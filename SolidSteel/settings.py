@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'about_us',
     'cart',
     'contact',
-    'media',
     'pay',
     'product',
     'recycler',
