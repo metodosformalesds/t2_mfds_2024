@@ -12,3 +12,5 @@
 | **Diagrama de Clases** | ![#F6EB61](https://via.placeholder.com/15/F6EB61/000000?text=+) [Diagrama en Lucidchart](https://lucid.app/lucidchart/cb076ddc-b9aa-406d-908f-747695b81e1b/edit?page=HWEp-vi-RSFO&invitationId=inv_9189eab0-e252-4f9e-973a-90922a3a8506#) |
 | **Diagrama de Procesos** | ![#4A90E2](https://via.placeholder.com/15/4A90E2/000000?text=+) [Visual Paradigm Diagram](https://online.visual-paradigm.com/share.jsp?id=333333313135322d35#diagram:workspace=qcdkggyd&proj=0&id=5) |
 | **PythonAnywhere** | ![#306998](https://via.placeholder.com/15/306998/000000?text=+) [SolidSteel en PythonAnywhere](https://SolidSteel.pythonanywhere.com) |
+
+#fecha de entrega del proyecto para el dia 21 de noviembre
