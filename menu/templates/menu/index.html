@@ -22,12 +22,6 @@
             <button class="btn btn-dark mx-2" onclick="window.location.href='{% url 'register' %}'">Registrarse</button>
         </div>
 
-        <div class="d-flex justify-content-center">
-            <p>supplier</p>
-            <button class="btn btn-outline-dark mx-2" onclick="window.location.href='{% url 'supplier_login' %}'">Iniciar sesión</button>
-            <button class="btn btn-dark mx-2"  onclick="window.location.href='{% url 'supplier_register' %}'">Registrarse</button>
-        </div>
-
         <section class="mt-5">
             <h2 class="text-center">Acerca de Nuestros Proveedores</h2>
             <p class="text-center">¡Contamos con un amplio catálogo proporcionado por nuestros colaboradores! Calidad, seguridad y precios competitivos.</p>
@@ -94,28 +88,31 @@
     <footer class="bg-light text-center py-4 mt-5">
         <div class="container">
             <div class="row">
-                <div class="col-md-4">
-                    <h6>Casos de uso</h6>
+                <div class="col-md-3">
+                    <h5>Casos de uso</h5>
                     <ul class="list-unstyled">
                         <li><a href="#"  >Diseño UI</a></li>
                         <li><a href="#"  >Diseño UX</a></li>
-                        <li><a href="#"  >Wireframing</a></li>
                     </ul>
                 </div>
-                <div class="col-md-4">
-                    <h6>Explorar</h6>
+                <div class="col-md-3">
+                    <h5>Explorar</h5>
                     <ul class="list-unstyled">
                         <li><a href="#"  >Diseño</a></li>
                         <li><a href="#"  >Prototipado</a></li>
-                        <li><a href="#"  >Características de desarrollo</a></li>
                     </ul>
                 </div>
-                <div class="col-md-4">
-                    <h6>Recursos</h6>
+                <div class="col-md-3">
+                    <h5>Recursos</h5>
                     <ul class="list-unstyled">
                         <li><a href="#"  >Blog</a></li>
-                        <li><a href="#"  >Mejores prácticas</a></li>
-                        <li><a href="#"  >Soporte</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>¿Eres proveedor?</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'supplier_login' %}">Iniciar sesión</a></li>
+                        <li><a href="{% url 'supplier_register' %}">Registrarse</a></li>
                     </ul>
                 </div>
             </div>
