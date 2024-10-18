@@ -7,3 +7,6 @@ def login(request):
 
 def supplier_login(request):
     return render(request, 'home/supplier_login.html')
+
+def password_reset(request):
+    return render(request, 'home/reset.html') 

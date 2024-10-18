@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solid Steel - Iniciar Sesión</title>
+    <title>Solid Steel - Reset</title>
     {% load static %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style_login.css' %} ">
+    <link rel="stylesheet" href="{% static 'css/style_reset.css' %} ">
     <link rel="stylesheet" href="{% static 'general/css/style_general.css' %}">
 </head>
 <body>
@@ -15,48 +15,37 @@
     </header>
 
     <main class="container mt-5">
-        <div class="d-flex justify-content-center">
-
-            <div class="card p-4 shadow-lg" style="max-width: 500px; width: 100%;">
-                <div class="d-flex justify-content-center mb-3">
-                    <h2>Iniciar sesión en Solid-Steel</h2>
-                </div>
-
-                <div class="d-flex flex-column gap-2">
-                    <button class="btn btn-outline-dark w-100"><i class="bi bi-apple"></i> Continuar con Apple</button>
-                    <button class="btn btn-outline-dark w-100"><i class="bi bi-google"></i> Continuar con Google</button>
-                    <button class="btn btn-outline-dark w-100"><i class="bi bi-facebook"></i> Continuar con Facebook</button>
-                </div>
-
-                <!-- OR divider -->
-                <div class="d-flex align-items-center my-4">
-                    <hr class="flex-grow-1">
-                    <span class="px-2">O</span>
-                    <hr class="flex-grow-1">
-                </div>
-
-                <form id="login-form">
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Correo electrónico</label>
-                        <input type="email" class="form-control" id="email" placeholder="Ingrese su correo">
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="password" placeholder="Ingrese su contraseña">
-                    </div>
-                    <button type="submit" class="btn btn-dark w-100">Iniciar sesión</button>
-                    <!--<button type="button" class="text-muted btn btn-link w-100" onclick="forgotPassword()">¿Olvidaste tu contraseña?</button>-->
-                    <button type="button" class="text-muted btn btn-link w-100" onclick="window.location.href='{% url 'password_reset' %}'">¿Olvidaste tu contraseña?</button>
-                </form>
-
-                <div class="text-center mt-3">
-                    <a href="{% url 'register' %}" class="text-muted">¿No tienes una cuenta? Regístrate</a>
-                </div>
-                
-            </div>
-        </div>
-    </main>
-
+      <div class="d-flex flex-column align-items-center">
+          
+          <ul class="nav nav-tabs mb-4" style="width: 70%;">
+              <li class="nav-item flex-grow-1">
+                  <a href="{% url 'login' %}" class="nav-link text-center">Iniciar sesión</a>
+              </li>
+              <li class="nav-item flex-grow-1">
+                  <a href="{% url 'register' %}" class="nav-link text-center active">Registrarse</a>
+              </li>
+          </ul>
+  
+          <div class="card p-5 shadow" style="max-width: 450px; width: 100%;">
+              <div class="text-center mb-4">
+                  <h2>Recuperar contraseña</h2>
+              </div>
+  
+              <form id="password-reset-form">
+                  <div class="mb-4">
+                      <label for="email" class="form-label">Correo electrónico:</label>
+                      <input type="email" class="form-control" id="email" placeholder="Ingrese su correo" required>
+                  </div>
+  
+                  <div class="d-flex justify-content-between">
+                      <button type="button" class="btn btn-outline-secondary">Cancelar</button>
+                      <button type="submit" class="btn btn-dark">Buscar</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </main>
+  
     <footer class="bg-light text-center py-4 mt-5">
         <div class="container">
             <div class="row">
