@@ -15,8 +15,6 @@
 
     <main class="container mt-5">
         <div class="d-flex justify-content-center">
-
-                 
             <div class="card p-4 shadow-lg" style="max-width: 500px; width: 100%;">
                 <div class="d-flex justify-content-left ">
                     <button class="btn btn-outline-secondary" onclick="window.location.href='{% url 'index' %}'">
@@ -28,37 +26,10 @@
                     <h2>Regístrate como proveedor</h2>
                 </div>
 
-
-
-                <form id="register-form">
-                    <div class="mb-3">
-                        <label for="firstName" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" id="firstName" placeholder="Ingrese su nombre">
-                    </div>
-                    <div class="mb-3">
-                        <label for="lastName" class="form-label">Apellido</label>
-                        <input type="text" class="form-control" id="lastName" placeholder="Ingrese su apellido">
-                    </div>
-                    <div class="mb-3">
-                        <label for="secondLastName" class="form-label">Segundo Apellido</label>
-                        <input type="text" class="form-control" id="secondLastName" placeholder="Ingrese su segundo apellido">
-                    </div>
-                    <div class="mb-3">
-                        <label for="phone" class="form-label">Número de Teléfono</label>
-                        <input type="tel" class="form-control" id="phone" placeholder="Ingrese su número de teléfono">
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Correo Electrónico</label>
-                        <input type="email" class="form-control" id="email" placeholder="Ingrese su correo">
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="password" placeholder="Ingrese su contraseña">
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">Todos mis datos son correctos</label>
-                    </div>
+                <!-- Aquí renderizamos el formulario con Django Forms -->
+                <form id="register-form" method="POST" action="">
+                    {% csrf_token %}
+                    {{ form.as_p }}
                     <button type="submit" class="btn btn-dark w-100">Registrar</button>
                 </form>
 

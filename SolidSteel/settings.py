@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-(bco9)^g@zu52)zwrq8ms=zt@y6n62$1x4muag=f*chr4n+^06
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost'] #'solidsteel.pythonanywhere.com'
-#ALLOWED_HOSTS = [] 'solidsteel.pythonanywhere.com'
+#NOOOOOOO BORRAAAR POORFAVOOOOOOR
+ALLOWED_HOSTS = [] #'solidsteel.pythonanywhere.com'
 
 # Application definition
 
@@ -94,6 +94,20 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+#NOOOOOOO BORRAAAR POORFAVOOOOOOR
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'SolidSteel$db',  # El nombre que aparece en tu lista
+#        'USER': 'SolidSteel',     # Debe ser el nombre de tu usuario de PythonAnywhere
+#        'PASSWORD': 'Cacahuate11%',
+#        'HOST': 'SolidSteel.mysql.pythonanywhere-services.com',  # Tu host de MySQL en PythonAnywhere
+#        'PORT': '3306',  # Puerto estándar para MySQL
+#        'OPTIONS': {
+#            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#        },
+#    }
+#}
 
 
 # Password validation
