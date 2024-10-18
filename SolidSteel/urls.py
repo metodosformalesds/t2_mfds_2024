@@ -24,4 +24,5 @@ urlpatterns = [
     path('', include('menu.urls')),
     path('login/', include('login.urls')),# Incluye las URLs de la aplicación "menu"
     path('register/', include('register.urls')),# Incluye las URLs de la aplicación "menu"
+    path('cart/', include('cart.urls')),# Incluye las URLs de la aplicación "cart"
 ]
