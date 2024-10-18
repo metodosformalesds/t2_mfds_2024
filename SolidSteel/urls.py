@@ -25,4 +25,5 @@ urlpatterns = [
     path('login/', include('login.urls')),# Incluye las URLs de la aplicación "menu"
     path('register/', include('register.urls')),# Incluye las URLs de la aplicación "menu"
     path('cart/', include('cart.urls')),# Incluye las URLs de la aplicación "cart"
+    path('products/', include('product.urls')), # Incluye las URLs de la aplicación "product"
 ]

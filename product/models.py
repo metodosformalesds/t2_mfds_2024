@@ -1,31 +1,31 @@
 from django.db import models
- 
+from django.contrib.auth.hashers import make_password, check_password
 # Create your models here.
  
 from django.db import models
  
 # Clases para inizializar las opciones pre-establecidas
 class UserRole(models.TextChoices):
-    SUPPLIER = 'Supplier'
-    CLIENT = 'Client'
- 
+    SUPPLIER = 'Supplier', 'Supplier'
+    CLIENT = 'Client', 'Client'
+
 class UserAuthProvider(models.TextChoices):
-    INTERNAL = 'Internal'
-    FACEBOOK = 'Facebook'
-    IOS = 'iOS'
- 
+    INTERNAL = 'Internal', 'Internal'
+    FACEBOOK = 'Facebook', 'Facebook'
+    IOS = 'iOS', 'iOS'
+
 class PaymentMethod(models.TextChoices):
-    STRIPE = 'Stripe'
-    PAYPAL = 'Paypal'
- 
+    STRIPE = 'Stripe', 'Stripe'
+    PAYPAL = 'Paypal', 'Paypal'
+
 class PaymentStatus(models.TextChoices):
-    COMPLETED = 'Completed'
-    PENDING = 'Pending'
-    FAILED = 'Failed'
- 
+    COMPLETED = 'Completed', 'Completed'
+    PENDING = 'Pending', 'Pending'
+    FAILED = 'Failed', 'Failed'
+
 class SupplierPaymentMethod(models.TextChoices):
-    PAYPAL = 'Paypal'
-    STRIPE = 'Stripe'
+    PAYPAL = 'Paypal', 'Paypal'
+    STRIPE = 'Stripe', 'Stripe'
  
  
  
@@ -36,7 +36,15 @@ class UserAccount(models.Model):
     user_role = models.CharField(max_length=20, choices=UserRole.choices)
     user_auth_provider = models.CharField(max_length=20, choices=UserAuthProvider.choices, default=UserAuthProvider.INTERNAL)
     user_auth_provider_id = models.CharField(max_length=255, null=True, blank=True)
- 
+    
+    def set_password(self, raw_password):
+        """Establecer la contraseña encriptada."""
+        self.user_password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        """Verificar la contraseña."""
+        return check_password(raw_password, self.user_password)
+    
     def __str__(self):
         return self.user_email
  
@@ -50,7 +58,9 @@ class Supplier(models.Model):
     supplier_state = models.CharField(max_length=50)
     supplier_city = models.CharField(max_length=50)
     supplier_zip_code = models.CharField(max_length=10)
-    user = models.OneToOneField(UserAccount, on_delete=models.CASCADE)
+    # Aquí aplicamos el filtro para que solo se muestren los usuarios con rol 'Supplier'
+    
+    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE,limit_choices_to={'user_role': UserRole.SUPPLIER}, unique=True) 
     def __str__(self):
         return self.supplier_name
  
@@ -58,11 +68,11 @@ class Supplier(models.Model):
  
 class Client(models.Model):
     id_client = models.AutoField(primary_key=True)
-    user = models.OneToOneField(UserAccount, on_delete=models.CASCADE)
+    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, unique=True, limit_choices_to={'user_role': UserRole.CLIENT})
     client_first_name = models.CharField(max_length=50)
     client_last_name = models.CharField(max_length=50)
     client_phone = models.CharField(max_length=20)
- 
+
     def __str__(self):
         return f"{self.client_first_name} {self.client_last_name}"
  
@@ -185,11 +195,14 @@ class PasswordReset(models.Model):
  
 class SupplierPaymentMethodModel(models.Model):
     id_supplier_payment = models.AutoField(primary_key=True)
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, related_name='payment_methods')
     supplier_method_id = models.CharField(max_length=255)
-    supplier_payment_method = models.CharField(max_length=20, choices=SupplierPaymentMethod.choices)
+    supplier_payment_method = models.CharField(
+    max_length=20,
+    choices=SupplierPaymentMethod.choices  # Usar así para las opciones del campo
+)
     supplier_payment_email = models.CharField(max_length=50)
- 
+
     def __str__(self):
         return f"Supplier Payment {self.id_supplier_payment}"
  
@@ -212,7 +225,7 @@ class Recycle(models.Model):
     recycle_description = models.CharField(max_length=255)
     recycle_address = models.CharField(max_length=255)
     recycle_number = models.CharField(max_length=20)
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    
  
     def __str__(self):
         return self.recycle_name
