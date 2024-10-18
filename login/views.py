@@ -4,3 +4,6 @@ from django.shortcuts import render
 
 def login(request):
     return render(request, 'home/login.html')
+
+def supplier_login(request):
+    return render(request, 'home/supplier_login.html')
