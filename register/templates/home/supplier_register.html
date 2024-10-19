@@ -29,9 +29,39 @@
                 <!-- Aquí renderizamos el formulario con Django Forms -->
                 <form id="register-form" method="POST" action="">
                     {% csrf_token %}
-                    {{ form.as_p }}
+                    <div class="mb-3">
+                        <label for="id_supplier_name" class="form-label">Nombre</label>
+                        {{ form.supplier_name }}  <!-- Campo generado por Django Forms -->
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_supplier_address" class="form-label">Apellido</label>
+                        {{ form.supplier_address }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_supplier_city" class="form-label">Ciudad</label>
+                        {{ form.supplier_city }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_supplier_zip_code" class="form-label">Código Postal</label>
+                        {{ form.supplier_zip_code }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_supplier_state" class="form-label">Estado</label>
+                        {{ form.supplier_state }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Correo Electrónico</label>
+                        {{ form.email }}
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Contraseña</label>
+                        {{ form.password }}
+                    </div>
                     <button type="submit" class="btn btn-dark w-100">Registrar</button>
                 </form>
+                
+                
+                
 
                 <div class="text-center mt-3">
                     <a href="{% url 'supplier_login' %}" class="text-muted">¿Ya tienes una cuenta? Inicia sesión como proveedor</a>

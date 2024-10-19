@@ -30,28 +30,32 @@
                 <div class="d-flex justify-content-center mb-3">
                     <h2 >Inicia sesión como proveedor</h2>
                 </div>
+                {% if messages %}
+                <div class="list-group mt-3">
+                    {% for message in messages %}
+                        <span class="list-group-item list-group-item-{{ message.tags }}">{{ message }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
-                <form id="login-form-proveedor">
+                <form id="login-form-proveedor" method="POST" action="">
+                    {% csrf_token %}
                     <div class="mb-3">
-                        <label for="email" class="form-label">Correo electrónico</label>
-                        <input type="email" class="form-control" id="email" placeholder="Ingrese su correo">
+                        <label for="id_email" class="form-label">Correo electrónico</label>
+                        {{ form.email }}  <!-- Campo generado por Django Forms -->
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="password" placeholder="Ingrese su contraseña">
+                        <label for="id_password" class="form-label">Contraseña</label>
+                        {{ form.password }}  <!-- Campo generado por Django Forms -->
                     </div>
                     <button type="submit" class="btn btn-dark w-100">Iniciar sesión</button>
                     <button type="button" class="text-muted btn btn-link w-100" onclick="forgotPassword()">¿Olvidaste tu contraseña?</button>
                 </form>
-
+                
                 <div class="text-center mt-3">
                     <a href="{% url 'supplier_register' %}" class="text-muted">¿No tienes una cuenta? Regístrate</a>
                 </div>
-                
-            </div>
-        </div>
-    </main>
-
+       
     <footer class="bg-light text-center py-4 mt-5">
         <div class="container">
             <div class="row">
