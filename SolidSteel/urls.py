@@ -27,4 +27,5 @@ urlpatterns = [
     path('cart/', include('cart.urls')),# Incluye las URLs de la aplicación "cart"
     path('shipping/', include('shipping.urls')),# Incluye las URLs de la aplicación "Envios"
     path('products/', include('product.urls')), # Incluye las URLs de la aplicación "product"
+    path('contact/', include('contact.urls')),
 ]
