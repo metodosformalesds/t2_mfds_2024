@@ -16,6 +16,8 @@ h2 {
     font-size: 2rem;
 }
 
+
+
 p {
     color: #6c757d;
     font-size: 1.1rem;
@@ -38,4 +40,19 @@ footer img {
 
 footer img:hover {
     filter: none;
+}
+
+.information-box {
+    background-color: #fff;  /* Color de fondo blanco */
+    border: 1px solid #ccc;  /* Borde gris claro */
+    border-radius: 8px;      /* Bordes redondeados */
+    padding: 20px;           /* Espaciado interno */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    width: 100%;             /* Ancho completo en móviles */
+    max-width: 500px;        /* Ancho máximo en pantallas grandes */
+}
+
+
+h3 {
+    color: red;
 }
