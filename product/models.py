@@ -98,7 +98,7 @@ class Product(models.Model):
     product_description = models.CharField(max_length=100)
     product_price = models.FloatField(default=0)
     product_stock = models.IntegerField(default=0)
-    product_image = models.CharField(max_length=255)
+    product_image = models.ImageField(("Product Image"), upload_to='static/products_images/', null=False)
     product_width = models.FloatField(default=0)
     product_height = models.FloatField(default=0)
     product_thickness = models.FloatField(default=0)
@@ -221,7 +221,7 @@ class SupplierSales(models.Model):
 class Recycle(models.Model):
     id_recycle = models.AutoField(primary_key=True)
     recycle_name = models.CharField(max_length=255)
-    recycle_image = models.CharField(max_length=255)
+    recycle_image = models.ImageField(("Recycle Image"), upload_to='static/products_images/', null=False)
     recycle_description = models.CharField(max_length=255)
     recycle_address = models.CharField(max_length=255)
     recycle_number = models.CharField(max_length=20)

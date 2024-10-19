@@ -1,0 +1,44 @@
+<html>
+
+
+    <body>
+        
+        <style>
+            .grid-container {
+                display: grid;
+                grid-template-columns: 70% 10% 10% 10%; /* Primera columna 50%, otras 3 columnas 16.67% cada una */
+                height: 25px; /* Ajusta esto según el tamaño total que desees */
+            }
+    
+            .grid-container{
+                text-align: center;
+                padding: 40px;
+            }
+        </style>
+        
+
+        <div class="grid-container">
+            <div class="item1">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control">
+                    <div class="input-group-append"><button class="btn btn-menu" style="height:100%"><i class="bi bi-search"></i></button></div>
+                </div>
+            </div>
+            <div class="item2">
+                <button class="btn btn-menu btn-sm" type="button" style="color: white; background-color: #2C2C2C">New</button>
+            </div>
+            <div class="item2">
+                <button class="btn btn-menu btn-sm" type="button" style="background-color: #F5F5F5">Ascending</button>
+
+            </div>
+            <div class="item2">
+                <button class="btn btn-menu btn-sm" type="button" style="background-color: #F5F5F5">Descending</button>
+
+            </div>
+        </div>
+
+
+    </body>
+
+
+</html>

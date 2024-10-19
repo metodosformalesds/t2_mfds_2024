@@ -3,5 +3,55 @@
 {% block title %} Menu De productos {% endblock %}
 
 {% block content %}
-    <p>hola</p>
+<!--Container que divide el menu de productos del sidebar-->
+<div class="container-fluid" style=" height: 95%">
+    <div class="row">
+        <!-- SideBar -->
+        <div class="col-md-3 col-75">
+            
+            <div class="card" style="width: 100%;">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">Metales</li>
+                  {%for Product in productos%}
+                    <p>{{Product.product_material}}</p>
+                  {%endfor%}
+                  <li class="list-group-item">Espesor</li>
+                  {%for Product in productos%}
+                    <p>{{Product.product_thickness}}</p>
+                  {%endfor%}
+                  <li class="list-group-item">Categoria</li>
+                  {%for Product in productos%}
+                    <p>{{Product.product_name}}</p>
+                  {%endfor%}
+                </ul>
+              </div>
+            
+        </div>
+        <!-- Menu de productos -->
+        <div class="col-md-9 col-25">
+
+            {% include "search.html" %}
+
+            <div class="container">
+            <div class="row">
+            {% for Product in productos %}
+
+                <div class="col-sm-4"><!--Columna Abre-->
+                <div class="card" style="width: 100%; height:95%; margin: 5px 10px;"><!--Card Abre-->
+
+                    <img src="{{Product.product_image.url}}" class="card-img-top">
+                    <div class="card-body"><!--Card Body Abre-->
+                        <h6 class="card-title">{{Product.product_name}}</p>
+                            <p class="card-text">$&nbsp;{{Product.product_price}}</p>
+                        
+                    </div><!--Card Body Cierre-->
+                </div><!--Card Cierre-->
+                </div> <!--Columna Cierre-->
+
+            {% endfor %}
+            </div>  
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
