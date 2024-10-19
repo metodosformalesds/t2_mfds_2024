@@ -1,0 +1,112 @@
+/* styles.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+}
+
+h1 {
+    font-weight: bold;
+    font-size: 3rem;
+}
+
+h2 {
+    margin-top: 30px;
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+p {
+    color: #6c757d;
+    font-size: 1.1rem;
+}
+
+.card {
+    margin-bottom: 20px;
+    border-radius: 15px;
+    overflow: hidden;
+    width: 100%;
+}
+
+footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+footer img {
+    filter: grayscale(100%);
+}
+
+footer img:hover {
+    filter: none;
+}
+
+.card-body{
+    margin-top: -100px;
+    margin-left: 120px;
+}
+
+.card-img-top{
+    margin-left: 0px;
+    height: 120px;
+    width: 120px;
+}
+
+.price {
+    position: relative;
+    top: -80px; 
+    right: -190px; 
+    background-color: rgba(255, 255, 255, 0.8); 
+    padding: 2px;
+    border: 2px solid #ccc;
+    border-radius: 25px; 
+    font-weight: bold; 
+    font-weight: bold;
+    font-size: 1rem; 
+    display: inline-block; 
+}
+
+.form-label{
+    position: relative;
+    margin-left: 45px;
+}
+
+.cart-item-quantity {
+    margin: 0px;
+    margin-top: -20px;
+    height: 34px;
+    width: 150px;
+    margin-left: 100px;
+}
+
+.eliminar {
+    height: 38px;
+    position: absolute;
+    margin-top: -25px;
+    background-color: #dc3545; 
+    color: white; 
+    border: none; 
+    border-radius: 5px; 
+    padding: 8px 15px; 
+    cursor: pointer; 
+    transition: background-color 0.3s;
+}
+
+.eliminar:hover {
+    background-color: #c82333; 
+}
+
+.payment-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.payment-container .btn {
+    margin-top: 10px;
+}
+
+.pagar-label{
+    margin-left: -5px;
+}
