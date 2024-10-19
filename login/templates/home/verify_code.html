@@ -1,0 +1,11 @@
+<form method="POST">
+    {% csrf_token %}
+    <label for="email">Correo electrónico:</label>
+    <input type="email" name="email" required>
+    <label for="reset_code">Código:</label>
+    <input type="text" name="reset_code" required>
+    <button type="submit">Verificar</button>
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+</form>

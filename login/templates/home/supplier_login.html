@@ -49,7 +49,7 @@
                         {{ form.password }}  <!-- Campo generado por Django Forms -->
                     </div>
                     <button type="submit" class="btn btn-dark w-100">Iniciar sesión</button>
-                    <button type="button" class="text-muted btn btn-link w-100" onclick="forgotPassword()">¿Olvidaste tu contraseña?</button>
+                    <button type="button" class="text-muted btn btn-link w-100"onclick="window.location.href='{% url 'password_reset' %}'">¿Olvidaste tu contraseña?</button>
                 </form>
                 
                 <div class="text-center mt-3">
