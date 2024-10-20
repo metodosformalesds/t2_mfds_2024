@@ -1,97 +1,92 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrito de Compras - Solid Steel</title>
-    {% load static %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+{% extends "base_without_image.html" %}
+
+{% block title %}
+Carrito de Compras - Solid Steel
+{% endblock %}
+
+{% load static %}
+
+{% block head %}
+    {{ block.super }}
     <link rel="stylesheet" href="{% static 'general/css/style_general.css' %}">
     <link rel="stylesheet" href="{% static 'css/style_cart.css' %}">
-</head>
-<body>
-    <header class="bg-dark text-white text-center p-4">
-    </header>
+{% endblock %}
 
-    <main class="container mt-5">
-        <h2 class="carrito">Carrito</h2>
-        <div class="list-group">
-            <!-- Artículo 1 -->
-            <div class="list-group-item">
-                <div class="card">
-                    <img src="{% static 'images/articulo2.jpg' %}" class="card-img-top" alt="Artículo 2">
-                    <div class="card-body">
-                        <h5 class="card-title">Artículo 2</h5>
-                        <p class="card-text">Descripción breve del artículo 2.</p>
-                        <p class="price"><strong>$15.00</strong></p>
-                        <label for="quantity" class="form-label">Cantidad:</label>
-                        <div class="d-flex align-items-center">
-                            <select id="quantity" class="form-select cart-item-quantity me-2">
-                                <option value="0">0</option>
-                            </select>
-                            <button class="eliminar btn btn-danger">Eliminar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Artículo 2 -->
-            <div class="list-group-item">
-                <div class="card">
-                    <img src="{% static 'images/articulo2.jpg' %}" class="card-img-top" alt="Artículo 2">
-                    <div class="card-body">
-                        <h5 class="card-title">Artículo 2</h5>
-                        <p class="card-text">Descripción breve del artículo 2.</p>
-                        <p class="price"><strong>$15.00</strong></p>
-                        <label for="quantity" class="form-label">Cantidad:</label>
-                        <div class="d-flex align-items-center">
-                            <select id="quantity" class="form-select cart-item-quantity me-2">
-                                <option value="0">0</option>
-                            </select>
-                            <button class="eliminar btn btn-danger">Eliminar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Artículo 3 -->
-            <div class="list-group-item">
-                <div class="card">
-                    <img src="{% static 'images/articulo2.jpg' %}" class="card-img-top" alt="Artículo 3">
-                    <div class="card-body">
-                        <h5 class="card-title">Artículo 3</h5>
-                        <p class="card-text">Descripción breve del artículo 3.</p>
-                        <p class="price"><strong>$20.00</strong></p>
-                        <label for="quantity" class="form-label">Cantidad:</label>
-                        <div class="d-flex align-items-center">
-                            <select id="quantity" class="form-select cart-item-quantity me-2">
-                                <option value="0">0</option>
-                            </select>
-                            <button class="eliminar btn btn-danger">Eliminar</button>
-                        </div>
+{% block content %}
+<main class="container mt-5">
+    <h2 class="carrito">Carrito</h2>
+    <div class="list-group">
+        <!-- Artículo 1 -->
+        <div class="list-group-item">
+            <div class="card">
+                <img src="{% static 'images/articulo2.jpg' %}" class="card-img-top" alt="Artículo 2">
+                <div class="card-body">
+                    <h5 class="card-title">Artículo 2</h5>
+                    <p class="card-text">Descripción breve del artículo 2.</p>
+                    <p class="price"><strong>$15.00</strong></p>
+                    <label for="quantity1" class="form-label">Cantidad:</label>
+                    <div class="d-flex align-items-center">
+                        <select id="quantity1" class="form-select cart-item-quantity me-2">
+                            <option value="0">0</option>
+                        </select>
+                        <button class="eliminar btn btn-danger">Eliminar</button>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="payment-container">
-            <p id="totalAmount" class="h5"><strong>$50.00</strong></p>
-            <label for="totalAmount" class="pagar-label">listo para pagar?</label>
-            <button class="btn btn-primary">Pagar</button>
-        </div>
-    </main>
 
-    <footer class="bg-light text-center py-4 mt-5">
-        <div class="container">
-            <p>&copy; 2024 Solid Steel. Todos los derechos reservados.</p>
-            <div class="d-flex justify-content-center mb-3">
-                <a href="#" class="mx-2"><img src="https://img.icons8.com/ios-filled/50/000000/github.png" alt="GitHub" width="30"></a>
-                <a href="#" class="mx-2"><img src="https://img.icons8.com/ios-filled/50/000000/linkedin.png" alt="LinkedIn" width="30"></a>
-                <a href="#" class="mx-2"><img src="https://img.icons8.com/ios-filled/50/000000/twitter.png" alt="Twitter" width="30"></a>
+        <!-- Artículo 2 -->
+        <div class="list-group-item">
+            <div class="card">
+                <img src="{% static 'images/articulo2.jpg' %}" class="card-img-top" alt="Artículo 2">
+                <div class="card-body">
+                    <h5 class="card-title">Artículo 2</h5>
+                    <p class="card-text">Descripción breve del artículo 2.</p>
+                    <p class="price"><strong>$15.00</strong></p>
+                    <label for="quantity2" class="form-label">Cantidad:</label>
+                    <div class="d-flex align-items-center">
+                        <select id="quantity2" class="form-select cart-item-quantity me-2">
+                            <option value="0">0</option>
+                        </select>
+                        <button class="eliminar btn btn-danger">Eliminar</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+        <!-- Artículo 3 -->
+        <div class="list-group-item">
+            <div class="card">
+                <img src="{% static 'images/articulo3.jpg' %}" class="card-img-top" alt="Artículo 3">
+                <div class="card-body">
+                    <h5 class="card-title">Artículo 3</h5>
+                    <p class="card-text">Descripción breve del artículo 3.</p>
+                    <p class="price"><strong>$20.00</strong></p>
+                    <label for="quantity3" class="form-label">Cantidad:</label>
+                    <div class="d-flex align-items-center">
+                        <select id="quantity3" class="form-select cart-item-quantity me-2">
+                            <option value="0">0</option>
+                        </select>
+                        <button class="eliminar btn btn-danger">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="payment-container mt-4">
+        <p id="totalAmount" class="h5"><strong>$50.00</strong></p>
+        <label for="totalAmount" class="pagar-label">¿Listo para pagar?</label>
+        <button class="btn btn-primary" onclick="window.location.href='{% url 'shipping' %}'">Continuar</button>
+    </div>
+</main>
+
+<footer class="footer-container">
+    <p>&copy; 2024 Solid Steel. Todos los derechos reservados.</p>
+    <div>
+        <a href="#"><img src="https://img.icons8.com/ios-filled/50/000000/github.png" alt="GitHub" width="30"></a>
+        <a href="#"><img src="https://img.icons8.com/ios-filled/50/000000/linkedin.png" alt="LinkedIn" width="30"></a>
+        <a href="#"><img src="https://img.icons8.com/ios-filled/50/000000/twitter.png" alt="Twitter" width="30"></a>
+    </div>
+</footer>
+{% endblock %}

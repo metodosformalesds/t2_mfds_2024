@@ -8,13 +8,14 @@ Información de Envío - Solid Steel
 
 {% block head %}
     {{block.super}}
-    <link rel="stylesheet" href="{% static 'general/css/style_envio.css' %}">
+    <link rel="stylesheet" href="{% static 'general/style_envio.css' %}">
 {% endblock %}
 
 {% block content %}
 <main class="main-container">
     <div class="info-wrapper">
         <h2>Datos de Envío</h2>
+        <h3>Direccion</h3>
         <div class="info-entry">
             <strong class="info-title">Nombre Completo:</strong>
             <span class="info-data" id="fullName">Juan Pérez</span>
@@ -36,7 +37,7 @@ Información de Envío - Solid Steel
             <span class="info-data" id="postalCode">12345</span>
         </div>
         <div class="button-group">
-            <button type="button" class="button-refresh" onclick="location.reload();">Actualizar</button>
+            <button type="button" class="button-refresh" onclick="window.location.href='{% url 'shipping_actualizar_datos' %}';">Actualizar datos</button>
             <button type="button" class="button-continue" id="continueButton">Continuar</button>
         </div>
     </div>
