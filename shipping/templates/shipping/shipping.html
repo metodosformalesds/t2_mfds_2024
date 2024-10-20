@@ -6,15 +6,10 @@ Información de Envío - Solid Steel
 
 {% load static %}
 
-<head>
-    {% block head %}
-    <link rel="stylesheet" href="{% static 'general/css/style_general.css' %}">
-    <link rel="stylesheet" href="{% static 'css/style_envio.css' %}">
-    {% endblock %}
-</head>
-
-<link rel="stylesheet" href="{% static 'general/css/style_general.css' %}">
-<link rel="stylesheet" href="{% static 'css/style_envio.css' %}">
+{% block head %}
+    {{block.super}}
+    <link rel="stylesheet" href="{% static 'general/css/style_envio.css' %}">
+{% endblock %}
 
 {% block content %}
 <main class="main-container">
