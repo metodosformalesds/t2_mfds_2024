@@ -1,0 +1,81 @@
+{% extends "base_with_image.html" %}
+{% load static %}
+
+{% block title %}
+    Solid steel - recycle
+{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/custom_style.css' %}">
+{% endblock %}
+
+{% block content %}
+<main class="container py-5">
+  <h2 class="mb-3">Recicladoras</h2>
+  <p class="text-muted">¡Contáctate con la más cercana!</p>
+
+  <div class="recycler-list">
+      <div class="card mb-4 shadow-sm recycler-card">
+          <div class="row g-0">
+              <div class="col-md-3">
+                  <img src="https://via.placeholder.com/150" class="img-fluid rounded-start" alt="Recicladora">
+              </div>
+              <div class="col-md-9">
+                  <div class="card-body">
+                      <h5 class="card-title">Recicladora Méndez</h5>
+                      <p class="card-text text-muted">Centro de reciclaje en Ciudad Juárez</p>
+                      <button class="btn btn-outline-secondary">Contáctanos!</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="card mb-4 shadow-sm recycler-card">
+          <div class="row g-0">
+              <div class="col-md-3">
+                  <img src="https://via.placeholder.com/150" class="img-fluid rounded-start" alt="Recicladora">
+              </div>
+              <div class="col-md-9">
+                  <div class="card-body">
+                      <h5 class="card-title">Recicladora El 20</h5>
+                      <p class="card-text text-muted">Centro de reciclaje en Ciudad Juárez</p>
+                      <button class="btn btn-outline-secondary">Contáctanos!</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="card mb-4 shadow-sm recycler-card">
+          <div class="row g-0">
+              <div class="col-md-3">
+                  <img src="https://via.placeholder.com/150" class="img-fluid rounded-start" alt="Recicladora">
+              </div>
+              <div class="col-md-9">
+                  <div class="card-body">
+                      <h5 class="card-title">Recicladora JRZ #1</h5>
+                      <p class="card-text text-muted">Centro de reciclaje en Ciudad Juárez</p>
+                      <button class="btn btn-outline-secondary">Contáctanos!</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+          <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1">&larr; Previous</a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><span class="page-link">...</span></li>
+          <li class="page-item"><a class="page-link" href="#">67</a></li>
+          <li class="page-item"><a class="page-link" href="#">68</a></li>
+          <li class="page-item">
+              <a class="page-link" href="#">Next &rarr;</a>
+          </li>
+      </ul>
+  </nav>
+</main>
+{% endblock %}
