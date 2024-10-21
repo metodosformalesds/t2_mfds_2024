@@ -21,9 +21,9 @@ def supplier_login(request):
                 # Verificar la contraseña usando el método 'check_password' del modelo UserAccount
                 if user.check_password(password):
                     # Aquí no usamos 'login()' de Django, sino que manejamos la sesión manualmente
-                    request.session['user_id'] = user.id_user  # Guardar el ID del usuario en la sesión
+                    request.session['supplier_id'] = user.id_user  # Guardar el ID del usuario en la sesión
                     messages.success(request, 'Has iniciado sesión correctamente')
-                    return redirect('dashboard_proveedor')  # Redirigir al panel de proveedor
+                    return redirect('supplier_edit_info')  # Redirigir al panel de proveedor
                 else:
                     messages.error(request, 'Contraseña incorrecta')
             except UserAccount.DoesNotExist:

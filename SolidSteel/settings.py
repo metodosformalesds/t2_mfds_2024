@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'shipping',
     'supplier',
     'static',
+    'client' ,
 ]
 
 MIDDLEWARE = [
