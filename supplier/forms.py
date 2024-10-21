@@ -2,14 +2,11 @@ from django import forms
 from product.models import Supplier
 
 class SupplierForm(forms.ModelForm):
-    user_email = forms.EmailField()
+    user_email = forms.EmailField()  # Campo de email del usuario
     user_password = forms.CharField(
         widget=forms.PasswordInput(),
-        required=False
+        required=False  # No requerido, solo si desean cambiar la contraseña
     )
-    user_first_name = forms.CharField()
-    user_last_name = forms.CharField()
-    user_last_second_name = forms.CharField()
 
     class Meta:
         model = Supplier

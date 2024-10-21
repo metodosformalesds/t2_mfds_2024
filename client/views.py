@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from product.models import Client, UserAccount
+from django.contrib import messages
 from .forms import ClientForm
 
 def client_edit_info(request):
@@ -33,8 +34,16 @@ def client_edit_info(request):
             if new_password:
                 user.set_password(new_password)  # Encriptar la nueva contraseña
             user.save()  # Guardar los cambios en el usuario
+            messages.success(request, 'Se modificaron los datos correctamente', extra_tags='edit')
+            return render(request, 'client/client_edit_info.html', {
+        'form': form, 
+        'client': client,  # Pasar los datos del cliente
+        'user': user  # Pasar los datos del usuario
+    })
 
-            return redirect('success_page')  # Redirigir a una página de éxito
+        else:
+            messages.error(request, 'Por favor, corrige los errores a continuación.', extra_tags='edit')
+            print(form.errors)  # Verificar si hay errores en el formulario
 
     return render(request, 'client/client_edit_info.html', {
         'form': form, 

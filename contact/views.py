@@ -5,4 +5,4 @@ from django.shortcuts import render
 def contacto(request):
 
     
-    return render(request, "contact/index.html")
+    return render(request, "contact/contact.html")
