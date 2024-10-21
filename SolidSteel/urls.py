@@ -28,7 +28,8 @@ urlpatterns = [
     path('shipping/', include('shipping.urls')),# Incluye las URLs de la aplicación "Envios"
     path('products/', include('product.urls')), # Incluye las URLs de la aplicación "product"
     path('contact/', include('contact.urls')),
+    path('recycler/', include('recycler.urls')),
     path('supplier/', include('supplier.urls')),
     path('client/', include('client.urls')),
-    
+
 ]
