@@ -1,0 +1,16 @@
+{% extends "saldo.html" %}
+
+{% block title %}Todos los Movimientos{% endblock %}
+
+{% block content %}
+<main class="main-container">
+    <h1>Todos los Movimientos</h1>
+    <ul>
+        {% for movimiento in movimientos %}
+        <li>{{ movimiento.tipo }} ID: {{ movimiento.id }} - <span class="{% if movimiento.tipo_mov == 'negativo' %}negativo{% else %}positivo{% endif %}">
+            {{ movimiento.monto|floatformat:2 }}
+        </span></li>
+        {% endfor %}
+    </ul>
+</main>
+{% endblock %}

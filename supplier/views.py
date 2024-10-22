@@ -49,3 +49,51 @@ def supplier_edit_info(request):
         'supplier': supplier,
         'user': user,
     })
+    
+# Vista de saldo (ya existente)
+def saldo_view(request):
+    # Simulación de datos
+    saldo = 3241
+    metas = {
+        'saldo': saldo,
+        'meta_saldo': 10000,
+        'paypal': 324,
+        'meta_paypal': 1000,
+        'otra_meta': 200,
+        'meta_otra': 200,
+    }
+    movimientos = [
+        {'tipo': 'Compra', 'id': '0002', 'monto': 540, 'metodo': '', 'tipo_mov': 'positivo'},
+        {'tipo': 'Retirado', 'id': 'Paypal', 'monto': -300, 'metodo': 'Paypal', 'tipo_mov': 'negativo'},
+        {'tipo': 'Retirado', 'id': 'Paypal', 'monto': -350, 'metodo': 'Paypal', 'tipo_mov': 'negativo'},
+        {'tipo': 'Retirado', 'id': 'Paypal', 'monto': -360, 'metodo': 'Paypal', 'tipo_mov': 'negativo'},
+    ]
+
+    context = {
+        'saldo': saldo,
+        'metas': metas,
+        'movimientos': movimientos
+    }
+    return render(request, 'supplier/saldo.html', context)
+
+# Vista para retirar saldo
+def retirar_saldo(request):
+    # Aquí agregas la lógica para el retiro del saldo
+    return redirect('saldo_view')  # Redirige a la vista de saldo después del retiro
+
+# Vista para actualizar datos de retiro
+def actualizar_datos_retiro(request):
+    # Aquí agregas la lógica para actualizar los datos de retiro
+    return render(request, 'supplier/actualizar_datos.html')  # Muestra una plantilla para actualizar los datos
+
+def todos_los_movimientos(request):
+    # Aquí puedes agregar la lógica para obtener todos los movimientos
+    movimientos = [
+        {'id': '0001', 'tipo': 'Compra', 'monto': 540.00, 'tipo_mov': 'positivo'},
+        {'id': 'Paypal', 'tipo': 'Retirado', 'monto': -300.00, 'tipo_mov': 'negativo'},
+        {'id': 'Paypal', 'tipo': 'Retirado', 'monto': -350.00, 'tipo_mov': 'negativo'},
+        {'id': 'Paypal', 'tipo': 'Retirado', 'monto': -360.00, 'tipo_mov': 'negativo'},
+    ]
+    return render(request, 'supplier/todos_los_movimientos.html', {'movimientos': movimientos})
+
+

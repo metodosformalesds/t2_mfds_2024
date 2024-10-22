@@ -31,5 +31,6 @@ urlpatterns = [
     path('recycler/', include('recycler.urls')),
     path('supplier/', include('supplier.urls')),
     path('client/', include('client.urls')),
+    
 
 ]

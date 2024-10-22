@@ -1,6 +1,10 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
-    path('edit_info/', views.supplier_edit_info, name='supplier_edit_info'), # Ruta para la página principal
+    path('saldo/', views.saldo_view, name='saldo_view'),  # Vista para mostrar el saldo
+    path('saldo/retirar/', views.retirar_saldo, name='saldo_retirar'),  # Vista para retirar saldo
+    path('saldo/actualizar/', views.actualizar_datos_retiro, name='saldo_actualizar_datos'),  # Vista para actualizar datos de retiro
+    path('todos_movimientos/', views.todos_los_movimientos, name='todos_los_movimientos'),
 ]
