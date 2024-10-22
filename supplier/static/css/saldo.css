@@ -340,5 +340,81 @@ button:hover {
     background-color: #f8f9fa;
 }
 
+/* Ajuste de espaciado entre las columnas */
+.main-container .row {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.section-title h1 {
+    text-align: left;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+}
+
+/* Ajustes de la sección del saldo */
+.saldo {
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 500px; /* Aumentar el ancho */
+}
+
+.saldo-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: black;
+}
+
+.saldo-cantidad {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.button-refresh, .button-continue {
+    font-size: 1.1rem;
+    padding: 12px;
+    border-radius: 5px;
+}
+
+.form-group label {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.form-control {
+    font-size: 1.2rem;
+    padding: 12px;
+}
+
+/* Ajustes de la sección de detalles */
+.detalles-titular {
+    text-align: start;
+    padding-left: 30px;
+    font-size: 1.1rem;
+}
+
+.detalles-titular h5 {
+    text-align: start;
+    font-size: 1.5rem;
+    margin-top: 20px;
+}
+
+.detalles-titular p {
+    text-align: start;
+    font-size: 1.5rem;
+}
+
+/* Ajustes generales */
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.row {
+    align-items: center;
+    justify-content: space-between;
+}
 
 

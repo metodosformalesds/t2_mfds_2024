@@ -96,4 +96,9 @@ def todos_los_movimientos(request):
     ]
     return render(request, 'supplier/todos_los_movimientos.html', {'movimientos': movimientos})
 
+from django.shortcuts import render
+
+def retirar_saldo_view(request):
+    return render(request, 'supplier/retirar_saldo.html')
+
 
