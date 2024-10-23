@@ -25,3 +25,11 @@ class EditarRetiroForm(forms.ModelForm):
             'nombre_titular': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del Titular'}),
             'cuenta_paypal': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Cuenta de PayPal'}),
         }
+
+from django import forms
+from django.contrib.auth.models import User
+
+class ActualizarDatosForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']

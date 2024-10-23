@@ -12,4 +12,6 @@ urlpatterns = [
     path('todos_movimientos/', views.todos_los_movimientos, name='todos_los_movimientos'),
     path('retiro_saldo/', views.retirar_saldo_view, name='retirar_saldo'),
     path('editar-retiro/', views.editar_retiro, name='editar_retiro'),
+    path('confirmacion-retiro/', views.confirmacion_retiro, name='confirmacion_retiro'),
+    path('configurar-datos/', views.configurar_datos, name='configurar_datos'),
 ]

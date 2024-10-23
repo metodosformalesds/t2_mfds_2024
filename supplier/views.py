@@ -96,12 +96,9 @@ def todos_los_movimientos(request):
     ]
     return render(request, 'supplier/todos_los_movimientos.html', {'movimientos': movimientos})
 
-from django.shortcuts import render
-
 def retirar_saldo_view(request):
     return render(request, 'supplier/retirar_saldo.html')
 
-#Vista que muestra los productos del supplier
 def supplier_menu(request):
     productos = Product.objects.all()
     return render(request, 'supplier/suppliers_menu.html', {'productos':productos})
@@ -114,7 +111,6 @@ def add_product(request):
     productos = Product.objects.all()
     return render(request, 'supplier/add_product.html', {'productos': productos})
 
-from django.shortcuts import render, redirect
 from .forms import EditarRetiroForm  # Si vas a utilizar un formulario de Django (opcional)
 from django.contrib import messages
 
@@ -130,3 +126,21 @@ def editar_retiro(request):
         form = EditarRetiroForm()
 
     return render(request, 'supplier/editar_retiro.html', {'form': form})
+
+def confirmacion_retiro(request):
+    return render(request, 'supplier/confirmacion_retiro.html')
+
+from django.contrib.auth.decorators import login_required
+from .forms import ActualizarDatosForm
+
+@login_required
+def configurar_datos(request):
+    if request.method == 'POST':
+        form = ActualizarDatosForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('configurar_datos')
+    else:
+        form = ActualizarDatosForm(instance=request.user)
+
+    return render(request, 'supplier/configurar_datos.html', {'form': form})
