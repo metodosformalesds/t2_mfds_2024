@@ -109,3 +109,7 @@ def supplier_menu(request):
 def update_stock(request):
     productos= Product.objects.all()
     return render(request, 'supplier/update_stock.html', {'productos':productos})
+
+def add_product(request):
+    productos = Product.objects.all()
+    return render(request, 'supplier/add_product.html', {'productos': productos})
