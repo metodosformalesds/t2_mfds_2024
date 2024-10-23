@@ -1,0 +1,90 @@
+.botones {
+    background-color: #E3E3E3;
+    border-color: #767676;
+    color: #1E1E1E;
+}
+
+
+
+.cantidad:active,
+.cantidad:focus {
+    background-color: #E3E3E3 !important;
+    border-color: #767676 !important;
+    box-shadow: none !important;
+    transition: none !important;
+}
+
+.botones:hover {
+    background-color: #767676;
+    border-color: #767676;
+}
+
+.botones:active,
+.botones:focus {
+    background-color: #767676 !important;
+    border-color: #767676 !important;
+    box-shadow: none !important;
+    transition: none !important;
+}
+
+.opciones{
+    background-color: white;
+}
+
+.opciones:hover{
+    background-color: #E3E3E3;
+    border-color: #E3E3E3;
+}
+
+.dato-entrada {
+    width: 25%; 
+    background-color: #E3E3E3;
+    border-color: #767676;
+    color: #1E1E1E;
+}
+
+.header-botones {
+    margin: 15px 0px;
+}
+
+.cartas {
+    margin: 10px 0;
+    height: auto;
+}
+
+.description {
+    font-size: 80%;
+    color: #767676;
+}
+
+.principal{
+    font-size: 95%;
+}
+
+.margen {
+    margin: 5vh auto; 
+}
+
+.ajustar{
+    width: 85%;
+    
+}
+
+.bloque{
+    max-width: 3%;
+}
+@media (min-width: 992px) {
+    .margen {
+        margin: 5vh 10vw;
+    }
+}
+
+@media (max-width: 576px) {
+    .margen {
+        margin: 5vh 5vw; 
+    }
+
+    .cartas {
+        width: 100%;
+    }
+}

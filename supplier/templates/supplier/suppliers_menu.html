@@ -4,60 +4,12 @@
 
 {% block content%}
 
-<style>
-    .botones {
-        background-color: #E3E3E3;
-        border-color: #767676;
-        color: #1E1E1E;
-    }
+{%block head%}
 
-    .botones:hover {
-        background-color: #767676;
-        border-color: #767676;
-    }
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/menus_supplier.css' %}">
 
-    .botones:active,
-    .botones:focus {
-        background-color: #767676 !important;
-        border-color: #767676 !important;
-        box-shadow: none !important;
-        transition: none !important;
-    }
-
-    .header-botones {
-        margin: 15px 0px;
-    }
-
-    .cartas {
-        margin: 10px 0;
-        height: auto;
-    }
-
-    .description {
-        font-size: 80%;
-    }
-
-    .margen {
-        margin: 5vh auto; 
-    }
-
-    @media (min-width: 992px) {
-        .margen {
-            margin: 5vh 10vw;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .margen {
-            margin: 5vh 5vw; 
-        }
-
-        .cartas {
-            width: 100%;
-        }
-    }
-
-</style>
+{% endblock %}
 
 <!--Header botones-->
 <div class="header-botones ">
@@ -73,7 +25,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-auto">
-                            <button type="button" class="btn btn-primary btn-sm botones">Cambiar Inventario</button>
+                            <a href=" {%url 'update_stock'%}" type="button" class="btn btn-primary btn-sm botones">Actualizar Inventario</a>
                         </div>
                         <div class="col-sm-auto">
                             <button type="button" class="btn btn-primary btn-sm botones">Cargar Nuevo Producto</button>

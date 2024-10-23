@@ -105,3 +105,7 @@ def retirar_saldo_view(request):
 def supplier_menu(request):
     productos = Product.objects.all()
     return render(request, 'supplier/suppliers_menu.html', {'productos':productos})
+
+def update_stock(request):
+    productos= Product.objects.all()
+    return render(request, 'supplier/update_stock.html', {'productos':productos})

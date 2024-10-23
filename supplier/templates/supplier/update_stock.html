@@ -1,0 +1,97 @@
+{% extends "base_without_image.html" %}
+
+{%block title%} Actualizar Stock{% endblock %}
+
+{%block head%}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/menus_supplier.css' %}">
+
+{% endblock %}
+
+{%block content%}
+
+<!--Header del stock -->
+<div class="header-botones">
+    <div class="container">
+        <div class="row">
+        <div class="col-md-3">
+            Stock
+        </div>
+    
+    <div class="col-md-9"><!--columna2 abre-->
+        
+        
+        <div class="dropdown"><!--drop abre-->
+            <button class="btn btn-secondary dropdown-toggle botones" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Categoria
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item opciones" href="#">Planchas</a></li>
+              <li><a class="dropdown-item opciones" href="#">Soleras</a></li>
+            </ul>
+          </div><!--drop cierra-->
+    </div><!--columna 2 cierra-->
+    </div> <!--row-->
+    </div> <!--container-->
+
+    </div>
+
+
+<div>
+    <div class="container">
+    <div class="row">
+    <div class="col-md-1 bloque">
+        
+    </div>
+    <div class="col-md-10">
+    {% for Product in productos %}
+    <div class="card mb-3">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="{{Product.product_image.url}}" class="img-fluid rounded-start" alt="...">
+          </div>
+          
+          <div class="col-md-8">
+            <div class="card-body ">
+                <div class="d-flex align-items-center">
+                    <h5 class="card-title principal">{{Product.product_name}} Precio:&nbsp;</h5>
+                    <input type="number" class="form-control-sm dato-entrada " id="priceInput" name="new_price" min="0" step="0.01" required placeholder="{{Product.product_price}}">
+                </div>
+              <p class="card-text description">{{Product.product_material}}&nbsp;-&nbsp;{{Product.product_description}}&nbsp;-&nbsp;Espesor:&nbsp;{{Product.product_thickness}}&nbsp;mm</p>
+              <div class="container">
+                <form method="POST" action=" ">
+                   
+                    
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <label for="stockInput" class="form-label">Cantidad</label>
+                            <input type="number" class="form-control cantidad" id="stockInput" name="new_stock" min="0" required placeholder="{{Product.product_stock}}">
+                        </div>
+            
+
+                    </div>
+                </form>
+            </div>
+            
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="col-md-1 bloque">
+        
+    </div>
+    </div>
+    </div>
+      <div class="col-md-6 ajustar" align="center">
+        <button type="submit" class="btn btn-success mt-3 botones">Actualizar Stock</button>
+    </div>
+</div>
+
+<div>
+
+</div>
+
+{% endblock %}
