@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from product.models import Supplier, UserAccount
+from product.models import Supplier, UserAccount, Product
 from django.contrib import messages
 from .forms import SupplierForm
 
@@ -101,4 +101,7 @@ from django.shortcuts import render
 def retirar_saldo_view(request):
     return render(request, 'supplier/retirar_saldo.html')
 
-
+#Vista que muestra los productos del supplier
+def supplier_menu(request):
+    productos = Product.objects.all()
+    return render(request, 'supplier/suppliers_menu.html', {'productos':productos})

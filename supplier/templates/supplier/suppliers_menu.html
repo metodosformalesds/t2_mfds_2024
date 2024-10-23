@@ -1,0 +1,112 @@
+{% extends "base_without_image.html" %}
+
+{% block title %} Productos del proveedor {% endblock %}
+
+{% block content%}
+
+<style>
+    .botones {
+        background-color: #E3E3E3;
+        border-color: #767676;
+        color: #1E1E1E;
+    }
+
+    .botones:hover {
+        background-color: #767676;
+        border-color: #767676;
+    }
+
+    .botones:active,
+    .botones:focus {
+        background-color: #767676 !important;
+        border-color: #767676 !important;
+        box-shadow: none !important;
+        transition: none !important;
+    }
+
+    .header-botones {
+        margin: 15px 0px;
+    }
+
+    .cartas {
+        margin: 10px 0;
+        height: auto;
+    }
+
+    .description {
+        font-size: 80%;
+    }
+
+    .margen {
+        margin: 5vh auto; 
+    }
+
+    @media (min-width: 992px) {
+        .margen {
+            margin: 5vh 10vw;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .margen {
+            margin: 5vh 5vw; 
+        }
+
+        .cartas {
+            width: 100%;
+        }
+    }
+
+</style>
+
+<!--Header botones-->
+<div class="header-botones ">
+    <div class="container">
+        <div class="row">
+            <!--Sección del logo-->
+            <div class="col-md-3">
+                Catálogo de supplier
+            </div>
+
+            <!--Sección botones-->
+            <div class="col-md-9 ">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-auto">
+                            <button type="button" class="btn btn-primary btn-sm botones">Cambiar Inventario</button>
+                        </div>
+                        <div class="col-sm-auto">
+                            <button type="button" class="btn btn-primary btn-sm botones">Cargar Nuevo Producto</button>
+                        </div>
+                        <div class="col-sm-auto">
+                            <button type="button" class="btn btn-primary btn-sm botones">Saldo y Cuenta</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cartas de productos -->
+<div class="margen">
+    <div class="container">
+        <div class="row">
+            {% for Product in productos %}
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <a href=" {% url 'product_detail' Product.id_product %}" class="text-decoration-none">
+                    <div class="card cartas">
+                        <img src="{{Product.product_image.url}}" class="card-img-top">
+                        <div class="card-body">
+                            <h6 class="card-title text-center">Stock {{Product.product_stock}}</h6>
+                            <p class="card-text description">{{Product.product_name}} - {{Product.product_height}} - {{Product.product_thickness}}</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
