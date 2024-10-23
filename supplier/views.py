@@ -113,3 +113,20 @@ def update_stock(request):
 def add_product(request):
     productos = Product.objects.all()
     return render(request, 'supplier/add_product.html', {'productos': productos})
+
+from django.shortcuts import render, redirect
+from .forms import EditarRetiroForm  # Si vas a utilizar un formulario de Django (opcional)
+from django.contrib import messages
+
+def editar_retiro(request):
+    if request.method == 'POST':
+        form = EditarRetiroForm(request.POST)
+        if form.is_valid():
+            # Aquí guardas la lógica para actualizar los datos del titular y la cuenta PayPal
+            form.save()
+            messages.success(request, 'Datos de retiro actualizados correctamente.')
+            return redirect('editar_retiro')  # Redirigir después de guardar
+    else:
+        form = EditarRetiroForm()
+
+    return render(request, 'supplier/editar_retiro.html', {'form': form})

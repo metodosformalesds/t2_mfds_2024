@@ -23,7 +23,9 @@
                 <button class="btn btn-menu" type="button">Proveedor</button>
             </div>
             <div class="col-md-3 text-right">
-                <button class="btn btn-menu" type="button"><i class="bi bi-box-arrow-left"></i></button>
+                <button class="btn btn-menu" type="button" onclick="window.history.back();">
+                    <i class="bi bi-box-arrow-left"></i>
+                </button>                
                 <button class="btn btn-menu" type="button"><i class="bi bi-gear"></i></button>
             </div>
         </div>
@@ -45,7 +47,7 @@
     
                     <!-- Botones y campo de cantidad -->
                     <div class="mt-4">
-                        <button class="button-refresh w-100 mb-3">Cambiar datos de Retiro</button>
+                        <button type="button" class="button-continue w-100" onclick="window.location.href='/supplier/editar-retiro/'">Cambiar datos de retiro</button>
                         <div class="form-group">
                             <label for="cantidad">Cantidad</label>
                             <input type="number" class="form-control" id="cantidad" placeholder="$">

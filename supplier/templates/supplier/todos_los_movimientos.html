@@ -1,16 +1,36 @@
-{% extends "saldo.html" %}
+{% extends "supplier/saldo.html" %}
+{% load static %}
 
 {% block title %}Todos los Movimientos{% endblock %}
 
 {% block content %}
+<!-- Enlace al archivo CSS específico para esta sección -->
+<link rel="stylesheet" href="{% static 'css/movimientos.css' %}">
+
 <main class="main-container">
-    <h1>Todos los Movimientos</h1>
-    <ul>
-        {% for movimiento in movimientos %}
-        <li>{{ movimiento.tipo }} ID: {{ movimiento.id }} - <span class="{% if movimiento.tipo_mov == 'negativo' %}negativo{% else %}positivo{% endif %}">
-            {{ movimiento.monto|floatformat:2 }}
-        </span></li>
-        {% endfor %}
-    </ul>
+    <div class="container-movimientos">
+        <div class="section-title">
+            <h1>Movimientos</h1>
+        </div>
+        <ul class="movimientos-lista">
+            {% for movimiento in movimientos %}
+            <li class="movimiento-item">
+                <div class="movimiento-tipo">
+                    <span>{{ movimiento.tipo }}</span>
+                    <!-- Solo muestra el ID si es una compra -->
+                    {% if movimiento.tipo == 'Compra' %}
+                        <span class="movimiento-id">ID: {{ movimiento.id }}</span>
+                    {% endif %}
+                </div>
+                <!-- Muestra el monto en color verde si es positivo o naranja si es negativo -->
+                <div class="movimiento-monto {% if movimiento.tipo_mov == 'negativo' %}negativo{% else %}positivo{% endif %}">
+                    {{ movimiento.monto|floatformat:2 }}
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 </main>
 {% endblock %}
+
+
