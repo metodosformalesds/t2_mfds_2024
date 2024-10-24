@@ -50,6 +50,8 @@ def supplier_edit_info(request):
         'user': user,
     })
     
+    
+    
 # Vista de saldo (ya existente)
 def saldo_view(request):
     # Simulación de datos

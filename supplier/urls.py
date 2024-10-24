@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.supplier_menu, name='supplier_menu'),
+    path('edit_info/', views.supplier_edit_info, name='supplier_edit_info'),
     path('actualizar-inventario/', views.update_stock, name='update_stock'),
     path('agregar-producto/', views.add_product, name='add_product'),
     path('saldo/', views.saldo_view, name='saldo_view'),  # Vista para mostrar el saldo

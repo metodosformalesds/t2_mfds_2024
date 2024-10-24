@@ -23,7 +23,7 @@ def supplier_login(request):
                     # Aquí no usamos 'login()' de Django, sino que manejamos la sesión manualmente
                     request.session['supplier_id'] = user.id_user  # Guardar el ID del usuario en la sesión
                     messages.success(request, 'Has iniciado sesión correctamente')
-                    return redirect('supplier_edit_info')  # Redirigir al panel de proveedor
+                    return redirect('supplier_menu')  # Redirigir al panel de proveedor
                 else:
                     messages.error(request, 'Contraseña incorrecta')
             except UserAccount.DoesNotExist:
