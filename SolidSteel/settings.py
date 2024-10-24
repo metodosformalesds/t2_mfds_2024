@@ -50,7 +50,34 @@ INSTALLED_APPS = [
     'supplier',
     'static',
     'client' ,
+    
+    #Google
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
+
+#se refiere a tomar informacion básica del profile and email para poder iniciar sesion
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}
+
+#id en el sitio de administrador de django
+SITE_ID = 2  
+
+#Para evitar el menú o pantalla intermedia de Google con inicio de sesion o registro
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -60,6 +87,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware', #también estop
 ]
 
 ROOT_URLCONF = 'SolidSteel.urls'
@@ -165,3 +193,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #EMAIL_USE_TLS = True
 #EMAIL_HOST_USER = 'tu_correo@gmail.com'  # Reemplázalo con tu correo
 #EMAIL_HOST_PASSWORD = 'tu_contraseña'  # Reemplázalo con tu contraseña
+
+
+#Redirect para google
+LOGIN_REDIRECT_URL = '/products/'  # Redirige a la página de cliente
+LOGOUT_REDIRECT_URL = '/login/'  # Redirige a la página de login
