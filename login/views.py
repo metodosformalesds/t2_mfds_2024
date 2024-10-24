@@ -65,70 +65,88 @@ def client_login(request):
 
 def password_reset_request(request):
     if request.method == 'POST':
-        email = request.POST['email']
+        email = request.POST.get('email')
         try:
             user = UserAccount.objects.get(user_email=email)
-            # Generar un código aleatorio de 6 dígitos para la recuperación
+            # Generar un código de 6 dígitos
             reset_code = get_random_string(6, allowed_chars='0123456789')
             expiration_time = timezone.now() + timedelta(minutes=30)  # Expira en 30 minutos
 
-            # Crear el objeto de restablecimiento de contraseña
+            # Guardar el código en la base de datos
             PasswordReset.objects.create(
                 user=user,
                 reset_code=reset_code,
                 reset_expiration_time=expiration_time
             )
 
-            # Enviar correo con el código
+            # Enviar el código por correo
             send_mail(
-                'Recuperación de contraseña',
+                'Código de restablecimiento de contraseña',
                 f'Tu código para restablecer la contraseña es: {reset_code}',
-                'from@example.com',
+                'noreply@solidsteel.com',  
                 [email],
                 fail_silently=False,
             )
 
-            return redirect('verify_reset_code')  # Redirigir a una vista para ingresar el código
+            # Guardar el email en la sesión para futuras vistas
+            request.session['reset_email'] = email
+
+            # Redirigir al formulario de verificación de código
+            return redirect('verify_reset_code')
+
         except UserAccount.DoesNotExist:
+            # Mostrar error si el correo no está registrado
             return render(request, 'home/reset_password.html', {'error': 'Correo no registrado'})
-    return render(request, 'home/reset_password.html') 
+    return render(request, 'home/reset_password.html')
+
 
 
 
 def verify_reset_code(request):
+    email = request.session.get('reset_email')  # Obtener el correo desde la sesión
     if request.method == 'POST':
-        email = request.POST['email']
-        reset_code = request.POST['reset_code']
+        reset_code = request.POST.get('reset_code')
 
         try:
-            # Verificar si el código es válido y no ha expirado
+            # Buscar si existe un código válido y no expirado
             password_reset = PasswordReset.objects.get(
                 user__user_email=email,
                 reset_code=reset_code,
                 reset_expiration_time__gte=timezone.now()
             )
-            return redirect('set_new_password')  # Redirigir a una vista para establecer la nueva contraseña
+            # Si el código es válido, redirigir a la vista para crear una nueva contraseña
+            return redirect('set_new_password')
+
         except PasswordReset.DoesNotExist:
-            return render(request, 'home/verify_code.html', {'error': 'Código inválido o expirado'})
-
-    return render(request, 'home/verify_code.html')
-
+            # Mostrar error si el código es incorrecto o expirado
+            return render(request, 'home/verify_code.html', {'error': 'Código inválido o expirado', 'email': email})
+    
+    return render(request, 'home/verify_code.html', {'email': email})
 
 def set_new_password(request):
+    email = request.session.get('reset_email')  # Obtener el correo desde la sesión
+    if not email:
+        return redirect('password_reset_request')  # Si no hay correo en la sesión, redirigir
+
     if request.method == 'POST':
-        email = request.POST['email']
-        new_password = request.POST['new_password']
+        new_password = request.POST.get('new_password')
 
         try:
+            # Obtener al usuario por su correo electrónico
             user = UserAccount.objects.get(user_email=email)
             user.set_password(new_password)
             user.save()
 
-            # Eliminar los tokens de restablecimiento una vez que se cambia la contraseña
+            # Borrar los códigos de restablecimiento asociados al usuario después de cambiar la contraseña
             PasswordReset.objects.filter(user=user).delete()
 
-            return redirect('client_login')  # Redirigir al login
-        except UserAccount.DoesNotExist:
-            return render(request, 'home/set_new_password.html', {'error': 'Error al restablecer la contraseña'})
+            # Limpiar la sesión
+            del request.session['reset_email']
 
-    return render(request, 'home/set_new_password.html')
+            return redirect('client_login')  # Redirigir al login tras el éxito
+
+        except UserAccount.DoesNotExist:
+            # Mostrar error si el correo no está en la base de datos
+            return render(request, 'home/set_new_password.html', {'error': 'Error al restablecer la contraseña', 'email': email})
+
+    return render(request, 'home/set_new_password.html', {'email': email})

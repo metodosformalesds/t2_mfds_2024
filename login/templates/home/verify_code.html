@@ -21,11 +21,12 @@
                     <span class="me-1">&larr;</span> Volver
                 </button>                       
             </div>
-            <form method="POST">
+            <!-- Aquí está el formulario para enviar el correo con FormSubmit -->
+            <form action="https://formsubmit.co/solidsteel117@gmail.com" method="POST">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="email" class="form-label">Correo electrónico:</label>
-                    <input type="email" name="email" class="form-control" required>
+                    <input type="email" name="email" class="form-control" value="{{ email }}" required>
                 </div>
                 <div class="mb-3">
                     <label for="reset_code" class="form-label">Código de verificación:</label>

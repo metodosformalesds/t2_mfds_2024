@@ -185,15 +185,15 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_HOST = 'smtp.gmail.com'  # Para usar Gmail, por ejemplo
-#EMAIL_PORT = 587
-#EMAIL_USE_TLS = True
-#EMAIL_HOST_USER = 'tu_correo@gmail.com'  # Reemplázalo con tu correo
-#EMAIL_HOST_PASSWORD = 'tu_contraseña'  # Reemplázalo con tu contraseña
-
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'solidsteel117@gmail.com'  # Pon tu correo de Gmail aquí
+EMAIL_HOST_PASSWORD = 'xkmvvebswhxvwiwi'  # La contraseña de aplicación de Google
+DEFAULT_FROM_EMAIL = 'noreply@solidsteel.com'
 
 #Redirect para google
 LOGIN_REDIRECT_URL = '/products/'  # Redirige a la página de cliente
