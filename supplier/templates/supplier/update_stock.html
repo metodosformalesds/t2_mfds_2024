@@ -1,4 +1,4 @@
-{% extends "base_without_image.html" %}
+{% extends "base_supplier.html" %}
 
 {%block title%} Actualizar Stock{% endblock %}
 
@@ -13,6 +13,7 @@
 
 <!--Header del stock -->
 <div class="header-botones">
+  
     <div class="container">
         <div class="row">
         <div class="col-md-3">
@@ -33,6 +34,11 @@
           </div><!--drop cierra-->
     </div><!--columna 2 cierra-->
     </div> <!--row-->
+    <div class="d-flex justify-content-left ">
+      <button class="btn btn-outline-secondary" onclick="window.location.href='{% url 'supplier_menu' %}'">
+          <span class="me-1">&larr;</span> Volver
+      </button>
+  </div>
     </div> <!--container-->
 
     </div>
