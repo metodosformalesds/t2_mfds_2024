@@ -18,33 +18,7 @@
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 20px;
-    text-align: center; /* Centra los títulos */
-}
-
-/* Estilos específicos para los ítems de metas */
-.meta-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-}
-
-.meta-item span {
-    font-size: 1rem;
-}
-
-/* Barra de progreso */
-.progress-bar {
-    background-color: #e9ecef;
-    border-radius: 5px;
-    height: 8px;
-    width: 100%; /* Asegura que la barra ocupe todo el ancho */
-}
-
-.progress {
-    height: 100%;
-    background-color: #007bff; /* Color de la barra */
-    border-radius: 5px;
+    text-align: center;
 }
 
 /* Sección de movimientos */
@@ -60,10 +34,6 @@
     border-bottom: 1px solid #dee2e6;
 }
 
-.movimientos ul li:last-child {
-    border-bottom: none;
-}
-
 .movimientos .monto {
     font-weight: bold;
 }
@@ -73,7 +43,7 @@
 }
 
 .movimientos .negativo {
-    color: red;
+    color: #ffa500; /* Naranja para los valores negativos */
 }
 
 /* Estilos de saldo */
@@ -83,64 +53,31 @@
     margin-bottom: 20px;
 }
 
-.saldo button {
+.saldo .saldo-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: black;
+}
+
+.saldo .saldo-cantidad {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.button-refresh, .button-continue {
     display: block;
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     font-size: 1.2rem;
-    margin-top: 10px;
     border-radius: 5px;
-}
-
-/* Botones específicos para la sección de saldo */
-.button-refresh {
-    background-color: #28a745;
-    color: white;
+    background-color: #e0e0e0;
+    color: black;
     border: none;
+    margin-top: 10px;
 }
 
-.button-continue {
-    background-color: #6c757d;
-    color: white;
-    border: none;
-}
-
-/* Efecto hover para todos los botones */
-button:hover {
-    opacity: 0.9;
-}
-
-/* Iconos en metas */
-.meta-item-icon {
-    font-size: 1.5rem;
-    margin-right: 10px;
-}
-
-/* Ajustes para media queries */
-@media (max-width: 768px) {
-    .main-container {
-        flex-direction: column;
-    }
-
-    .metas, .movimientos, .saldo {
-        margin-bottom: 20px;
-    }
-
-    .progress-bar {
-        width: 100%;
-    }
-}
-
-/* Alineación vertical de las columnas */
-.row {
-    display: flex;
-    align-items: stretch; /* Asegura que todas las columnas tengan la misma altura */
-}
-
-.metas, .movimientos, .saldo {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.button-refresh:hover, .button-continue:hover {
+    background-color: #bdbdbd;
 }
 
 /* Estilos para el enlace de ver todos los movimientos */
@@ -149,360 +86,19 @@ button:hover {
     text-decoration: none;
     font-size: 1.1rem;
     font-weight: bold;
-    cursor: pointer;
-    display: block;
-    text-align: center; /* Esto centrará el enlace */
-    margin-top: 15px; /* Añadir espacio por encima */
-}
-
-.link-all-movimientos:hover {
-    text-decoration: underline; /* Subrayado al pasar el mouse */
-    color: #0056b3; /* Azul más oscuro */
-}
-
-/* Iconos en los ítems de metas */
-.meta-item i {
-    margin-right: 10px; /* Espacio entre el ícono y el texto */
-    font-size: 1.2rem; /* Tamaño del ícono */
-    vertical-align: middle; /* Alineación vertical */
-}
-
-/* Ajustes en la sección de metas */
-.metas {
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.metas h2 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 20px;
     text-align: center;
-}
-
-/* Ajustes de distribución y espacio en la sección de metas */
-.meta-label {
-    font-size: 1rem;
-    flex: 1;
-}
-
-.progress-bar-container {
-    flex: 2;
-    margin: 0 10px;
-}
-
-.progress-bar {
-    background-color: #e9ecef;
-    border-radius: 5px;
-    height: 10px;
-    position: relative;
-}
-
-.progress {
-    height: 100%;
-    background-color: #007bff;
-    border-radius: 5px;
-}
-
-.meta-value {
-    font-size: 1rem;
-    text-align: right;
-    flex: 1;
-}
-
-/* Estilos para la sección de saldo */
-.saldo-info {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.saldo-icon {
-    font-size: 3rem;
-    margin-bottom: 10px;
-    color: black;
-}
-
-.saldo-cantidad {
-    font-size: 2.5rem;
-    font-weight: bold;
-}
-
-/* Botones en la sección de saldo */
-.button-refresh {
-    background-color: #e0e0e0;
-    color: black;
-    border: none;
-    padding: 15px;
-    margin-top: 10px;
-    border-radius: 10px;
-    font-size: 1.2rem;
-}
-
-.button-continue {
-    background-color: #e0e0e0;
-    color: black;
-    border: none;
-    padding: 15px;
-    margin-top: 10px;
-    border-radius: 10px;
-    font-size: 1.2rem;
-}
-
-button:hover {
-    background-color: #bdbdbd;
-    opacity: 0.9;
-}
-
-.movimientos-lista {
-    list-style: none;
-    padding: 0;
-}
-
-.movimiento-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #dee2e6;
-}
-
-.movimiento-tipo {
-    display: flex;
-    flex-direction: column;
-    font-weight: bold;
-}
-
-.movimiento-id {
-    font-size: 0.9rem;
-    font-weight: normal;
-    color: #6c757d;
-}
-
-.movimiento-monto {
-    font-weight: bold;
-    font-size: 1.1rem;
-    margin-left: 20px;
-}
-
-.movimiento-monto.positivo {
-    color: green;
-}
-
-.movimiento-monto.negativo {
-    color: #ffa500; /* Color naranja para los valores negativos */
-}
-.saldo-icon {
-    font-size: 3rem; /* Tamaño del ícono */
-    margin-bottom: 10px;
-    color: #000; /* Color del ícono */
-}
-.section-title {
-    text-align: left;
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    padding-left: 20px; /* Ajuste del espacio a la izquierda para alineación */
-    color: #333; /* Color del texto */
-}
-
-.section-title h1 {
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    font-size: 2rem; /* Tamaño del título */
-    font-weight: 700;
-}
-.btn-volver {
-    display: inline-flex;
-    align-items: center;
-    background-color: white;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    padding: 5px 15px;
-    font-size: 1rem;
-    color: #495057;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-}
-
-.btn-volver i {
-    margin-right: 5px; /* Espacio entre la flecha y el texto */
-}
-
-.btn-volver:hover {
-    background-color: #f8f9fa;
-}
-
-/* Ajuste de espaciado entre las columnas */
-.main-container .row {
-    margin-top: 40px;
-    margin-bottom: 40px;
-}
-
-.section-title h1 {
-    text-align: left;
-    margin-bottom: 30px;
-    font-size: 1.8rem;
-}
-
-/* Ajustes de la sección del saldo */
-.saldo {
-    background-color: white;
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 500px; /* Aumentar el ancho */
-}
-
-.saldo-icon {
-    font-size: 3rem;
-    margin-bottom: 10px;
-    color: black;
-}
-
-.saldo-cantidad {
-    font-size: 2.5rem;
-    font-weight: bold;
-}
-
-.button-refresh, .button-continue {
-    font-size: 1.1rem;
-    padding: 12px;
-    border-radius: 5px;
-}
-
-.form-group label {
-    font-size: 1rem;
-    margin-bottom: 10px;
-}
-
-.form-control {
-    font-size: 1.2rem;
-    padding: 12px;
-}
-
-/* Ajustes de la sección de detalles */
-.detalles-titular {
-    text-align: start;
-    padding-left: 30px;
-    font-size: 1.1rem;
-}
-
-.detalles-titular h5 {
-    text-align: start;
-    font-size: 1.5rem;
-    margin-top: 20px;
-}
-
-.detalles-titular p {
-    text-align: start;
-    font-size: 1.5rem;
-}
-
-/* Ajustes generales */
-.container {
-    max-width: 1200px;
-    margin: auto;
-}
-
-.row {
-    align-items: center;
-    justify-content: space-between;
-}
-
-.btn-actualizar {
-    background-color: #E0E0E0;  /* El color de fondo del botón */
-    color: #000;                /* El color del texto */
-    border: 1px solid #B0B0B0;  /* El color del borde */
-    border-radius: 10px;        /* Redondeo de bordes */
-    padding: 10px 20px;         /* Espaciado interno */
-    font-size: 16px;            /* Tamaño del texto */
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-actualizar:hover {
-    background-color: #D0D0D0;  /* Color al pasar el mouse */
-}
-
-
-/* Limitar el ancho del contenedor de movimientos */
-.container-movimientos {
-    max-width: 800px; /* Ajusta el ancho máximo */
-    margin: 0 auto;   /* Centrar el contenedor horizontalmente */
-    padding: 20px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Lista de movimientos */
-.movimientos-lista {
-    list-style: none;
-    padding: 0;
-}
-
-/* Ajustes de estilo para cada ítem en la lista */
-.movimiento-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid #dee2e6;
-}
-
-.movimiento-tipo {
-    display: flex;
-    flex-direction: column;
-    font-weight: bold;
-}
-
-.movimiento-id {
-    font-size: 0.9rem;
-    font-weight: normal;
-    color: #6c757d;
-}
-
-.movimiento-monto {
-    font-weight: bold;
-    font-size: 1.1rem;
-    margin-left: 20px;
-}
-
-.movimiento-monto.positivo {
-    color: green;
-}
-
-.movimiento-monto.negativo {
-    color: #ffa500; /* Naranja para los valores negativos */
-}
-
-.link-all-movimientos {
-    color: #007bff;
-    text-decoration: none;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
     display: block;
-    text-align: center; /* Centrado */
-    margin-top: 15px; /* Añadir espacio por encima */
+    margin-top: 15px;
 }
 
 .link-all-movimientos:hover {
     text-decoration: underline;
-    color: #0056b3; /* Azul más oscuro */
+    color: #0056b3;
 }
 
-.section-title h1 {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
+/* Ajustes para la visualización en dispositivos móviles */
+@media (max-width: 768px) {
+    .movimientos, .saldo {
+        margin-bottom: 20px;
+    }
 }
-

@@ -17,21 +17,37 @@
 </head>
 <body>
 
-    <!-- Cabecera con logo y menú -->
-    <div class="container-fluid" style="background-color: white; padding: 10px 0;">
-        <div class="row align-items-center">
-            <div class="col-md-3 text-left">
-                <img src="{% static 'images/logo.png' %}" alt="Logo" class="header-logo" style="max-width: 100px; height: auto;">
-            </div>
-            <div class="col-md-6 text-center">
-                <button class="btn btn-menu" type="button">Proveedor</button>
-            </div>
-            <div class="col-md-3 text-right">
+    <div class="header" style="background-color: white; width: 100%">
+        <div class="container-fluid" style="background-color: white;padding: 10px 0; ">
+            <div class="row align-items-center">
+                <!-- Columna para el logo -->
+                {% load static %}
+                <div class="col-md-3 text-left">
+                    <a href="{% url 'supplier_menu' %}"><img src="{% static 'images/logo.png' %}" alt="Logo" class="header-logo" style="max-width: 100px; height: auto;"></a>
+                </div>
+    
+                <!-- Columna para los botones en el medio -->
+                <div class="col-md-6 text-center ">
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'update_stock' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'update_stock' %}'">Actualizar</button>
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'supplier_menu' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'supplier_menu' %}'">Products</button>
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'add_product' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'add_product'%}'">Nuevo Producto</button>
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'retirar_saldo' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'retirar_saldo'%}'">Saldo</button>
+                </div>
                 
-                <button class="btn btn-menu" type="button" onclick="window.history.back();">
-                    <i class="bi bi-box-arrow-left"></i>
-                </button>                
-                <button class="btn btn-menu" type="button" onclick="window.location.href='{% url 'client_edit_info' %}'"><i class="bi bi-gear"></i></button>
+    
+                <!-- Columna para los iconos a la derecha -->
+                <!-- Columna para los iconos a la derecha -->
+    <div class="col-md-3 text-right">
+        <button class="btn btn-menu {% if request.resolver_match.url_name == 'supplier_edit_info' %}active{% endif %}" 
+                type="button" onclick="window.location.href='{% url 'supplier_edit_info' %}'">
+            <i class="bi bi-gear"></i>
+        </button>
+        <button class="btn btn-menu {% if request.resolver_match.url_name == 'client_login' %}active{% endif %}" 
+                type="button" onclick="window.location.href='{% url 'client_login' %}'">
+            <i class="bi bi-box-arrow-left"></i>
+        </button>
+    </div>
+    
             </div>
         </div>
     </div>
@@ -39,48 +55,16 @@
     {% block content %}
  
     <main class="main-container">
-        <div class="section-title" style="padding-left: 250px;">
+        <div class="section-title" style="padding-left: 5px;">
             <h1>Saldo y Cuenta</h1>
         </div>
         
         <div class="container">
-            <div class="row align-items-stretch">
-                <div class="col-md-4 metas">
-    
-                    <!-- Sección de Metas -->
-                    <h2>Metas</h2>
-                    <div class="meta-item">
-                        <span class="meta-label">Saldo:</span>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar">
-                                <div class="progress" style="width: {{ metas.porcentaje_saldo|floatformat:2 }}%;"></div>
-                            </div>
-                        </div>
-                        <span class="meta-value">{{ metas.saldo }}/{{ metas.meta_saldo }}</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="meta-label">Paypal:</span>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar">
-                                <div class="progress" style="width: {{ metas.porcentaje_paypal|floatformat:2 }}%;"></div>
-                            </div>
-                        </div>
-                        <span class="meta-value">{{ metas.paypal }}/{{ metas.meta_paypal }}</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="meta-label">Otra meta:</span>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar">
-                                <div class="progress" style="width: {{ metas.porcentaje_otra_meta|floatformat:2 }}%;"></div>
-                            </div>
-                        </div>
-                        <span class="meta-value">{{ metas.otra_meta }}/{{ metas.meta_otra }}</span>
-                    </div>
-                </div>
-    
-                <div class="col-md-4 movimientos">
+            <div class="row justify-content-center align-items-stretch"> <!-- align-items-stretch fuerza las columnas a tener la misma altura -->
+                <!-- Columna de Movimientos -->
+                <div class="col-md-6 col-lg-4 d-flex flex-column movimientos mx-lg-2"> <!-- Añadir flex-column para alinear el contenido internamente -->
                     <h2>Movimientos</h2>
-                    <ul class="movimientos-lista">
+                    <ul class="movimientos-lista flex-grow-1"> <!-- flex-grow-1 para que se extienda si es necesario -->
                         {% for movimiento in movimientos %}
                         <li class="movimiento-item">
                             <div class="movimiento-tipo">
@@ -94,27 +78,24 @@
                             </div>
                         </li>
                         {% endfor %}
-                            <!-- Enlace para revisar todos los movimientos -->
-                    <a href="{% url 'todos_los_movimientos' %}" class="link-all-movimientos">Ver todos</a>
-
                     </ul>
+                    <!-- Enlace para revisar todos los movimientos -->
+                    <a href="{% url 'todos_los_movimientos' %}" class="link-all-movimientos">Ver todos</a>
                 </div>
-                
-    
-                <!-- Sección de Saldo -->
-                <div class="col-md-4 saldo">
+        
+                <!-- Columna de Saldo -->
+                <div class="col-md-6 col-lg-4 d-flex flex-column saldo mx-lg-2"> <!-- flex-column para ajustar contenido -->
                     <h2>Saldo</h2>
-                    <div class="saldo-info text-center">
-                        <i class="fas fa-wallet saldo-icon"></i> <!-- Nuevo icono de Font Awesome -->
+                    <div class="saldo-info text-center flex-grow-1"> <!-- flex-grow-1 para mantener el tamaño equilibrado -->
+                        <i class="fas fa-wallet saldo-icon"></i> <!-- Icono de Font Awesome -->
                         <span class="saldo-cantidad d-block">${{ saldo }}.00</span>
                     </div>
                     <button type="button" class="button-refresh w-100" onclick="window.location.href='{% url 'retirar_saldo' %}'">Retirar Saldo</button>
-                    
                     <button type="button" class="button-continue w-100" onclick="window.location.href='/supplier/editar-retiro/'">Cambiar datos de Retiro</button>
-
                 </div>
             </div>
         </div>
+        
     </main>
     {% endblock %}
 
