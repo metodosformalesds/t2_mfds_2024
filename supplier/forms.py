@@ -1,5 +1,5 @@
 from django import forms
-from product.models import Supplier
+from product.models import Supplier, Product
 
 class SupplierForm(forms.ModelForm):
     user_email = forms.EmailField()  # Campo de email del usuario
@@ -33,3 +33,8 @@ class ActualizarDatosForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email']
+
+class AgregarProductoForm(forms.ModelForm):
+    class Meta:
+        model= Product
+        fields = ['product_name', 'product_description', 'product_price', 'product_stock', 'product_image', 'product_width', 'product_height', 'product_thickness', 'product_material']

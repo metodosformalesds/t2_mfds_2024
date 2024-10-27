@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
+
 # Create your models here.
  
 from django.db import models
@@ -98,7 +99,7 @@ class Product(models.Model):
     product_description = models.CharField(max_length=100)
     product_price = models.FloatField(default=0)
     product_stock = models.IntegerField(default=0)
-    product_image = models.ImageField(("Product Image"), upload_to='static/products_images/', null=False)
+    product_image = models.ImageField(("Product Image"), upload_to='media/products_images/', null=False)
     product_width = models.FloatField(default=0)
     product_height = models.FloatField(default=0)
     product_thickness = models.FloatField(default=0)

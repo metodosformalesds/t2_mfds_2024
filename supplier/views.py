@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from product.models import Supplier, UserAccount, Product
 from django.contrib import messages
-from .forms import SupplierForm
-
+from .forms import SupplierForm, AgregarProductoForm
+from django.contrib.auth.decorators import login_required
 def supplier_edit_info(request):
     user_id = request.session.get('supplier_id')  # Obtener el ID del usuario desde la sesión
     user = get_object_or_404(UserAccount, pk=user_id)  # Obtener el usuario asociado
@@ -109,9 +109,34 @@ def update_stock(request):
     productos= Product.objects.all()
     return render(request, 'supplier/update_stock.html', {'productos':productos})
 
+
 def add_product(request):
-    productos = Product.objects.all()
-    return render(request, 'supplier/add_product.html', {'productos': productos})
+    supplier_id = request.session.get('supplier_id')
+    
+    # Verifica que el ID del proveedor esté en la sesión
+    if supplier_id is None:
+        messages.error(request, 'No estás autorizado para agregar productos. Inicia sesión como proveedor.')
+        return redirect('login')  # O la ruta que maneje el inicio de sesión
+
+    if request.method == 'POST':
+        form = AgregarProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save(commit=False)
+            try:
+                # Asegúrate de que el usuario autenticado sea un proveedor
+                supplier = Supplier.objects.get(user__id_user=supplier_id)
+                product.supplier = supplier  # Asignar el proveedor al producto
+                product.save()
+                messages.success(request, 'Producto agregado correctamente.')
+                return redirect('supplier_menu')
+            except Supplier.DoesNotExist:
+                # Manejo del error si el Supplier no se encuentra
+                form.add_error(None, 'No se encontró un proveedor asociado a este usuario.')
+    else:
+        form = AgregarProductoForm()
+    
+    return render(request, 'supplier/add_product.html', {'form': form})
+
 
 from .forms import EditarRetiroForm  # Si vas a utilizar un formulario de Django (opcional)
 from django.contrib import messages

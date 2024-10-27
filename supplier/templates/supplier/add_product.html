@@ -31,16 +31,22 @@
 </div>
 
 <div>
-
+    <form method=post enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success mt-3 botones">Subir Producto</button>
+    </form>
     <div class="container">
         <div class="row">
             <div class="col-md-4">
-               
+               <!--
                 <img src="{% static 'images/subir-imagen.png' %}" alt="" class="img-fluid">
                 <button>Subir Imagen</button>
+                -->
             </div>
     
             <div class="col-md-8">
+                <!--
                 <label for="NombreProducto" class="form-label">Nombre del producto</label>
                 <input type="text" class="form-control cantidad" id="NombreProducto" name="nombre_producto" required placeholder="Valor">
 
@@ -64,6 +70,7 @@
 
                 <label for="MaterialProducto" class="form-label">Ancho</label>
                 <input type="text" class="form-control cantidad" id="MaterialProducto" name="material_producto" min="0" required placeholder="Valor">
+                -->
             </div>
     
         </div>
@@ -72,7 +79,9 @@
 </div>
 
 <div class align="center">
+    <!--
     <button type="submit" class="btn btn-success mt-3 botones">Subir Producto</button>
+    -->
 </div>
 
 {% endblock %}
