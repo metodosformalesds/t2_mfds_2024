@@ -5,7 +5,7 @@ from django.utils.crypto import get_random_string
 from django.utils import timezone
 from datetime import timedelta
 from .forms import SupplierLoginForm
-from product.models import UserAccount, UserRole,PasswordReset  # Asegúrate de que este es tu modelo correcto
+from product.models import UserAccount, UserRole,PasswordReset, UserRole, UserAuthProvider  # Asegúrate de que este es tu modelo correcto
 
 def supplier_login(request):
     if request.method == 'POST':
@@ -43,20 +43,27 @@ def client_login(request):
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
 
-            # Buscar el usuario con el rol de 'Supplier'
             try:
+                # Buscar al usuario por su correo y rol de cliente
                 user = UserAccount.objects.get(user_email=email, user_role=UserRole.CLIENT)
-                
-                # Verificar la contraseña usando el método 'check_password' del modelo UserAccount
-                if user.check_password(password):
-                    # Aquí no usamos 'login()' de Django, sino que manejamos la sesión manualmente
-                    request.session['user_id'] = user.id_user  # Guardar el ID del usuario en la sesión
-                    messages.success(request, 'Has iniciado sesión correctamente')
-                    return redirect('product_list')  # Redirigir al panel de proveedor
+
+                # Verificar si el usuario es del proveedor interno
+                if user.user_auth_provider == UserAuthProvider.INTERNAL:
+                    # Verificar la contraseña si el proveedor es 'INTERNAL'
+                    if user.check_password(password):
+                        request.session['user_id'] = user.id_user  # Guardar el ID en la sesión
+                        messages.success(request, 'Has iniciado sesión correctamente.')
+                        return redirect('product_list')  # Redirigir a la lista de productos
+                    else:
+                        messages.error(request, 'Contraseña incorrecta.')
                 else:
-                    messages.error(request, 'Contraseña incorrecta')
+                    # Si el usuario es de Google, no necesita contraseña
+                    request.session['user_id'] = user.id_user  # Guardar el ID en la sesión
+                    messages.success(request, 'Inicio de sesión exitoso con Google.')
+                    return redirect('product_list')  # Redirigir a la lista de productos
+
             except UserAccount.DoesNotExist:
-                messages.error(request, 'Proveedor no encontrado con ese correo')
+                messages.error(request, 'Usuario no encontrado.')
     else:
         form = SupplierLoginForm()
 

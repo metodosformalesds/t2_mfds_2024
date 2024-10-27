@@ -79,6 +79,11 @@ SITE_ID = 2
 #Para evitar el menú o pantalla intermedia de Google con inicio de sesion o registro
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # Para autenticación convencional
+    'allauth.account.auth_backends.AuthenticationBackend',  # Para Google
+)
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
