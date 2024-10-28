@@ -15,4 +15,5 @@ urlpatterns = [
     path('editar-retiro/', views.editar_retiro, name='editar_retiro'),
     path('confirmacion-retiro/', views.confirmacion_retiro, name='confirmacion_retiro'),
     path('configurar-datos/', views.configurar_datos, name='configurar_datos'),
+    path('cerrar-sesion/', views.log_out, name='log_out'),
 ]

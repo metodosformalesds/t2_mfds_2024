@@ -39,8 +39,8 @@
             type="button" onclick="window.location.href='{% url 'supplier_edit_info' %}'">
         <i class="bi bi-gear"></i>
     </button>
-    <button class="btn btn-menu {% if request.resolver_match.url_name == 'client_login' %}active{% endif %}" 
-            type="button" onclick="window.location.href='{% url 'client_login' %}'">
+    <button class="btn btn-menu {% if request.resolver_match.url_name == 'log_out' %}active{% endif %}" 
+            type="button" onclick="window.location.href='{% url 'log_out' %}'">
         <i class="bi bi-box-arrow-left"></i>
     </button>
 </div>

@@ -31,46 +31,27 @@
 </div>
 
 <div>
-    <form method=post enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success mt-3 botones">Subir Producto</button>
-    </form>
+  
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
-               <!--
-                <img src="{% static 'images/subir-imagen.png' %}" alt="" class="img-fluid">
-                <button>Subir Imagen</button>
-                -->
+            <div class="col-md-2">
+               
             </div>
     
             <div class="col-md-8">
-                <!--
-                <label for="NombreProducto" class="form-label">Nombre del producto</label>
-                <input type="text" class="form-control cantidad" id="NombreProducto" name="nombre_producto" required placeholder="Valor">
+                <form method=post enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class align="center">
+                        <button type="submit" class="btn btn-success mt-3 botones">Subir Producto</button>
+                    </div>
+                    
+                </form>
+               
+            </div>
 
-                <label for="DescripcionProducto" class="form-label">Descripcion del producto</label>
-                <input type="text" class="form-control cantidad" id="DescripcionProducto" name="descripcion_producto" required placeholder="Valor">
+            <div class="col-md-2">
 
-                <label for="CantidadProducto" class="form-label">Cantidad</label>
-                <input type="number" class="form-control cantidad" id="CantidadProducto" name="cantidad_producto" required placeholder="Valor">
-
-                <label for="StockProducto" class="form-label">Stock</label>
-                <input type="number" class="form-control cantidad" id="StockProducto" name="stock_producto" min="1" required placeholder="Valor">
-
-                <label for="WidthProducto" class="form-label">Ancho</label>
-                <input type="number" class="form-control cantidad" id="WidthProducto" name="ancho_producto" min="0" required placeholder="Valor">
-
-                <label for="HeigthProducto" class="form-label">Ancho</label>
-                <input type="number" class="form-control cantidad" id="HeigthProducto" name="alto_producto" min="0" required placeholder="Valor">
-
-                <label for="ThicknessProducto" class="form-label">Ancho</label>
-                <input type="number" class="form-control cantidad" id="ThicknessProducto" name="grueso_producto" min="0" required placeholder="Valor">
-
-                <label for="MaterialProducto" class="form-label">Ancho</label>
-                <input type="text" class="form-control cantidad" id="MaterialProducto" name="material_producto" min="0" required placeholder="Valor">
-                -->
             </div>
     
         </div>
@@ -78,10 +59,6 @@
 
 </div>
 
-<div class align="center">
-    <!--
-    <button type="submit" class="btn btn-success mt-3 botones">Subir Producto</button>
-    -->
-</div>
+
 
 {% endblock %}
