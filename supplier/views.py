@@ -60,6 +60,11 @@ def supplier_edit_info(request):
     
 # Vista de saldo (ya existente)
 def saldo_view(request):
+    supplier_id = request.session.get('supplier_id')
+
+    if supplier_id is None:
+        messages.error(request, 'No estás autorizado para agregar productos. Inicia sesión como proveedor.')
+        return redirect('index')
     # Simulación de datos
     saldo = 3241
     metas = {
