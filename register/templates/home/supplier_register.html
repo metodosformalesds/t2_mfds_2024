@@ -32,9 +32,9 @@
                         <small id="nameHelp" class="form-text text-danger d-none">El nombre solo debe contener letras.</small>
                     </div>
                     <div class="mb-3">
-                        <label for="id_supplier_address" class="form-label">Apellido</label>
+                        <label for="id_supplier_address" class="form-label">Dirección</label>
                         {{ form.supplier_address }}
-                        <small id="lastNameHelp" class="form-text text-danger d-none">El apellido solo debe contener letras.</small>
+                        <small id="addressHelp" class="form-text text-danger d-none">La dirección solo debe contener letras y números, y al menos 5 caracteres.</small>
                     </div>
                     <div class="mb-3">
                         <label for="id_supplier_city" class="form-label">Ciudad</label>
@@ -93,14 +93,15 @@
                 nameHelp.classList.add("d-none");
             }
 
-            // Validación de apellido (igual que nombre)
-            const lastNameInput = document.getElementById("id_supplier_address");
-            const lastNameHelp = document.getElementById("lastNameHelp");
-            if (!nameRegex.test(lastNameInput.value)) {
-                lastNameHelp.classList.remove("d-none");
+            // Validación de dirección (al menos 5 caracteres, solo letras y números)
+            const addressInput = document.getElementById("id_supplier_address");
+            const addressHelp = document.getElementById("addressHelp");
+            const addressRegex = /^[A-Za-z0-9\s]{5,}$/;
+            if (!addressRegex.test(addressInput.value)) {
+                addressHelp.classList.remove("d-none");
                 isValid = false;
             } else {
-                lastNameHelp.classList.add("d-none");
+                addressHelp.classList.add("d-none");
             }
 
             // Validación de ciudad

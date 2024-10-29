@@ -7,7 +7,7 @@ def client_edit_info(request):
     user_id = request.session.get('user_id')  # Obtener el ID del usuario desde la sesión
     
     if not user_id:
-        messages.error(request, 'No has iniciado sesión. Por favor, inicia sesión.')
+        messages.error(request, 'No has iniciado sesión. Por favor, inicia sesión.', extra_tags='edit')
         return redirect('client_login')  # Redirigir al login si no hay sesión activa
 
     # Obtener el usuario o lanzar un error 404
@@ -45,11 +45,11 @@ def client_edit_info(request):
                 user.set_password(new_password)
             user.save()
 
-            messages.success(request, 'Se modificaron los datos correctamente.')
+            messages.success(request, 'Se modificaron los datos correctamente.', extra_tags='edit')
             return redirect('client_edit_info')
 
         else:
-            messages.error(request, 'Por favor, corrige los errores a continuación.')
+            messages.error(request, 'Por favor, corrige los errores a continuación.', extra_tags='edit')
 
     return render(request, 'client/client_edit_info.html', {
         'form': form,
