@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from product.models import Supplier, UserAccount, Product
 from django.contrib import messages
-from .forms import SupplierForm, AgregarProductoForm
+from .forms import SupplierForm, AgregarProductoForm, ActualizarProductosForm
 from django.contrib.auth.decorators import login_required
 def supplier_edit_info(request):
     supplier_id = request.session.get('supplier_id')
@@ -124,12 +124,19 @@ def retirar_saldo_view(request):
     return render(request, 'supplier/retirar_saldo.html')
 
 def supplier_menu(request):
+
     supplier_id = request.session.get('supplier_id')
+    
 
     if supplier_id is None:
         return redirect('index')
 
-    productos = Product.objects.all()
+    user_id = request.session.get('supplier_id')  
+    user = get_object_or_404(UserAccount, pk=user_id)  
+    supplier = get_object_or_404(Supplier, user=user)  
+
+    productos = Product.objects.filter(supplier=supplier)
+
     return render(request, 'supplier/suppliers_menu.html', {'productos':productos})
 
 def update_stock(request):
@@ -139,31 +146,61 @@ def update_stock(request):
         messages.error(request, 'No estás autorizado para agregar productos. Inicia sesión como proveedor.')
         return redirect('index')
 
-    productos= Product.objects.all()
+    user_id = request.session.get('supplier_id')  
+    user = get_object_or_404(UserAccount, pk=user_id) 
+    supplier = get_object_or_404(Supplier, user=user)  
+    productos = Product.objects.filter(supplier=supplier)
+
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')  
+        product = get_object_or_404(Product, id_product=product_id)  
+
+        new_price = request.POST.get('new_price')
+        new_stock = request.POST.get('new_stock')
+       
+
+        
+        if new_price:
+            product.product_price = float(new_price)  
+        if new_stock:
+            product.product_stock = int(new_stock)  
+
+        product.save()  
+
+        return redirect('update_stock')   
+
     return render(request, 'supplier/update_stock.html', {'productos':productos})
+
+def delete_product(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')  
+        product = get_object_or_404(Product, id_product=product_id)  
+        product.delete() 
+        return redirect('update_stock') 
+
 
 
 def add_product(request):
     supplier_id = request.session.get('supplier_id')
     
-    # Verifica que el ID del proveedor esté en la sesión
+   
     if supplier_id is None:
         messages.error(request, 'No estás autorizado para agregar productos. Inicia sesión como proveedor.')
-        return redirect('index')# O la ruta que maneje el inicio de sesión
+        return redirect('index')
 
     if request.method == 'POST':
         form = AgregarProductoForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save(commit=False)
             try:
-                # Asegúrate de que el usuario autenticado sea un proveedor
+                
                 supplier = Supplier.objects.get(user__id_user=supplier_id)
-                product.supplier = supplier  # Asignar el proveedor al producto
+                product.supplier = supplier  
                 product.save()
                 messages.success(request, 'Producto agregado correctamente.')
                 return redirect('supplier_menu')
             except Supplier.DoesNotExist:
-                # Manejo del error si el Supplier no se encuentra
+                
                 form.add_error(None, 'No se encontró un proveedor asociado a este usuario.')
     else:
         form = AgregarProductoForm()

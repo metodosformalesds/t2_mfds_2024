@@ -61,3 +61,8 @@ class AgregarProductoForm(forms.ModelForm):
             'product_thickness': 'Grosor del Producto',
             'product_material': 'Material del Producto',
         }
+
+class ActualizarProductosForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['product_price','product_stock']
