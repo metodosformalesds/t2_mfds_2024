@@ -21,6 +21,7 @@ def supplier_login(request):
                 # Verificar la contraseña usando el método 'check_password' del modelo UserAccount
                 if user.check_password(password):
                     # Aquí no usamos 'login()' de Django, sino que manejamos la sesión manualmente
+                    request.session['user_role'] = user.user_role
                     request.session['supplier_id'] = user.id_user  # Guardar el ID del usuario en la sesión
                     messages.success(request, 'Has iniciado sesión correctamente')
                     return redirect('supplier_menu')  # Redirigir al panel de proveedor
@@ -51,6 +52,7 @@ def client_login(request):
                 if user.user_auth_provider == UserAuthProvider.INTERNAL:
                     # Verificar la contraseña si el proveedor es 'INTERNAL'
                     if user.check_password(password):
+                        request.session['user_role'] = user.user_role
                         request.session['user_id'] = user.id_user  # Guardar el ID en la sesión
                         messages.success(request, 'Has iniciado sesión correctamente.')
                         return redirect('product_list')  # Redirigir a la lista de productos

@@ -180,10 +180,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 
-# Static files directories
+# Static files directories (carpeta de desarrollo para archivos estáticos)
 STATICFILES_DIRS = [
-    BASE_DIR / "static",  # Carpeta general para archivos estáticos
+    BASE_DIR / "static",  # Carpeta general para archivos estáticos en desarrollo
 ]
+
+# Carpeta donde se recopilarán todos los archivos estáticos para producción
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Directorio donde collectstatic guardará los archivos estáticos
+
+# Configuración para archivos de medios (si usas archivos subidos por usuarios)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'  # Directorio donde se guardarán los archivos de medios subidos por los usuarios
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
