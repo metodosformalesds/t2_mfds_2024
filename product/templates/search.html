@@ -1,44 +1,66 @@
 <html>
-
-
     <body>
-        
         <style>
             .grid-container {
                 display: grid;
-                grid-template-columns: 70% 10% 10% 10%; /* Primera columna 50%, otras 3 columnas 16.67% cada una */
-                height: 25px; /* Ajusta esto según el tamaño total que desees */
+                grid-template-columns: 1fr auto auto auto; /* Asegura que la barra de búsqueda ocupe el espacio sobrante */
+                gap: 10px; /* Espacio entre elementos */
+                align-items: center;
+                padding: 20px;
             }
-    
-            .grid-container{
-                text-align: center;
-                padding: 40px;
+
+            .input-group {
+                display: flex;
+                width: 100%;
+            }
+
+            .input-group .form-control {
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+
+            .input-group-append .btn {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+
+            .btn-menu {
+                padding: 5px 15px;
+                font-size: 14px;
             }
         </style>
-        
 
         <div class="grid-container">
+            <!-- Barra de búsqueda -->
             <div class="item1">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control">
-                    <div class="input-group-append"><button class="btn btn-menu" style="height:100%"><i class="bi bi-search"></i></button></div>
-                </div>
+                <form method="GET" action="{% url 'product_list' %}">
+                    <div class="input-group mb-3">
+                        <input type="text" name="q" class="form-control" placeholder="Buscar producto" value="{{ request.GET.q }}">
+                        <div class="input-group-append">
+                            <button class="btn btn-menu" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="item2">
-                <button class="btn btn-menu btn-sm" type="button" style="color: white; background-color: #2C2C2C">New</button>
-            </div>
-            <div class="item2">
-                <button class="btn btn-menu btn-sm" type="button" style="background-color: #F5F5F5">Ascending</button>
 
+            <!-- Botones para ordenar -->
+            <div class="item2">
+                <a href="?order=new" class="btn btn-menu btn-sm" style="color: white; background-color: #2C2C2C">
+                    New
+                </a>
             </div>
             <div class="item2">
-                <button class="btn btn-menu btn-sm" type="button" style="background-color: #F5F5F5">Descending</button>
-
+                <a href="?order=asc" class="btn btn-menu btn-sm" style="background-color: #F5F5F5">
+                    Ascending
+                </a>
+            </div>
+            <div class="item2">
+                <a href="?order=desc" class="btn btn-menu btn-sm" style="background-color: #F5F5F5">
+                    Descending
+                </a>
             </div>
         </div>
-
-
     </body>
-
-
 </html>

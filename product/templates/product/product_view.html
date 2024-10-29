@@ -1,77 +1,78 @@
 {% extends "base_without_image.html" %}
 
-{% block title %} {%endblock%}
+{% block title %}Detalle del Producto - Solid Steel{% endblock %}
 
 {% block content %}
-
-
-
 <div class="tarjeta" style="padding: 20px; margin: 0 20px"> 
-
-    <div class="card mb-3" style="border: none"  >
+    <div class="card mb-3" style="border: none">
         <div class="row g-0">
-          <div class="col-md-5">
-            <img src="{{product_info.product_image.url}}" class="img-fluid h-100" style="object-fit: cover" alt="...">
-          </div>
-          <div class="col-md-7">
-            <div class="card-body">
-              
-              <h7 class="card-title">{{product_info.product_name}} </h7>
-              <h3 class="card-title">{{product_info.product_price}} </h3>
-              <p class="card-text">{{product_info.product_material}}&nbsp; • &nbsp;{{product_info.product_description}}&nbsp; • &nbsp; Espesor: &nbsp;{{product_info.product_thickness}}</p>
-                <div class="d-grid gap-2">
-                    <label for="nombre">Cantidad</label>
-                    <input type="text" id="nombre" name="nombre">
-                    <button class="btn btn-primary" type="button" style="background-color: #2C2C2C; border-color: #2C2C2C">Agregar al carrito</button>
-                </div>
-                <div class="accordion" id="accordionPanelsStayOpenExample">
-                  <div class="accordion-item">
-                    <h2 class="accordion-header">
-                      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-                        <strong>Envio por parte del vendedor</strong> 
-                      </button>
-                    </h2>
-                    <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
-                      <div class="accordion-body">
-                        El envio sera realizado por el vendedor, se proporcionara una clave de seguimiento y se podra visualizar la etapa de la gestion del mismo.
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              
+            <div class="col-md-5">
+                <img src="{{ product_info.product_image.url }}" class="img-fluid h-100" style="object-fit: cover" alt="{{ product_info.product_name }}">
             </div>
-          </div>
+            <div class="col-md-7">
+                <div class="card-body">
+                    <h7 class="card-title">{{ product_info.product_name }}</h7>
+                    <h3 class="card-title">${{ product_info.product_price }}</h3>
+                    <p class="card-text">{{ product_info.product_material }} &nbsp; • &nbsp;
+                        {{ product_info.product_description }} &nbsp; • &nbsp;
+                        Espesor: {{ product_info.product_thickness }}
+                    </p>
+
+                    <!-- Formulario para agregar el producto al carrito -->
+                    <form method="POST" action="{% url 'agregar_al_carrito' product_info.id_product %}">
+                        {% csrf_token %}
+                        <div class="d-grid gap-2">
+                            <label for="cantidad">Cantidad</label>
+                            <input type="number" id="cantidad" name="cantidad" min="1" value="1" class="form-control" required>
+                            <button class="btn btn-primary" type="submit" style="background-color: #2C2C2C; border-color: #2C2C2C">
+                                Agregar al carrito
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="accordion mt-3" id="accordionPanelsStayOpenExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+                                        aria-controls="panelsStayOpen-collapseOne">
+                                    <strong>Envio por parte del vendedor</strong>
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                                <div class="accordion-body">
+                                    El envío será realizado por el vendedor, se proporcionará una clave de seguimiento y
+                                    se podrá visualizar la etapa de la gestión del mismo.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
-      </div>
-
-
+    </div>
 </div>
-<div style="padding: 20px; margin: 0 20px">
 
+<!-- Productos Similares -->
+<div style="padding: 20px; margin: 0 20px">
     <h4>Productos Similares</h4>
     <p>Otras Opciones</p>
-
 </div>
+
 <div class="container">
     <div class="row">
-    {% for Product in productos|slice:":3" %}
-
-        <div class="col-sm-4"><!--Columna Abre-->
-        <div class="card" style="width: 100%; height:95%; "><!--Card Abre-->
-
-            <img src="{{Product.product_image.url}}" class="card-img-top ">
-            <div class="card-body" style=" padding: 10px"><!--Card Body Abre-->
-                <h6 class="card-title"style="padding-top: 25%; ">{{Product.product_name}}</p>
-                    <p class="card-text">$&nbsp;{{Product.product_price}}</p>
-                
-            </div><!--Card Body Cierre-->
-        </div><!--Card Cierre-->
-        </div> <!--Columna Cierre-->
-
-    {% endfor %}
-    </div>  
+        {% for Product in productos|slice:":3" %}
+            <div class="col-sm-4">
+                <div class="card" style="width: 100%; height:95%;">
+                    <img src="{{ Product.product_image.url }}" class="card-img-top" alt="{{ Product.product_name }}">
+                    <div class="card-body" style="padding: 10px;">
+                        <h6 class="card-title">{{ Product.product_name }}</h6>
+                        <p class="card-text">$&nbsp;{{ Product.product_price }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
-
-    
-
+</div>
 {% endblock %}

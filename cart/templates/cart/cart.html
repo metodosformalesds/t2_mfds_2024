@@ -1,11 +1,7 @@
 {% extends "base_without_image.html" %}
-
-{% block title %}
-Carrito de Compras - Solid Steel
-{% endblock %}
-
 {% load static %}
 
+{% block title %}Carrito de Compras - Solid Steel{% endblock %}
 {% block head %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'general/css/style_general.css' %}">
@@ -14,84 +10,38 @@ Carrito de Compras - Solid Steel
 
 {% block content %}
 <main class="container mt-5">
-    <div class="d-flex justify-content-left ">
-        <button class="btn btn-outline-secondary" onclick="window.location.href='{% url 'product_list' %}'">
-            <span class="me-1">&larr;</span> Volver
-        </button>
-    </div>
     <h2 class="carrito">Carrito</h2>
     <div class="list-group">
-        <!-- Artículo 1 -->
+        {% if carrito %}
+        {% for key, item in carrito.items %}
         <div class="list-group-item">
             <div class="card">
-                <img src="{% static 'images/articulo2.jpg' %}" class="card-img-top" alt="Artículo 2">
-                <div class="card-body">
-                    <h5 class="card-title">Artículo 2</h5>
-                    <p class="card-text">Descripción breve del artículo 2.</p>
-                    <p class="price"><strong>$15.00</strong></p>
-                    <label for="quantity1" class="form-label">Cantidad:</label>
-                    <div class="d-flex align-items-center">
-                        <select id="quantity1" class="form-select cart-item-quantity me-2">
-                            <option value="0">0</option>
-                        </select>
-                        <button class="eliminar btn btn-danger">Eliminar</button>
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{{ item.imagen }}" class="img-fluid" alt="{{ item.nombre }}">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.nombre }}</h5>
+                            <p class="price"><strong>${{ item.precio }}</strong></p>
+                            <p>Cantidad: {{ item.cantidad }}</p>
+                            <a href="{% url 'agregar_al_carrito' key %}" class="btn btn-secondary">+1</a>
+                            <a href="{% url 'eliminar_del_carrito' key %}" class="btn btn-danger">Eliminar</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Artículo 2 -->
-        <div class="list-group-item">
-            <div class="card">
-                <img src="{% static 'images/articulo2.jpg' %}" class="card-img-top" alt="Artículo 2">
-                <div class="card-body">
-                    <h5 class="card-title">Artículo 2</h5>
-                    <p class="card-text">Descripción breve del artículo 2.</p>
-                    <p class="price"><strong>$15.00</strong></p>
-                    <label for="quantity2" class="form-label">Cantidad:</label>
-                    <div class="d-flex align-items-center">
-                        <select id="quantity2" class="form-select cart-item-quantity me-2">
-                            <option value="0">0</option>
-                        </select>
-                        <button class="eliminar btn btn-danger">Eliminar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Artículo 3 -->
-        <div class="list-group-item">
-            <div class="card">
-                <img src="{% static 'images/articulo3.jpg' %}" class="card-img-top" alt="Artículo 3">
-                <div class="card-body">
-                    <h5 class="card-title">Artículo 3</h5>
-                    <p class="card-text">Descripción breve del artículo 3.</p>
-                    <p class="price"><strong>$20.00</strong></p>
-                    <label for="quantity3" class="form-label">Cantidad:</label>
-                    <div class="d-flex align-items-center">
-                        <select id="quantity3" class="form-select cart-item-quantity me-2">
-                            <option value="0">0</option>
-                        </select>
-                        <button class="eliminar btn btn-danger">Eliminar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% endfor %}
     
+        {% else %}
+            <p>No hay productos en tu carrito.</p>
+        {% endif %}
+    </div>
+
     <div class="payment-container mt-4">
-        <p id="totalAmount" class="h5"><strong>$50.00</strong></p>
-        <label for="totalAmount" class="pagar-label">¿Listo para pagar?</label>
-        <button class="btn btn-primary" onclick="window.location.href='{% url 'shipping' %}'">Continuar</button>
+        <p>Total: ${{ total }}</p>
+        <button class="btn btn-primary" onclick="window.location.href='{% url 'shipping' %}'">Pagar</button>
     </div>
 </main>
-
-<footer class="footer-container">
-    <p>&copy; 2024 Solid Steel. Todos los derechos reservados.</p>
-    <div>
-        <a href="#"><img src="https://img.icons8.com/ios-filled/50/000000/github.png" alt="GitHub" width="30"></a>
-        <a href="#"><img src="https://img.icons8.com/ios-filled/50/000000/linkedin.png" alt="LinkedIn" width="30"></a>
-        <a href="#"><img src="https://img.icons8.com/ios-filled/50/000000/twitter.png" alt="Twitter" width="30"></a>
-    </div>
-</footer>
 {% endblock %}
