@@ -26,9 +26,9 @@
             <!-- Columna para los botones en el medio -->
             <div class="col-md-6 text-center ">
                 <button class="btn btn-menu {% if request.resolver_match.url_name == 'update_stock' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'update_stock' %}'">Actualizar</button>
-                <button class="btn btn-menu {% if request.resolver_match.url_name == 'supplier_menu' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'supplier_menu' %}'">Products</button>
+                <button class="btn btn-menu {% if request.resolver_match.url_name == 'supplier_menu' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'supplier_menu' %}'">Productos</button>
                 <button class="btn btn-menu {% if request.resolver_match.url_name == 'add_product' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'add_product'%}'">Nuevo Producto</button>
-                <button class="btn btn-menu {% if request.resolver_match.url_name == 'retirar_saldo' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'saldo_view'%}'">Saldo</button>
+                <button class="btn btn-menu {% if request.resolver_match.url_name == 'saldo_view' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'saldo_view'%}'">Saldo</button>
             </div>
             
 

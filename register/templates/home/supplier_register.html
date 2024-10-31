@@ -27,7 +27,7 @@
                 <form id="register-form" method="POST" action="" onsubmit="return validateForm()">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="id_supplier_name" class="form-label">Nombre</label>
+                        <label for="id_supplier_name" class="form-label">Nombre de Empresa</label>
                         {{ form.supplier_name }}
                         <small id="nameHelp" class="form-text text-danger d-none">El nombre solo debe contener letras.</small>
                     </div>

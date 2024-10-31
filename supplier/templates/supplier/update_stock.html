@@ -7,6 +7,8 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/menus_supplier.css' %}">
 
+<!-- Agregar Font Awesome para el ícono de basura -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 {% endblock %}
 
 {%block content%}
@@ -16,9 +18,6 @@
   
     <div class="container">
         <div class="row">
-        <div class="col-md-3">
-            Stock
-        </div>
     
     <div class="col-md-9"><!--columna2 abre-->
         
@@ -45,6 +44,22 @@
     </div>
 
 
+    {% if messages %}
+        <div class="list-group mt-3">
+            {% for message in messages %}
+                {% if 'edit' in message.tags %}
+                    <span class="list-group-item list-group-item-{{ message.tags }}">{{ message }}</span>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        
+<div class="section-title text-center">
+    <h2>Actualizar productos</h2>
+</div>
+
+
 <div>
     <div class="container">
     <div class="row">
@@ -59,7 +74,7 @@
               <div class="card mb-3">
                   <div class="row g-0">
                       <div class="col-md-4">
-                          <img src="{{ Product.product_image.url }}" class="img-fluid rounded-start" alt="...">
+                          <img src="{{ Product.product_image.url }}" class="img-fluid rounded-start" style="width: auto; height: 244.4px; width:auto" alt="...">
                       </div>
                       <div class="col-md-8">
                           <div class="card-body ">
@@ -81,14 +96,18 @@
                           </div>
                       </div>
                   </div>
-              </div>
-              <button type="submit" class="btn btn-secondary botones">Actualizar</button>
+              
+            <div class="d-flex justify-content-center mt-3">
+              <button type="submit" class="btn btn-secondary me-2" style="flex-shrink: 0; height:37.6px">Actualizar</button>
           </form>
           <form method="POST" action="{% url 'delete_product' %}" style="display:inline;">
             {% csrf_token %}
             <input type="hidden" name="product_id" value="{{ Product.id_product }}">
-            <button type="submit" class="btn btn-danger botones" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');">Eliminar</button>
+            <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de que deseas eliminar este producto?');"><i class="fas fa-trash-alt"></i> Eliminar</button>
         </form>
+    </div>
+</div>
+
       {% endfor %}
   </div>
   
@@ -101,5 +120,8 @@
 <div>
 
 </div>
+
+<script src="https://kit.fontawesome.com/c75f30fc9e.js" crossorigin="anonymous"></script>
+<script>
 
 {% endblock %}
