@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-(bco9)^g@zu52)zwrq8ms=zt@y6n62$1x4muag=f*chr4n+^06
 DEBUG = True
 
 #NOOOOOOO BORRAAAR POORFAVOOOOOOR
-ALLOWED_HOSTS = [] #'solidsteel.pythonanywhere.com'
+ALLOWED_HOSTS = ['*'] 
 
 # Application definition
 
@@ -57,6 +57,10 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    
+    
+    #facerecognition
+
 ]
 
 #se refiere a tomar informacion básica del profile and email para poder iniciar sesion
@@ -190,7 +194,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # Directorio donde collectstatic guardar
 
 # Configuración para archivos de medios (si usas archivos subidos por usuarios)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'  # Directorio donde se guardarán los archivos de medios subidos por los usuarios
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Directorio donde se guardarán los archivos de medios subidos por los usuarios
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -211,3 +215,8 @@ DEFAULT_FROM_EMAIL = 'noreply@solidsteel.com'
 #Redirect para google
 LOGIN_REDIRECT_URL = '/products/'  # Redirige a la página de cliente
 LOGOUT_REDIRECT_URL = '/login/'  # Redirige a la página de login
+
+#acceso para rekognition en aws
+AWS_ACCESS_KEY_ID = 'AKIA47CR2OAEE7ANHYMU'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_REGION = 'us-west-2'  # Cambia esto según tu región

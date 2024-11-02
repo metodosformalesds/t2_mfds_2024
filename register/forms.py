@@ -1,5 +1,5 @@
 from django import forms
-from product.models import Supplier, UserAccount  # Importamos los modelos
+from product.models import Supplier, UserAccount,Client  # Importamos los modelos
 from django.contrib.auth.hashers import make_password  # Para encriptar contraseñas
 
 
@@ -8,6 +8,12 @@ class SupplierRegisterForm(forms.ModelForm):
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'})) 
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
+    
+    # Nuevos campos para cargar las imágenes
+    identificacion = forms.ImageField(required=True)
+    foto_actual = forms.ImageField(required=True)
+    
+    
     class Meta:
         model = Supplier
         fields = ['supplier_name', 'supplier_address', 'supplier_city', 'supplier_zip_code', 'supplier_state']
@@ -36,11 +42,7 @@ class SupplierRegisterForm(forms.ModelForm):
             supplier.save()
         return supplier
     
-    #REGISTRO PARA EL USUARIO
-
-from product.models import UserAccount, Client  # Asumiendo que estos son los modelos correctos
-
-
+#REGISTRO PARA EL USUARIO
 class ClientRegisterForm(forms.ModelForm):
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))

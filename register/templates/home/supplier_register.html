@@ -20,11 +20,19 @@
                         <span class="me-1">&larr;</span> Volver
                     </button>
                 </div>
+                {% if messages %}
+    <div class="alert alert-warning">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
                 <div class="d-flex justify-content-center mb-3">
                     <h2>Regístrate como proveedor</h2>
                 </div>
 
-                <form id="register-form" method="POST" action="" onsubmit="return validateForm()">
+                <form id="register-form" method="POST" action="" enctype="multipart/form-data">
+
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="id_supplier_name" class="form-label">Nombre de Empresa</label>
@@ -61,6 +69,19 @@
                         {{ form.password }}
                         <small id="passwordHelp" class="form-text text-danger d-none">La contraseña debe tener al menos 8 caracteres, una letra mayúscula, un número y un carácter especial.</small>
                     </div>
+
+
+                    <!-- Campo para subir identificación oficial -->
+    <div class="mb-3">
+        <label for="id_identificacion" class="form-label">Subir Identificación Oficial</label>
+        <input type="file" name="identificacion" class="form-control" required>
+    </div>
+
+    <!-- Campo para subir foto actual -->
+    <div class="mb-3">
+        <label for="id_foto_actual" class="form-label">Subir Foto Actual</label>
+        <input type="file" name="foto_actual" class="form-control" required>
+    </div>
                     <button type="submit" class="btn btn-dark w-100">Registrar</button>
                 </form>
                 
