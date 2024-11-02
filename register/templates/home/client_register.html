@@ -1,10 +1,9 @@
-{% load socialaccount %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solid Steel - Registro</title>
+    <title>Solid Steel - Registro Cliente</title>
     {% load static %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style_register.css' %}">
@@ -12,6 +11,7 @@
 </head>
 <body>
     <header class="bg-dark text-white text-center p-4"></header>
+
     <main class="container mt-5">
         <div class="d-flex justify-content-center">
             <div class="card p-4 shadow-lg" style="max-width: 500px; width: 100%;">
@@ -20,33 +20,32 @@
                         <span class="me-1">&larr;</span> Volver
                     </button>
                 </div>
-                <div class="d-flex justify-content-center mb-3">
-                    <h2>Regístrate en Solid-Steel</h2>
-                </div>
                 
                 {% if messages %}
-                    <div class="list-group mt-3">
+                    <div class="alert alert-warning">
                         {% for message in messages %}
-                            <span class="list-group-item list-group-item-{{ message.tags }}">{{ message }}</span>
-                        {% endfor %}<br>
+                            <p>{{ message }}</p>
+                        {% endfor %}
                     </div>
                 {% endif %}
 
+                <div class="d-flex justify-content-center mb-3">
+                    <h2>Regístrate como Cliente</h2>
+                </div>
 
                 <div class="d-flex flex-column gap-2">
-
-                    <!-- href="{% provider_login_url 'google' %}" -->
-                    <a href="{% provider_login_url 'google' %}" class="btn btn-outline-dark w-100">
+                    <a href=" " class="btn btn-outline-dark w-100">
                         <i class="bi bi-google"></i> Continuar con Google
                     </a>
                 </div>
+
                 <div class="d-flex align-items-center my-4">
                     <hr class="flex-grow-1">
                     <span class="px-2">O</span>
                     <hr class="flex-grow-1">
                 </div>
 
-                <form id="register-form" method="POST" action="" onsubmit="return validateForm()">
+                <form id="register-form" method="POST" action="" enctype="multipart/form-data" onsubmit="return validateForm()">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="id_client_first_name" class="form-label">Nombre</label>
@@ -73,20 +72,35 @@
                         {{ form.password }}
                         <small id="passwordHelp" class="form-text text-danger d-none">La contraseña debe tener al menos 8 caracteres, una letra mayúscula, un número y un carácter especial.</small>
                     </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                        <label class="form-check-label" for="exampleCheck1">Todos mis datos son correctos</label>
+
+                    <!-- Campo para subir identificación oficial -->
+                    <div class="mb-3">
+                        <label for="id_identificacion" class="form-label">Subir Identificación Oficial</label>
+                        <input type="file" name="identificacion" class="form-control" required>
                     </div>
+
+                    <!-- Campo para capturar foto actual -->
+                    <div class="mb-3">
+                        <label for="foto_actual" class="form-label">Foto Actual</label>
+                        <div class="d-flex flex-column align-items-center">
+                            <video id="video" width="100%" autoplay style="display: none;"></video>
+                            <canvas id="canvas" style="display: none;"></canvas>
+                            <button type="button" id="capture-btn" class="btn btn-primary mt-2">Tomar Foto</button>
+                            <img id="photo-preview" src="#" alt="Foto previa" style="display: none; width: 100%; max-width: 300px;" />
+                            <input type="file" id="foto-input" name="foto_actual" class="form-control-file" accept="image/*" capture="environment" style="display: none;">
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn btn-dark w-100">Registrar</button>
                 </form>
 
                 <div class="text-center mt-3">
-                    <a href="{% url 'client_login' %}" class="text-muted">¿Ya tienes una cuenta? Inicia sesión</a>
+                    <a href="{% url 'client_login' %}" class="text-muted">¿Ya tienes una cuenta? Inicia sesión como cliente</a>
                 </div>
             </div>
         </div>
     </main>
-    
+
     <footer class="bg-light text-center py-4 mt-5">
         <div class="container">
             <p class="mt-3">&copy; 2024 Solid Steel. Todos los derechos reservados.</p>
@@ -109,51 +123,60 @@
                 nameHelp.classList.add("d-none");
             }
 
-            // Validación de apellido
-            const lastNameInput = document.getElementById("id_client_last_name");
-            const lastNameHelp = document.getElementById("lastNameHelp");
-            if (!nameRegex.test(lastNameInput.value)) {
-                lastNameHelp.classList.remove("d-none");
-                isValid = false;
-            } else {
-                lastNameHelp.classList.add("d-none");
-            }
-
-            // Validación de número de teléfono
-            const phoneInput = document.getElementById("id_client_phone");
-            const phoneHelp = document.getElementById("phoneHelp");
-            const phoneRegex = /^\d{10,}$/; // Acepta solo dígitos y al menos 10 de ellos
-            if (!phoneRegex.test(phoneInput.value)) {
-                phoneHelp.classList.remove("d-none");
-                isValid = false;
-            } else {
-                phoneHelp.classList.add("d-none");
-            }
-
-            // Validación de correo electrónico
-            const emailInput = document.getElementById("id_email");
-            const emailHelp = document.getElementById("emailHelp");
-            const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-            if (!emailRegex.test(emailInput.value)) {
-                emailHelp.classList.remove("d-none");
-                isValid = false;
-            } else {
-                emailHelp.classList.add("d-none");
-            }
-
-            // Validación de contraseña
-            const passwordInput = document.getElementById("id_password");
-            const passwordHelp = document.getElementById("passwordHelp");
-            const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.{8,})/;
-            if (!passwordRegex.test(passwordInput.value)) {
-                passwordHelp.classList.remove("d-none");
-                isValid = false;
-            } else {
-                passwordHelp.classList.add("d-none");
-            }
+            // Validación de otros campos...
 
             return isValid;
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const captureBtn = document.getElementById('capture-btn');
+            const photoPreview = document.getElementById('photo-preview');
+            const fotoInput = document.getElementById('foto-input');
+
+            // Función para acceder a la cámara y mostrar el video
+            captureBtn.addEventListener("click", async () => {
+                if (video.style.display === "none") {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        video.srcObject = stream;
+                        video.style.display = "block";
+                        captureBtn.textContent = "Capturar";
+                    } catch (error) {
+                        console.error("No se puede acceder a la cámara:", error);
+                    }
+                } else {
+                    // Captura la imagen desde el video
+                    const context = canvas.getContext("2d");
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+                    
+                    // Detiene el video
+                    const stream = video.srcObject;
+                    const tracks = stream.getTracks();
+                    tracks.forEach(track => track.stop());
+                    video.style.display = "none";
+                    
+                    // Muestra la previsualización de la foto
+                    const imageDataURL = canvas.toDataURL("image/png");
+                    photoPreview.src = imageDataURL;
+                    photoPreview.style.display = "block";
+                    
+                    // Convierte la imagen en un archivo para subir
+                    const blob = await fetch(imageDataURL).then(res => res.blob());
+                    const file = new File([blob], "foto_actual.png", { type: "image/png" });
+                    
+                    // Asigna el archivo al input para el envío en el formulario
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    fotoInput.files = dataTransfer.files;
+                    
+                    captureBtn.textContent = "Tomar otra foto";
+                }
+            });
+        });
     </script>
 </body>
 </html>

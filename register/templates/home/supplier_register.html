@@ -69,6 +69,11 @@
                         {{ form.password }}
                         <small id="passwordHelp" class="form-text text-danger d-none">La contraseña debe tener al menos 8 caracteres, una letra mayúscula, un número y un carácter especial.</small>
                     </div>
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
 
 
                     <!-- Campo para subir identificación oficial -->
@@ -79,9 +84,23 @@
 
     <!-- Campo para subir foto actual -->
     <div class="mb-3">
+<<<<<<< Updated upstream
         <label for="id_foto_actual" class="form-label">Subir Foto Actual</label>
         <input type="file" name="foto_actual" class="form-control" required>
     </div>
+=======
+        <label for="foto_actual" class="form-label">Foto Actual</label>
+        <div class="d-flex flex-column align-items-center">
+            <video id="video" width="100%" autoplay style="display: none;"></video>
+            <canvas id="canvas" style="display: none;"></canvas>
+            <button type="button" id="capture-btn" class="btn btn-primary mt-2">Tomar Foto</button>
+            <img id="photo-preview" src="#" alt="Foto previa" style="display: none; width: 100%; max-width: 300px;" />
+            <input type="file" id="foto-input" name="foto_actual" class="form-control-file" accept="image/*" capture="environment" style="display: none;">
+        </div>
+    </div>
+    
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
                     <button type="submit" class="btn btn-dark w-100">Registrar</button>
                 </form>
                 
@@ -180,6 +199,55 @@
 
             return isValid;
         }
+        document.addEventListener("DOMContentLoaded", function() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const captureBtn = document.getElementById('capture-btn');
+            const photoPreview = document.getElementById('photo-preview');
+            const fotoInput = document.getElementById('foto-input');
+
+            // Función para acceder a la cámara y mostrar el video
+            captureBtn.addEventListener("click", async () => {
+                if (video.style.display === "none") {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        video.srcObject = stream;
+                        video.style.display = "block";
+                        captureBtn.textContent = "Capturar";
+                    } catch (error) {
+                        console.error("No se puede acceder a la cámara:", error);
+                    }
+                } else {
+                    // Captura la imagen desde el video
+                    const context = canvas.getContext("2d");
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+                    
+                    // Detiene el video
+                    const stream = video.srcObject;
+                    const tracks = stream.getTracks();
+                    tracks.forEach(track => track.stop());
+                    video.style.display = "none";
+                    
+                    // Muestra la previsualización de la foto
+                    const imageDataURL = canvas.toDataURL("image/png");
+                    photoPreview.src = imageDataURL;
+                    photoPreview.style.display = "block";
+                    
+                    // Convierte la imagen en un archivo para subir
+                    const blob = await fetch(imageDataURL).then(res => res.blob());
+                    const file = new File([blob], "foto_actual.png", { type: "image/png" });
+                    
+                    // Asigna el archivo al input para el envío en el formulario
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    fotoInput.files = dataTransfer.files;
+                    
+                    captureBtn.textContent = "Tomar otra foto";
+                }
+            });
+        });
     </script>
 </body>
 </html>
