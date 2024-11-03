@@ -75,6 +75,11 @@ def client_login(request):
 def password_reset_request(request):
     if request.method == 'POST':
         email = request.POST.get('email')
+        
+        # Limpiar los mensajes previos
+        storage = messages.get_messages(request)
+        storage.used = True
+                
         try:
             user = UserAccount.objects.get(user_email=email)
             # Generar un código de 6 dígitos
@@ -100,12 +105,16 @@ def password_reset_request(request):
             # Guardar el email en la sesión para futuras vistas
             request.session['reset_email'] = email
 
+            #Mensaje para confirmar que se envio un codigo
+            messages.success(request, 'Se envio un codigo a tu correo, favor de verificarlo.')
             # Redirigir al formulario de verificación de código
             return redirect('verify_reset_code')
 
         except UserAccount.DoesNotExist:
             # Mostrar error si el correo no está registrado
-            return render(request, 'home/reset_password.html', {'error': 'Correo no registrado'})
+            messages.error(request, 'No se encontro ningun usario intentelo de nuevo.')
+            return redirect('password_reset')
+            
     return render(request, 'home/reset_password.html')
 
 
@@ -143,6 +152,9 @@ def set_new_password(request):
         try:
             # Obtener al usuario por su correo electrónico
             user = UserAccount.objects.get(user_email=email)
+            # Obtener el tipo de cliente (rol) del usuario
+            client_role = user.user_role
+            
             user.set_password(new_password)
             user.save()
 
@@ -151,8 +163,22 @@ def set_new_password(request):
 
             # Limpiar la sesión
             del request.session['reset_email']
-
-            return redirect('client_login')  # Redirigir al login tras el éxito
+            
+            # Limpiar los mensajes previos
+            storage = messages.get_messages(request)
+            storage.used = True
+            
+            if client_role=='Client':
+                messages.success(request, 'Tu constraseña se cambio correctamente.')
+                return redirect('client_login')  # Redirigir al login CLIENTE tras el éxito
+            elif client_role=='Supplier':
+                messages.success(request, 'Tu constraseña se cambio correctamente.')
+                return redirect('client_login')  # Redirigir al login PROOVEDOR tras el éxito
+            else:
+                messages.error(request, 'No se encontro ningun usario intentelo de nuevo.')
+                return redirect('password_reset')
+                
+                
 
         except UserAccount.DoesNotExist:
             # Mostrar error si el correo no está en la base de datos

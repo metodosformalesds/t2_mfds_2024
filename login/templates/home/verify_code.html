@@ -21,8 +21,16 @@
                     <span class="me-1">&larr;</span> Volver
                 </button>                       
             </div>
-            <!-- Aquí está el formulario para enviar el correo con FormSubmit -->
-            <form action="https://formsubmit.co/solidsteel117@gmail.com" method="POST">
+                {% if messages %}
+                    <div class="list-group mt-3">
+                        {% for message in messages %}
+                            <span class="list-group-item list-group-item-{{ message.tags }}">{{ message }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+            <!--formulario para verificar codigo de reseteo de contrasena enviado -->
+            <form method="POST" action="{% url 'verify_reset_code' %}">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="email" class="form-label">Correo electrónico:</label>
