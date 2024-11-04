@@ -3,6 +3,14 @@
 {% block title %}Detalle del Producto - Solid Steel{% endblock %}
 
 {% block content %}
+{% if messages %}
+    <div class="alert alert-warning" role="alert">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="tarjeta" style="padding: 20px; margin: 0 20px"> 
     <div class="card mb-3" style="border: none">
         <div class="row g-0">
