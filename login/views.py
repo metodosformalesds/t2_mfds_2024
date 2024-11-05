@@ -54,14 +54,14 @@ def client_login(request):
                     if user.check_password(password):
                         request.session['user_role'] = user.user_role
                         request.session['user_id'] = user.id_user  # Guardar el ID en la sesión
-                        messages.success(request, 'Has iniciado sesión correctamente.')
+                        #messages.success(request, 'Has iniciado sesión correctamente.')
                         return redirect('product_list')  # Redirigir a la lista de productos
                     else:
                         messages.error(request, 'Contraseña incorrecta.')
                 else:
                     # Si el usuario es de Google, no necesita contraseña
                     request.session['user_id'] = user.id_user  # Guardar el ID en la sesión
-                    messages.success(request, 'Inicio de sesión exitoso con Google.')
+                    #messages.success(request, 'Inicio de sesión exitoso con Google.')
                     return redirect('product_list')  # Redirigir a la lista de productos
 
             except UserAccount.DoesNotExist:

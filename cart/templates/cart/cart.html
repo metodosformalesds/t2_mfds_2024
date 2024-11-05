@@ -7,6 +7,9 @@
 
 {% block content %}
 <main class="container mt-5">
+    <button class="btn btn-outline-secondary" onclick="window.location.href='/products/1/'">
+        <span class="me-1">&larr;</span> Volver
+    </button>   
         <div class="list-group mt-3">
             {% for message in messages %}
                 {% if 'edit' in message.tags %}

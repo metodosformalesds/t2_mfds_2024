@@ -25,18 +25,16 @@
                 </div>
 
                 
-                <div class="col-md-6 text-center ">
-                    <button class="btn btn-menu" type="button">Products</button>
-                    <button class="btn btn-menu" type="button">Recycler</button>
-                    <button class="btn btn-menu" type="button">Contact</button>
+                <div class="col-md-6 text-center">
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'product_list' %}'">Productos</button>
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'recycler' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'recycler' %}'">Reciclaje</button>
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" type="button">Contacto</button>
                 </div>
-
                 
                 <div class="col-md-3 text-right">
-                    <button class="btn btn-menu" type="button" onclick="window.location.href='{% url 'cart' %}'"><i class="bi bi-cart2"></i></button>
-                    <button class="btn btn-menu" type="button" onclick="window.location.href='{% url 'client_edit_info' %}'"><i class="bi bi-gear"></i></button>
-                    <button class="btn btn-menu" type="button"><i class="bi bi-box-arrow-left"></i></button>
-                    
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'cart' %}'"><i class="bi bi-cart2"></i></button>
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'client_edit_info' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'client_edit_info' %}'"><i class="bi bi-gear"></i></button>
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'client_login' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'client_login' %}'"><i class="bi bi-box-arrow-left"></i></button>
                 </div>
             </div>
         </div>

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,10 +7,16 @@
     <title>
         {% block title %} {% endblock %}
     </title>
-    
+    <head>
+        {% load static %}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'general/css/noimage.css' %}">
+        {%block head%} {%endblock%}
+    </head>
 </head>
 <body>
     <header class="header" style="background-color: white; width: 100%">
+        {% include "head.html" %}
         <div class="container-fluid" style="background-color: white;padding: 10px 0; ">
             <div class="row align-items-center">
                 <!-- Columna para el logo -->
@@ -19,23 +26,22 @@
                 </div>
 
                 <!-- Columna para los botones en el medio -->
-                <div class="col-md-6 text-center ">
-                    <button class="btn btn-menu" type="button">Recycler</button>
-                    <button class="btn btn-menu" type="button" onclick="window.location.href='{% url 'product_list' %}'">Products</button>
-                    <button class="btn btn-menu" type="button">Contact</button>
+                <div class="col-md-6 text-center">
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'product_list' %}'">Productos</button>
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'recycler' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'recycler' %}'">Reciclaje</button>
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" type="button">Contacto</button>
                 </div>
-
-                <!-- Columna para los iconos a la derecha -->
+                
                 <div class="col-md-3 text-right">
-                    <button class="btn btn-menu" type="button" onclick="window.location.href='{% url 'cart' %}'"><i class="bi bi-cart2"></i></button>
-                    <button class="btn btn-menu" type="button" onclick="window.location.href='{% url 'client_edit_info' %}'"><i class="bi bi-gear"></i></button>
-                    <button class="btn btn-menu" type="button" onclick="window.location.href='{% url 'client_login' %}'"><i class="bi bi-box-arrow-left"></i></button>
-                    
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'cart' %}'"><i class="bi bi-cart2"></i></button>
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'client_edit_info' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'client_edit_info' %}'"><i class="bi bi-gear"></i></button>
+                    <button class="btn btn-menu {% if request.resolver_match.url_name == 'client_login' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'client_login' %}'"><i class="bi bi-box-arrow-left"></i></button>
                 </div>
+                
             </div>
         </div>
     </header>
-    {% include "head.html" %}
+    
    
 
     {% block content %}

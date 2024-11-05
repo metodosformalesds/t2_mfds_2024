@@ -10,8 +10,11 @@
         {% endfor %}
     </div>
 {% endif %}
-
+  
 <div class="tarjeta" style="padding: 20px; margin: 0 20px"> 
+    <button class="btn btn-outline-secondary" onclick="window.location.href='{% url 'product_list' %}'" style="margin-bottom: 20px;">
+        <span class="me-1">&larr;</span> Volver
+    </button>      
     <div class="card mb-3" style="border: none">
         <div class="row g-0">
             <div class="col-md-5">
