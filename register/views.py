@@ -173,10 +173,9 @@ def supplier_register(request):
     return render(request, 'home/supplier_register.html', {'form': form})
 
 
-# Vista para el registro de clientes
 def client_register(request):
     if request.method == 'POST':
-        form = ClientRegisterForm(request.POST)
+        form = ClientRegisterForm(request.POST, request.FILES)
         if form.is_valid():
             email = form.cleaned_data['email']
             
@@ -184,9 +183,49 @@ def client_register(request):
             if UserAccount.objects.filter(user_email=email).exists():
                 messages.error(request, 'El correo ya está registrado. Por favor, usa otro.')
             else:
-                form.save()  # Guardamos el cliente y el usuario
-                messages.success(request, 'Cliente registrado exitosamente')
-                return redirect('client_login')  # Redirige al login de usuarios normales
+                # Guardar las imágenes temporalmente para verificación
+                temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp')
+                if not os.path.exists(temp_dir):
+                    os.makedirs(temp_dir)
+                
+                # Obtener los archivos de las imágenes de identificación y foto tomada
+                identificacion_img = request.FILES['identificacion']
+                foto_actual_img = request.FILES['foto_actual']
+
+                # Define rutas de guardado temporal
+                identificacion_path = os.path.join(temp_dir, 'identificacion.jpg')
+                foto_actual_path = os.path.join(temp_dir, 'foto_actual.jpg')
+
+                # Guarda las imágenes manualmente en la carpeta 'temp'
+                with open(identificacion_path, 'wb') as f:
+                    f.write(identificacion_img.read())
+                with open(foto_actual_path, 'wb') as f:
+                    f.write(foto_actual_img.read())
+
+                try:
+                    # Compara las imágenes usando Rekognition
+                    match = compare_faces_with_rekognition(identificacion_path, foto_actual_path)
+
+                    # Mensaje en caso de que las fotos no coincidan
+                    face_mismatch_message = 'La verificación facial ha fallado. Por favor, asegúrate de que la foto tomada coincida con la identificación.'
+
+                    # Verifica la coincidencia de los rostros antes de permitir el registro
+                    if not match:
+                        messages.error(request, face_mismatch_message)
+                    else:
+                        # Guarda el cliente y muestra mensaje de éxito
+                        form.save()
+                        messages.success(request, 'Cliente registrado exitosamente')
+                        return redirect('client_login')  # Redirige al login de usuarios normales
+                finally:
+                    # Eliminar archivos temporales después de usarlos
+                    if os.path.exists(identificacion_path):
+                        os.remove(identificacion_path)
+                    if os.path.exists(foto_actual_path):
+                        os.remove(foto_actual_path)
+        else:
+            messages.error(request, 'El formulario no es válido. Revisa los datos.')
+        
     else:
         form = ClientRegisterForm()
 
