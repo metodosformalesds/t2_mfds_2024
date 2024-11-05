@@ -126,26 +126,21 @@ WSGI_APPLICATION = 'SolidSteel.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+#NOOOOOOO BORRAAAR POORFAVOOOOOOR
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'solid_db',  # El nombre que aparece en tu lista
+        'USER': 'root',     # Debe ser el nombre de tu usuario de PythonAnywhere
+        'PASSWORD': 'Cacahuate11%',
+        'HOST': 'ls-7c806381e95ae6fdea3561848f7aa12dbe862db9.cdqi0uqm4gv3.us-west-2.rds.amazonaws.com',  # Tu host de MySQL en PythonAnywhere
+        'PORT': '3306',  # Puerto estándar para MySQL
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
-#NOOOOOOO BORRAAAR POORFAVOOOOOOR
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'SolidSteel$db',  # El nombre que aparece en tu lista
-#        'USER': 'SolidSteel',     # Debe ser el nombre de tu usuario de PythonAnywhere
-#        'PASSWORD': 'Cacahuate11%',
-#        'HOST': 'SolidSteel.mysql.pythonanywhere-services.com',  # Tu host de MySQL en PythonAnywhere
-#        'PORT': '3306',  # Puerto estándar para MySQL
-#        'OPTIONS': {
-#            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-#        },
-#    }
-#}
 
 
 # Password validation
@@ -194,7 +189,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # Directorio donde collectstatic guardar
 
 # Configuración para archivos de medios (si usas archivos subidos por usuarios)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Directorio donde se guardarán los archivos de medios subidos por los usuarios
+MEDIA_ROOT = BASE_DIR / 'media'  # Directorio donde se guardarán los archivos de medios subidos por los usuarios
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
