@@ -34,6 +34,7 @@ urlpatterns = [
     path('supplier/', include('supplier.urls')),
     path('client/', include('client.urls')),
     path('accounts/', include('allauth.urls')), #new url para google
+    path('pagos/', include('pay.urls')),
     
 
 ]

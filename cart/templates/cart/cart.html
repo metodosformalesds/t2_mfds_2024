@@ -7,6 +7,12 @@
 
 {% block content %}
 <main class="container mt-5">
+        <div class="list-group mt-3">
+            {% for message in messages %}
+                {% if 'edit' in message.tags %}
+                    <span class="list-group-item list-group-item-{{ message.tags }}">{{ message }}</span>
+                {% endif %}
+            {% endfor %}
     <h2 class="carrito">Carrito</h2>
     <div class="list-group">
         {% if carrito_items %}
@@ -41,11 +47,12 @@
 
     <div class="payment-container mt-4">
         <p>Total: ${{ total }}</p>
-        <button class="btn btn-primary" 
-            onclick="window.location.href='{% url 'shipping' %}'" 
-            {% if total == 0 %}disabled{% endif %}>
-        Pagar
-    </button>
+        <form action="{% url 'iniciar_pago' %}" method="POST">
+            {% csrf_token %}
+            <button class="btn btn-primary" {% if total == 0 %}disabled{% endif %}>
+                Pagar
+            </button>
+        </form>
     </div>
 </main>
 {% endblock %}

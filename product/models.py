@@ -50,7 +50,6 @@ class UserAccount(models.Model):
         return self.user_email
  
  
- 
 class Supplier(models.Model):
     id_supplier = models.AutoField(primary_key=True)
     supplier_name = models.CharField(max_length=50)
@@ -61,7 +60,7 @@ class Supplier(models.Model):
     supplier_zip_code = models.CharField(max_length=10)
     # Aquí aplicamos el filtro para que solo se muestren los usuarios con rol 'Supplier'
     
-    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE,limit_choices_to={'user_role': UserRole.SUPPLIER}, unique=True) 
+    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE,limit_choices_to={'user_role': UserRole.SUPPLIER}) 
     def __str__(self):
         return self.supplier_name
  
@@ -69,7 +68,7 @@ class Supplier(models.Model):
  
 class Client(models.Model):
     id_client = models.AutoField(primary_key=True)
-    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, unique=True, limit_choices_to={'user_role': UserRole.CLIENT})
+    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, limit_choices_to={'user_role': UserRole.CLIENT})
     client_first_name = models.CharField(max_length=50)
     client_last_name = models.CharField(max_length=50)
     client_phone = models.CharField(max_length=20)

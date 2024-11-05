@@ -220,3 +220,8 @@ LOGOUT_REDIRECT_URL = '/login/'  # Redirige a la página de login
 AWS_ACCESS_KEY_ID = 'AKIA47CR2OAEE7ANHYMU'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_REGION = 'us-west-2'  # Cambia esto según tu región
+
+#api paypal
+PAYPAL_CLIENT_ID = 'AUm2f3CYUOUlCmPOkAtA6kFWzjpY_yqDT9pBKLFpYZBR7ZW7Gl62dWqzb7CBqyb6cxJX_WQePKVj7A7E'
+PAYPAL_CLIENT_SECRET = 'EKgTR0HeavgN8LEYCRI_vOQDAW5WwKCHyVuVUBjThRFW_-z9sDmx-QQ5OOL9jwxoWBjo1OYrSzOcsi4Q'
+PAYPAL_MODE = 'sandbox'  # Asegúrate de que esté en 'sandbox' para pruebas
