@@ -198,6 +198,7 @@ MEDIA_ROOT = BASE_DIR / 'media'  # Directorio donde se guardarán los archivos d
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
