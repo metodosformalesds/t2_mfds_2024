@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style_login.css' %}">
     <link rel="stylesheet" href="{% static 'general/css/style_general.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body>
     <header class="bg-dark text-white text-center p-4"></header>
@@ -39,9 +40,21 @@
                         <label for="id_email" class="form-label">Correo electrónico</label>
                         {{ form.email }}
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 position-relative">
                         <label for="id_password" class="form-label">Contraseña</label>
-                        {{ form.password }}
+                        <div class="input-group">
+                            {{ form.password }}
+                            <button 
+                                type="button" 
+                                class="btn btn-outline-secondary" 
+                                onclick="togglePassword()" 
+                                style="border-left: none;">
+                                <!-- Ícono de ojo cerrado -->
+                                <i id="eyeIconClosed" class="bi bi-eye-slash"></i>
+                                <!-- Ícono de ojo abierto -->
+                                <i id="eyeIconOpen" class="bi bi-eye" style="display: none;"></i>
+                            </button>
+                        </div>
                         <small id="passwordHelp" class="form-text text-danger d-none">La contraseña debe tener al menos 8 caracteres, incluir un número y un carácter especial.</small>
                     </div>
                     <button type="submit" class="btn btn-dark w-100">Iniciar sesión</button>
@@ -92,12 +105,25 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Bootstrap Icons (opcional, para iconos sociales) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     
     <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('id_password');
+            const eyeIconClosed = document.getElementById('eyeIconClosed');
+            const eyeIconOpen = document.getElementById('eyeIconOpen');
+    
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIconClosed.style.display = 'none';
+                eyeIconOpen.style.display = 'block';
+            } else {
+                passwordField.type = 'password';
+                eyeIconClosed.style.display = 'block';
+                eyeIconOpen.style.display = 'none';
+            }
+        }
+
         function validatePassword() {
             const passwordInput = document.getElementById("id_password");
             const passwordHelp = document.getElementById("passwordHelp");
