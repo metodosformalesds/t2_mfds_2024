@@ -126,21 +126,26 @@ WSGI_APPLICATION = 'SolidSteel.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-
-#NOOOOOOO BORRAAAR POORFAVOOOOOOR
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'solid_db',  # El nombre que aparece en tu lista
-        'USER': 'root',     # Debe ser el nombre de tu usuario de PythonAnywhere
-        'PASSWORD': 'Cacahuate11%',
-        'HOST': 'ls-7c806381e95ae6fdea3561848f7aa12dbe862db9.cdqi0uqm4gv3.us-west-2.rds.amazonaws.com',  # Tu host de MySQL en PythonAnywhere
-        'PORT': '3306',  # Puerto estándar para MySQL
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+#NOOOOOOO BORRAAAR POORFAVOOOOOOR
+#DATABASES = {
+   # 'default': {
+   #     'ENGINE': 'django.db.backends.mysql',
+   #     'NAME': 'solid_db',  # El nombre que aparece en tu lista
+   #     'USER': 'root',     # Debe ser el nombre de tu usuario de PythonAnywhere
+    #    'PASSWORD': 'Cacahuate11%',
+    #    'HOST': 'ls-7c806381e95ae6fdea3561848f7aa12dbe862db9.cdqi0uqm4gv3.us-west-2.rds.amazonaws.com',  # Tu host de MySQL en PythonAnywhere
+   #     'PORT': '3306',  # Puerto estándar para MySQL
+   #     'OPTIONS': {
+   #         'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+   #     },
+   # }
+#}
 
 
 # Password validation
@@ -222,3 +227,11 @@ AWS_REGION = 'us-west-2'  # Cambia esto según tu región
 PAYPAL_CLIENT_ID = 'AUm2f3CYUOUlCmPOkAtA6kFWzjpY_yqDT9pBKLFpYZBR7ZW7Gl62dWqzb7CBqyb6cxJX_WQePKVj7A7E'
 PAYPAL_CLIENT_SECRET = 'EKgTR0HeavgN8LEYCRI_vOQDAW5WwKCHyVuVUBjThRFW_-z9sDmx-QQ5OOL9jwxoWBjo1OYrSzOcsi4Q'
 PAYPAL_MODE = 'sandbox'  # Asegúrate de que esté en 'sandbox' para pruebas
+
+
+
+#Stripe
+STRIPE_PUBLIC_KEY = ""
+STRIPE_SECRET_KEY_TEST = "sk_test_51QGZYaKIVqnl5aZZLPrAwNWgMwRxAL7Ies2QuDqfN2ZigszcL7jfaG6eFQYGe57mCjH2yQ3MUa8XWq8TyXfEfEXf00T5ZEH2jQ"
+STRIPE_WEBHOOK_SECRET = ""
+REDIRECT_DOMAIN = 'http://127.0.0.1:8000'

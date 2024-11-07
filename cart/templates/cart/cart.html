@@ -2,8 +2,13 @@
 {% load static %}
 
 {% block title %}Carrito de Compras - Solid Steel{% endblock %}
-
-{%block head%} <link rel="stylesheet" href="{% static 'css/style_cart.css' %}"> {%endblock%}
+{% block head %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'general/css/style_general.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style_cart.css' %}">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://js.stripe.com/v3/"></script>
+{% endblock %}
 
 {% block content %}
 <main class="container mt-5">

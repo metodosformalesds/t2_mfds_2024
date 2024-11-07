@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
     path("", views.mostrar_pagos_view, name="mostrar_pagos"),  # Página de pago
     path("iniciar/", views.iniciar_pago_view, name="iniciar_pago"),

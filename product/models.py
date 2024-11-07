@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django.utils import timezone
+
 
 # Create your models here.
  
@@ -96,7 +100,7 @@ class Product(models.Model):
     id_product = models.AutoField(primary_key=True)
     product_name = models.CharField(max_length=100)
     product_description = models.CharField(max_length=100)
-    product_price = models.FloatField(default=0)
+    product_price = models.IntegerField(default=0) #Centavos
     product_stock = models.IntegerField(default=0)
     product_image = models.ImageField(("Product Image"), upload_to='media/products_images/', null=False)
     product_width = models.FloatField(default=0)
@@ -107,6 +111,9 @@ class Product(models.Model):
  
     def __str__(self):
         return self.product_name
+    
+    def get_display_price(self):
+        return "{0:.2f}".format(self.price / 100)
  
  
 class Order(models.Model):
@@ -149,14 +156,23 @@ class Shipment(models.Model):
  
 class Payment(models.Model):
     id_payment = models.AutoField(primary_key=True)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    #order = models.ForeignKey(Order, on_delete=models.CASCADE)
     payment_method = models.CharField(max_length=20, choices=PaymentMethod.choices)
     payment_amount = models.FloatField()
     payment_date = models.DateTimeField()
     payment_status = models.CharField(max_length=20, choices=PaymentStatus.choices)
+
+    app_user = models.ForeignKey(Client, on_delete=models.CASCADE)
+    payment_bool = models.BooleanField(default=False)
+    stripe_checkout_id = models.CharField(max_length=500)
  
     def __str__(self):
         return f"Payment {self.id_payment}"
+
+@receiver(post_save, sender = Client)
+def create_user_payment(sender, instance, created, **kwargs):
+    if created:
+          Payment.objects.create(app_user=instance)
  
  
  
