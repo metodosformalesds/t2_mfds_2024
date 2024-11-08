@@ -52,6 +52,16 @@ KEYWORDS = [
     "expedición", "nacionalidad", "identificación", "clase", "restricciones"
 ]
 
+
+# Crear cliente de Amazon Rekognition
+def create_rekognition_client():
+    return boto3.client(
+        'rekognition',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_REGION
+    )
+    
 # Función para detectar palabras clave en el texto extraído
 def detect_keywords_in_document(image_path, keywords):
     rekognition = boto3.client(
@@ -87,6 +97,18 @@ def detect_keywords_in_document(image_path, keywords):
     # Retorna True si al menos 2 palabras clave son encontradas
     return found_keywords >= 2
 
+# Función para detectar si una imagen contiene un rostro
+def detect_face(image_path):
+    rekognition = create_rekognition_client()
+    with open(image_path, 'rb') as image_file:
+        response = rekognition.detect_faces(
+            Image={'Bytes': image_file.read()},
+            Attributes=['ALL']
+        )
+    return len(response['FaceDetails']) > 0
+
+
+
 
 #funcion que compara las imagenes de la identificacion con la cara en tiempo real
 def compare_faces_with_rekognition(identificacion_path, foto_actual_path):
@@ -110,60 +132,77 @@ def compare_faces_with_rekognition(identificacion_path, foto_actual_path):
 
     return False
 
+# Función para verificar que las imágenes no sean las mismas
+def are_images_identical(identificacion_path, foto_actual_path):
+    # Compara el contenido binario de los dos archivos
+    with open(identificacion_path, 'rb') as img1, open(foto_actual_path, 'rb') as img2:
+        return img1.read() == img2.read()
 
 
-# Definimos la vista para manejar el registro de proveedor
+# Definimos para manejar el registro de proveedor
 def supplier_register(request):
     if request.method == 'POST':
+        
         form = SupplierRegisterForm(request.POST, request.FILES)
         if form.is_valid():
-            # Verifica que la carpeta 'temp' exista
-            temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp')
-            if not os.path.exists(temp_dir):
-                os.makedirs(temp_dir)
+            email = form.cleaned_data['email']
+            
+            # Verificar si el correo ya está registrado
+            if UserAccount.objects.filter(user_email=email).exists():
+                messages.error(request, 'El correo ya está registrado. Por favor, usa otro.')
+            else:
+                # Verifica que la carpeta 'temp' exista
+                temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp')
+                if not os.path.exists(temp_dir):
+                    os.makedirs(temp_dir)
 
-            # Obtener los archivos de las imágenes
-            identificacion_img = request.FILES['identificacion']
-            foto_actual_img = request.FILES['foto_actual']
+                # Obtener los archivos de las imágenes
+                identificacion_img = request.FILES['identificacion']
+                foto_actual_img = request.FILES['foto_actual']
 
-            # Define rutas de guardado
-            identificacion_path = os.path.join(temp_dir, 'identificacion.jpg')
-            foto_actual_path = os.path.join(temp_dir, 'foto_actual.jpg')
+                # Define rutas de guardado
+                identificacion_path = os.path.join(temp_dir, 'identificacion.jpg')
+                foto_actual_path = os.path.join(temp_dir, 'foto_actual.jpg')
 
-            # Guarda las imágenes manualmente en la carpeta 'temp'
-            with open(identificacion_path, 'wb') as f:
-                f.write(identificacion_img.read())
-            with open(foto_actual_path, 'wb') as f:
-                f.write(foto_actual_img.read())
+                # Guarda las imágenes manualmente en la carpeta 'temp'
+                with open(identificacion_path, 'wb') as f:
+                    f.write(identificacion_img.read())
+                with open(foto_actual_path, 'wb') as f:
+                    f.write(foto_actual_img.read())
 
-            try:
-                # Compara las imágenes usando Rekognition
-                match = compare_faces_with_rekognition(identificacion_path, foto_actual_path)
+                try:
+                    # Definir mensajes
+                    success_message = 'Proveedor registrado exitosamente'
+                    face_mismatch_message = 'Los rostros no coinciden.'
+                    invalid_document_message = 'Identificación no válida. Asegúrate de tomar bien la foto y que sea una identificación oficial.'
                 
-                # Detecta palabras clave en el documento usando Rekognition
-                valid_document = detect_keywords_in_document(identificacion_path, KEYWORDS)
-
-                # Definir mensajes
-                success_message = 'Proveedor registrado exitosamente'
-                face_mismatch_message = 'Los rostros no coinciden.'
-                invalid_document_message = 'Identificación no válida. Asegúrate de tomar bien la foto y que sea una identificación oficial.'
+                    # Verificar condiciones
+                    if not detect_keywords_in_document(identificacion_path, KEYWORDS):
+                        messages.error(request, invalid_document_message)
+                        return render(request, 'home/supplier_register.html', {'form': form})
+                    elif not detect_face(identificacion_path):
+                        messages.error(request, 'La identificación no muestra bien el rostro.')
+                        return render(request, 'home/supplier_register.html', {'form': form})
+                    elif not detect_face(foto_actual_path):
+                        messages.error(request, 'La foto actual no muestra bien el rostro.')
+                        return render(request, 'home/supplier_register.html', {'form': form})
+                    elif are_images_identical(identificacion_path, foto_actual_path):
+                        messages.error(request, 'La foto actual no debe ser la misma que la identificación. Por favor, sube una foto diferente.')
+                        return render(request, 'home/supplier_register.html', {'form': form})
+                    elif not compare_faces_with_rekognition(identificacion_path, foto_actual_path):
+                        messages.error(request, face_mismatch_message)
+                        return render(request, 'home/supplier_register.html', {'form': form})
+                    else:
+                        form.save()
+                        messages.success(request, success_message)
+                        return redirect('supplier_login')  # Redirigir a la página de inicio de sesión
                 
-                # Verificar condiciones
-                if not valid_document:
-                    messages.error(request, invalid_document_message)
-                elif not match:
-                    messages.error(request, face_mismatch_message)
-                else:
-                    form.save()
-                    messages.success(request, success_message)
-                    return redirect('supplier_login')  # Redirigir a la página de inicio de sesión
-                
-            finally:
-                # Eliminar archivos temporales después de usarlos
-                if os.path.exists(identificacion_path):
-                    os.remove(identificacion_path)
-                if os.path.exists(foto_actual_path):
-                    os.remove(foto_actual_path)
+                finally:
+                    # Eliminar archivos temporales después de usarlos
+                    if os.path.exists(identificacion_path):
+                        os.remove(identificacion_path)
+                    if os.path.exists(foto_actual_path):
+                        os.remove(foto_actual_path)
         else:
             messages.error(request, 'El formulario no es válido. Revisa los datos.')
         

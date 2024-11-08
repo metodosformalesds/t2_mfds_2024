@@ -6,6 +6,8 @@
     <title>Solid Steel - Registro</title>
     {% load static %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
     <link rel="stylesheet" href="{% static 'css/style_register.css' %}">
     <link rel="stylesheet" href="{% static 'general/css/style_general.css' %}">
 </head>
@@ -31,7 +33,7 @@
                     <h2>Regístrate como proveedor</h2>
                 </div>
 
-                <form id="register-form" method="POST" action="" enctype="multipart/form-data">
+                <form id="register-form" method="POST" action="" enctype="multipart/form-data" onsubmit="return validateForm()">
 
                     {% csrf_token %}
                     <div class="mb-3">
@@ -64,31 +66,53 @@
                         {{ form.email }}
                         <small id="emailHelp" class="form-text text-danger d-none">El correo solo puede contener letras, números, '.', '_', '-', y '@'.</small>
                     </div>
-                    <div class="mb-3">
-                        <label for="id_password" class="form-label">Contraseña</label>
-                        {{ form.password }}
-                        <small id="passwordHelp" class="form-text text-danger d-none">La contraseña debe tener al menos 8 caracteres, una letra mayúscula, un número y un carácter especial.</small>
+                    <div class="mb-3 position-relative">
+                        <label for="passwordField" class="form-label">Contraseña</label>
+                        <div class="input-group">
+                            <input type="password" id="passwordField" name="password" class="form-control" required>
+                            <button 
+                                type="button" 
+                                class="btn btn-outline-secondary" 
+                                onclick="togglePassword()" 
+                                style="border-left: none;">
+                                <!-- Ícono de ojo cerrado -->
+                                <i id="eyeIconClosed" class="bi bi-eye-slash"></i>
+                                <!-- Ícono de ojo abierto -->
+                                <i id="eyeIconOpen" class="bi bi-eye" style="display: none;"></i>
+                            </button>
+                        </div>
+                        <small id="passwordHelp" class="form-text text-danger d-none">
+                            La contraseña debe tener al menos 8 caracteres, incluir un número y un carácter especial.
+                        </small>
                     </div>
 
 
                     <!-- Campo para subir identificación oficial -->
-    <div class="mb-3">
-        <label for="id_identificacion" class="form-label">Subir Identificación Oficial</label>
-        <input type="file" name="identificacion" class="form-control" required>
-    </div>
+                    <div class="mb-3">
+                        <label for="id_identificacion" class="form-label">Subir Identificación Oficial</label>
+                        <input type="file" name="identificacion" class="form-control" required>
+                        <small id="identificacionHelp" class="form-text text-danger d-none">La identificación debe ser un archivo de imagen en formato JPEG, PNG o BMP.</small>
+                    </div>
 
-    <!-- Campo para subir foto actual -->
-    <div class="mb-3">
-        <label for="foto_actual" class="form-label">Foto Actual</label>
-        <div class="d-flex flex-column align-items-center">
-            <video id="video" width="100%" autoplay style="display: none;"></video>
-            <canvas id="canvas" style="display: none;"></canvas>
-            <button type="button" id="capture-btn" class="btn btn-primary mt-2">Tomar Foto</button>
-            <img id="photo-preview" src="#" alt="Foto previa" style="display: none; width: 100%; max-width: 300px;" />
-            <input type="file" id="foto-input" name="foto_actual" class="form-control-file" accept="image/*" capture="environment" style="display: none;">
-        </div>
-    </div>
-    
+                    <!-- Campo de cámara o carga de imagen -->
+                    <div class="mb-3" id="photo-section">
+                        <!-- Sección de la cámara -->
+                        <label for="foto_actual" class="form-label" id="title_foto_actual">Foto Actual</label>
+                        <div class="d-flex flex-column align-items-center" id="camera-section" style="display: none;">
+                            <video id="video" width="100%" autoplay></video>
+                            <canvas id="canvas" style="display: none;"></canvas>
+                            <button type="button" id="capture-btn" class="btn btn-primary mt-2">Tomar Foto</button>
+                            <img id="photo-preview" src="#" alt="Foto previa" style="display: none; width: 100%; max-width: 300px;">
+                        </div>
+                        
+                        <!-- Sección de carga de archivo -->
+                        <div id="file-upload-section">
+                            <label for="id_identificacion" class="form-label">Subir foto actual</label>
+                            <input type="file" name="foto_actual" class="form-control" accept="image/*">
+                            <small id="fotoHelp" class="form-text text-danger d-none">La foto debe ser un archivo de imagen en formato JPEG, PNG o BMP.</small>
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn btn-dark w-100">Registrar</button>
                 </form>
                 
@@ -105,11 +129,32 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
     <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('passwordField');
+            const eyeIconClosed = document.getElementById('eyeIconClosed');
+            const eyeIconOpen = document.getElementById('eyeIconOpen');
+    
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIconClosed.style.display = 'none';
+                eyeIconOpen.style.display = 'block';
+            } else {
+                passwordField.type = 'password';
+                eyeIconClosed.style.display = 'block';
+                eyeIconOpen.style.display = 'none';
+            }
+        }
+    </script>
+    <script>
+        //Validate form
         function validateForm() {
             let isValid = true;
-
+        
             // Validación de nombre
             const nameInput = document.getElementById("id_supplier_name");
             const nameHelp = document.getElementById("nameHelp");
@@ -120,8 +165,8 @@
             } else {
                 nameHelp.classList.add("d-none");
             }
-
-            // Validación de dirección (al menos 5 caracteres, solo letras y números)
+        
+            // Validación de dirección
             const addressInput = document.getElementById("id_supplier_address");
             const addressHelp = document.getElementById("addressHelp");
             const addressRegex = /^[A-Za-z0-9\s]{5,}$/;
@@ -131,7 +176,7 @@
             } else {
                 addressHelp.classList.add("d-none");
             }
-
+        
             // Validación de ciudad
             const cityInput = document.getElementById("id_supplier_city");
             const cityHelp = document.getElementById("cityHelp");
@@ -141,7 +186,7 @@
             } else {
                 cityHelp.classList.add("d-none");
             }
-
+        
             // Validación de código postal
             const zipCodeInput = document.getElementById("id_supplier_zip_code");
             const zipCodeHelp = document.getElementById("zipCodeHelp");
@@ -152,7 +197,7 @@
             } else {
                 zipCodeHelp.classList.add("d-none");
             }
-
+        
             // Validación de estado
             const stateInput = document.getElementById("id_supplier_state");
             const stateHelp = document.getElementById("stateHelp");
@@ -162,7 +207,7 @@
             } else {
                 stateHelp.classList.add("d-none");
             }
-
+        
             // Validación de correo electrónico
             const emailInput = document.getElementById("id_email");
             const emailHelp = document.getElementById("emailHelp");
@@ -173,9 +218,9 @@
             } else {
                 emailHelp.classList.add("d-none");
             }
-
+        
             // Validación de contraseña
-            const passwordInput = document.getElementById("id_password");
+            const passwordInput = document.getElementById("passwordField");
             const passwordHelp = document.getElementById("passwordHelp");
             const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.{8,})/;
             if (!passwordRegex.test(passwordInput.value)) {
@@ -184,55 +229,121 @@
             } else {
                 passwordHelp.classList.add("d-none");
             }
+        
+            // Validación de archivo de identificación
+    const identificacionInput = document.querySelector("input[name='identificacion']");
+    const identificacionHelp = document.getElementById("identificacionHelp");
+    const validImageTypes = ['image/jpeg', 'image/png'];
+    if (!identificacionInput.files || identificacionInput.files.length === 0) {
+        identificacionHelp.textContent = "Por favor, sube tu identificación oficial.";
+        identificacionHelp.classList.remove("d-none");
+        isValid = false;
+    } else {
+        const identificacionFile = identificacionInput.files[0];
+        if (!validImageTypes.includes(identificacionFile.type)) {
+            identificacionHelp.textContent = "La identificación debe ser un archivo de imagen en formato JPEG, PNG.";
+            identificacionHelp.classList.remove("d-none");
+            isValid = false;
+        } else {
+            identificacionHelp.classList.add("d-none");
+        }
+    }
+
+    // Validación de foto actual
+const fotoInput = document.querySelector("input[name='foto_actual']");
+const fotoHelp = document.getElementById("fotoHelp");
+const rekognitionValidImageTypes = ['image/jpeg', 'image/png'];
+
+if (!fotoInput.files || fotoInput.files.length === 0) {
+    fotoHelp.textContent = "Por favor, toma una foto actual o súbela.";
+    fotoHelp.classList.remove("d-none");
+    isValid = false;
+} else {
+    const fotoFile = fotoInput.files[0];
+    if (!rekognitionValidImageTypes.includes(fotoFile.type)) {
+        fotoHelp.textContent = "La foto debe ser un archivo de imagen en formato JPEG o PNG.";
+        fotoHelp.classList.remove("d-none");
+        isValid = false;
+    } else {
+        fotoHelp.classList.add("d-none");
+    }
+}
 
             return isValid;
         }
+        
+
+        //CAMERA 
         document.addEventListener("DOMContentLoaded", function() {
             const video = document.getElementById('video');
             const canvas = document.getElementById('canvas');
             const captureBtn = document.getElementById('capture-btn');
             const photoPreview = document.getElementById('photo-preview');
-            const fotoInput = document.getElementById('foto-input');
-
-            // Función para acceder a la cámara y mostrar el video
-            captureBtn.addEventListener("click", async () => {
-                if (video.style.display === "none") {
-                    try {
-                        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                        video.srcObject = stream;
-                        video.style.display = "block";
-                        captureBtn.textContent = "Capturar";
-                    } catch (error) {
-                        console.error("No se puede acceder a la cámara:", error);
+            const cameraSection = document.getElementById('camera-section');
+            const titleCameraSection = document.getElementById('title_foto_actual');
+            const fileUploadSection = document.getElementById('file-upload-section');
+            const fotoInput = document.querySelector("input[name='foto_actual']");
+        
+            let isCameraAvailable = false; // Para rastrear la disponibilidad de la cámara
+        
+            // Verificar si la cámara está disponible
+            navigator.mediaDevices.enumerateDevices()
+                .then(devices => {
+                    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                    if (videoDevices.length > 0) {
+                        // Si hay dispositivos de cámara, intenta acceder a la cámara
+                        return navigator.mediaDevices.getUserMedia({ video: true });
+                    } else {
+                        throw new Error("No se encontraron dispositivos de cámara.");
                     }
-                } else {
-                    // Captura la imagen desde el video
+                })
+                .then(stream => {
+                    isCameraAvailable = true;
+                    video.srcObject = stream;
+                    cameraSection.style.display = "block";
+                    fileUploadSection.style.display = "none";
+                })
+                .catch(error => {
+                    // Si la cámara no está disponible, muestra la carga de archivo
+                    console.error("No se puede acceder a la cámara:", error);
+                    cameraSection.style.display = "none";
+                    fileUploadSection.style.display = "block";
+                    titleCameraSection.style.display="none";
+        
+                    // Forzar que la sección de la cámara no sea visible
+                    cameraSection.classList.add("visually-hidden"); // Añadir una clase que oculte el elemento
+                });
+        
+            // Capturar la foto desde la cámara
+            captureBtn.addEventListener("click", () => {
+                if (isCameraAvailable) {
                     const context = canvas.getContext("2d");
                     canvas.width = video.videoWidth;
                     canvas.height = video.videoHeight;
                     context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-                    
-                    // Detiene el video
-                    const stream = video.srcObject;
-                    const tracks = stream.getTracks();
-                    tracks.forEach(track => track.stop());
-                    video.style.display = "none";
-                    
-                    // Muestra la previsualización de la foto
+        
+                    // Mostrar la foto capturada
                     const imageDataURL = canvas.toDataURL("image/png");
                     photoPreview.src = imageDataURL;
                     photoPreview.style.display = "block";
-                    
-                    // Convierte la imagen en un archivo para subir
-                    const blob = await fetch(imageDataURL).then(res => res.blob());
-                    const file = new File([blob], "foto_actual.png", { type: "image/png" });
-                    
-                    // Asigna el archivo al input para el envío en el formulario
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    fotoInput.files = dataTransfer.files;
-                    
-                    captureBtn.textContent = "Tomar otra foto";
+        
+                    // Crear un archivo de imagen y adjuntarlo al input
+                    fetch(imageDataURL)
+                        .then(res => res.blob())
+                        .then(blob => {
+                            const file = new File([blob], "foto_actual.png", { type: "image/png" });
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+                            fotoInput.files = dataTransfer.files;
+                        });
+                }
+            });
+        
+            // Validar antes de enviar el formulario
+            document.getElementById("register-form").addEventListener("submit", function(event) {
+                if (cameraSection.style.display === "block" && photoPreview.style.display === "none") {
+                    event.preventDefault();
+                    alert("Por favor, captura una foto antes de enviar el formulario.");
                 }
             });
         });
