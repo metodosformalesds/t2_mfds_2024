@@ -38,7 +38,7 @@ def cart(request):
             payment_method_types = ['card'],
             line_items=[{
                     'price_data': {
-                        'currency': 'usd',
+                        'currency': 'mxn',
                         'product_data': {
                             'name': 'Carrito de compras',
                         },
@@ -83,8 +83,7 @@ def stripe_webhook(request):
     return HttpResponse(status = 200)
 
 #4242424242424242
-def payment_successful(request):
-    
+def payment_successful(request):  
    # stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
    # checkout_session_id = request.GET.get('session_id', None)
    # session = stripe.checkout.Session.retrieve(checkout_session_id)

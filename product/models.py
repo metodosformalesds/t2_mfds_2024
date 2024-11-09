@@ -156,7 +156,7 @@ class Shipment(models.Model):
  
 class Payment(models.Model):
     id_payment = models.AutoField(primary_key=True)
-    #order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
     payment_method = models.CharField(max_length=20, choices=PaymentMethod.choices)
     payment_amount = models.FloatField()
     payment_date = models.DateTimeField()

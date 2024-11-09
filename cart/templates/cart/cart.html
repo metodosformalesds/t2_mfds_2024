@@ -54,13 +54,35 @@
     </div>
 
     <div class="payment-container mt-4">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+
+                    <form action="{% url 'iniciar_pago' %}" method="POST">
+                        {% csrf_token %}
+                        <button class="btn btn-primary" {% if total == 0 %}disabled{% endif %}>
+                            Pagar
+                        </button>
+                    </form>
+
+                </div>
+
+                <div class="col" >
+
+                    <form action="{% url 'cart' %}" method="POST">
+
+                        {% csrf_token %}
+                        <button type = "submit" id = "checkout-button" class="btn btn-primary" {% if total == 0 %}disabled{% endif %}>Pagar con Stripe</button>
+            
+                    </form>
+
+                </div>
+            </div>
+        </div>
         <p>Total: ${{ total }}</p>
-        <form action="{% url 'iniciar_pago' %}" method="POST">
-            {% csrf_token %}
-            <button class="btn btn-primary" {% if total == 0 %}disabled{% endif %}>
-                Pagar
-            </button>
-        </form>
+        
+
+        
     </div>
 </main>
 {% endblock %}
