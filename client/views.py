@@ -56,3 +56,11 @@ def client_edit_info(request):
         'client': client,
         'user': user,
     })
+
+def client_address(request):
+
+    user_id = request.session.get('user_id')
+    user_account = UserAccount.objects.get(id_user=user_id)
+    client = Client.objects.get(user=user_account)
+
+    render(request, 'client/client_address.html')

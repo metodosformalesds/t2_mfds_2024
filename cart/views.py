@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
-from product.models import Product, ShoppingCart, UserAccount, Client, Payment
+from product.models import Product, ShoppingCart, UserAccount, Client, Payment, Order, ClientAddress
 from django.conf import settings
 from django.http import HttpResponse
 import stripe
@@ -86,22 +86,41 @@ def stripe_webhook(request):
 
 #4242424242424242
 def payment_successful(request):  
-   # stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
-   # checkout_session_id = request.GET.get('session_id', None)
-   # session = stripe.checkout.Session.retrieve(checkout_session_id)
-   # customer = stripe.Customer.retrieve(session.customer)
+    stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
+    checkout_session_id = request.GET.get('session_id', None)
+    session = stripe.checkout.Session.retrieve(checkout_session_id)
+    customer = stripe.Customer.retrieve(session.customer)
 
-   # user_id = request.session.get('user_id')
-   # user = get_object_or_404(UserAccount, pk=user_id)
-   # client = Client.objects.get(user=user)
+    user_id = request.session.get('user_id')
+    user_account = UserAccount.objects.get(id_user=user_id)
+    client = Client.objects.get(user=user_account)
 
+    carrito_items = ShoppingCart.objects.filter(client=client)
+    total = sum(item.product.product_price * item.cart_product_quantity for item in carrito_items)
 
-    
-   # user_payment = Payment.objects.get(app_user=client)
-   # user_payment.stripe_checkout_id = checkout_session_id
-   # user_payment.save()
-    
+    # Suponiendo que 'order' ya existe o debes crearla primero
+    #address = ClientAddress.objects.filter(client=client).first()  
+
+    # Crea la orden con los datos especificados
+    #order = Order.objects.create(
+    #    client=client,
+    #    address=address,
+    #   order_date=timezone.now()  # Asigna la fecha actual
+    #)
+
+    # Llama a la función para crear el registro de pago
+    payment = Payment.objects.create(
+        #order=order,
+        payment_method="Stripe",
+        payment_amount=total,
+        payment_status="Completed",
+        app_user=client,
+        stripe_checkout_id=checkout_session_id,
+        payment_bool=True  # Marcado como pagado
+    )
+
     return render(request, 'cart/success.html')
+
 
 def payment_cancelled(request):
     return render(request, 'cart/cancel.html')

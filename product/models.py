@@ -156,10 +156,10 @@ class Shipment(models.Model):
  
 class Payment(models.Model):
     id_payment = models.AutoField(primary_key=True)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    
     payment_method = models.CharField(max_length=20, choices=PaymentMethod.choices)
     payment_amount = models.FloatField()
-    payment_date = models.DateTimeField()
+    payment_date = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(max_length=20, choices=PaymentStatus.choices)
 
     app_user = models.ForeignKey(Client, on_delete=models.CASCADE)
@@ -168,12 +168,6 @@ class Payment(models.Model):
  
     def __str__(self):
         return f"Payment {self.id_payment}"
-
-@receiver(post_save, sender = Client)
-def create_user_payment(sender, instance, created, **kwargs):
-    if created:
-          Payment.objects.create(app_user=instance)
- 
  
  
 class ShoppingCart(models.Model):
