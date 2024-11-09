@@ -88,8 +88,8 @@ class ClientAddress(models.Model):
     client_address = models.CharField(max_length=100)
     client_city = models.CharField(max_length=50)
     client_state = models.CharField(max_length=50)
-    client_zip_code = models.CharField(max_length=10)
-    client_address_additional_information = models.CharField(max_length=100)
+    client_zip_code = models.IntegerField()
+    client_address_additional_information = models.CharField(max_length=150)
  
     def __str__(self):
         return self.client_address
@@ -156,7 +156,7 @@ class Shipment(models.Model):
  
 class Payment(models.Model):
     id_payment = models.AutoField(primary_key=True)
-    
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
     payment_method = models.CharField(max_length=20, choices=PaymentMethod.choices)
     payment_amount = models.FloatField()
     payment_date = models.DateTimeField(auto_now_add=True)

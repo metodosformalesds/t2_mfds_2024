@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from product.models import Client, UserAccount
+from product.models import Client, UserAccount, ClientAddress
 from django.contrib import messages
-from .forms import ClientForm
+from .forms import ClientForm, ClientAddressForm
 
 def client_edit_info(request):
     user_id = request.session.get('user_id')  # Obtener el ID del usuario desde la sesión
@@ -57,10 +57,34 @@ def client_edit_info(request):
         'user': user,
     })
 
-def client_address(request):
+def client_address(request, id_address = None):
 
     user_id = request.session.get('user_id')
     user_account = UserAccount.objects.get(id_user=user_id)
     client = Client.objects.get(user=user_account)
+    
+    client_address, created = ClientAddress.objects.get_or_create(
+    client=client,
+    defaults={
+        'client_address': 'Dirección predeterminada',
+        'client_city': 'Ciudad predeterminada',
+        'client_state': 'Estado predeterminado',
+        'client_zip_code': 12345,
+        'client_address_additional_information': 'Informacion predeterminada',
+    }
+)
 
-    render(request, 'client/client_address.html')
+    if request.method == 'POST':
+        form = ClientAddressForm(request.POST, instance=client_address)
+        if form.is_valid():
+            form.save()
+            #return redirect('')  # Cambia a la URL de éxito deseada
+    else:
+        form = ClientAddressForm(instance=client_address)
+
+        
+
+    
+
+
+    return render(request, 'client/client_address.html', {'form': form})

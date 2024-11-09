@@ -99,18 +99,18 @@ def payment_successful(request):
     total = sum(item.product.product_price * item.cart_product_quantity for item in carrito_items)
 
     # Suponiendo que 'order' ya existe o debes crearla primero
-    #address = ClientAddress.objects.filter(client=client).first()  
+    address = ClientAddress.objects.filter(client=client).first()  
 
     # Crea la orden con los datos especificados
-    #order = Order.objects.create(
-    #    client=client,
-    #    address=address,
-    #   order_date=timezone.now()  # Asigna la fecha actual
-    #)
+    order = Order.objects.create(
+        client=client,
+        address=address,
+        order_date=timezone.now()  # Asigna la fecha actual
+    )
 
     # Llama a la función para crear el registro de pago
     payment = Payment.objects.create(
-        #order=order,
+        order=order,
         payment_method="Stripe",
         payment_amount=total,
         payment_status="Completed",
