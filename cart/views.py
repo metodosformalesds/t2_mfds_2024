@@ -6,6 +6,8 @@ from django.conf import settings
 from django.http import HttpResponse
 import stripe
 import time
+from django.http import JsonResponse 
+import pandas as pd
 
 
 # Vista para mostrar el carrito
@@ -187,3 +189,26 @@ def eliminar_del_carrito(request, id):
     carrito_item = get_object_or_404(ShoppingCart, client=client, product_id=id)
     carrito_item.delete()
     return redirect('cart')
+
+
+def drag_and_drop(request):
+    if request.method == 'POST' and request.FILES.get('file'):
+        excel_file = request.FILES['file']
+
+        try:
+            # Leer el archivo Excel con pandas
+            df = pd.read_excel(excel_file)
+            # Convertir el DataFrame a una lista de listas (filas)
+            data = df.fillna('').values.tolist()  # Rellenar valores NaN con cadenas vacías
+            headers = df.columns.tolist()  # Obtener los encabezados de las columnas
+
+            print("Encabezados:", headers)  # Imprimir los encabezados en la consola
+            print("Datos:", data)  # Imprimir los datos en la consola
+
+            # Enviar los datos del Excel como respuesta JSON
+            return JsonResponse({"success": True, "headers": headers, "data": data})
+        except Exception as e:
+            print(f"Error al procesar el archivo: {e}")
+            return JsonResponse({"success": False, "error": str(e)})
+
+    return render(request, 'cart/drag.html')
