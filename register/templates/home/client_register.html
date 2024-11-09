@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solid Steel - Registro Cliente</title>
+    <title>Solid Steel - Registro</title>
     {% load static %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{% static 'css/style_register.css' %}">
     <link rel="stylesheet" href="{% static 'general/css/style_general.css' %}">
 </head>
@@ -28,21 +29,9 @@
                         {% endfor %}
                     </div>
                 {% endif %}
-
+                
                 <div class="d-flex justify-content-center mb-3">
                     <h2>Regístrate como Cliente</h2>
-                </div>
-
-                <div class="d-flex flex-column gap-2">
-                    <a href=" " class="btn btn-outline-dark w-100">
-                        <i class="bi bi-google"></i> Continuar con Google
-                    </a>
-                </div>
-
-                <div class="d-flex align-items-center my-4">
-                    <hr class="flex-grow-1">
-                    <span class="px-2">O</span>
-                    <hr class="flex-grow-1">
                 </div>
 
                 <form id="register-form" method="POST" action="" enctype="multipart/form-data" onsubmit="return validateForm()">
@@ -67,27 +56,41 @@
                         {{ form.email }}
                         <small id="emailHelp" class="form-text text-danger d-none">El correo solo puede contener letras, números, '.', '_', '-', y '@'.</small>
                     </div>
-                    <div class="mb-3">
-                        <label for="id_password" class="form-label">Contraseña</label>
-                        {{ form.password }}
-                        <small id="passwordHelp" class="form-text text-danger d-none">La contraseña debe tener al menos 8 caracteres, una letra mayúscula, un número y un carácter especial.</small>
+                    <div class="mb-3 position-relative">
+                        <label for="passwordField" class="form-label">Contraseña</label>
+                        <div class="input-group">
+                            <input type="password" id="passwordField" name="password" class="form-control" required>
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()" style="border-left: none;">
+                                <i id="eyeIconClosed" class="bi bi-eye-slash"></i>
+                                <i id="eyeIconOpen" class="bi bi-eye" style="display: none;"></i>
+                            </button>
+                        </div>
+                        <small id="passwordHelp" class="form-text text-danger d-none">
+                            La contraseña debe tener al menos 8 caracteres, un número y un carácter especial.
+                        </small>
                     </div>
 
                     <!-- Campo para subir identificación oficial -->
                     <div class="mb-3">
                         <label for="id_identificacion" class="form-label">Subir Identificación Oficial</label>
                         <input type="file" name="identificacion" class="form-control" required>
+                        <small id="identificacionHelp" class="form-text text-danger d-none">La identificación debe ser un archivo de imagen en formato JPEG, PNG o BMP.</small>
                     </div>
 
-                    <!-- Campo para capturar foto actual -->
-                    <div class="mb-3">
-                        <label for="foto_actual" class="form-label">Foto Actual</label>
-                        <div class="d-flex flex-column align-items-center">
-                            <video id="video" width="100%" autoplay style="display: none;"></video>
+                    <!-- Campo de cámara o carga de imagen -->
+                    <div class="mb-3" id="photo-section">
+                        <label for="foto_actual" class="form-label" id="title_foto_actual">Foto Actual</label>
+                        <div class="d-flex flex-column align-items-center" id="camera-section" style="display: none;">
+                            <video id="video" width="100%" autoplay></video>
                             <canvas id="canvas" style="display: none;"></canvas>
                             <button type="button" id="capture-btn" class="btn btn-primary mt-2">Tomar Foto</button>
-                            <img id="photo-preview" src="#" alt="Foto previa" style="display: none; width: 100%; max-width: 300px;" />
-                            <input type="file" id="foto-input" name="foto_actual" class="form-control-file" accept="image/*" capture="environment" style="display: none;">
+                            <img id="photo-preview" src="#" alt="Foto previa" style="display: none; width: 100%; max-width: 300px;">
+                        </div>
+
+                        <div id="file-upload-section">
+                            <label for="id_foto_actual" class="form-label">Subir foto actual</label>
+                            <input type="file" name="foto_actual" class="form-control" accept="image/*">
+                            <small id="fotoHelp" class="form-text text-danger d-none">La foto debe ser un archivo de imagen en formato JPEG, PNG o BMP.</small>
                         </div>
                     </div>
 
@@ -109,22 +112,26 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('passwordField');
+            const eyeIconClosed = document.getElementById('eyeIconClosed');
+            const eyeIconOpen = document.getElementById('eyeIconOpen');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIconClosed.style.display = 'none';
+                eyeIconOpen.style.display = 'block';
+            } else {
+                passwordField.type = 'password';
+                eyeIconClosed.style.display = 'block';
+                eyeIconOpen.style.display = 'none';
+            }
+        }
+
         function validateForm() {
             let isValid = true;
-
-            // Validación de nombre
-            const firstNameInput = document.getElementById("id_client_first_name");
-            const nameHelp = document.getElementById("nameHelp");
-            const nameRegex = /^[A-Za-zÀ-ÿ\u00f1\u00d1\s]+$/;
-            if (!nameRegex.test(firstNameInput.value)) {
-                nameHelp.classList.remove("d-none");
-                isValid = false;
-            } else {
-                nameHelp.classList.add("d-none");
-            }
-
-            // Validación de otros campos...
-
+            // Validaciones de formulario (nombre, apellido, teléfono, correo, etc.)
+            // Agrega las validaciones necesarias como en el formulario del proveedor
             return isValid;
         }
 
@@ -133,47 +140,59 @@
             const canvas = document.getElementById('canvas');
             const captureBtn = document.getElementById('capture-btn');
             const photoPreview = document.getElementById('photo-preview');
-            const fotoInput = document.getElementById('foto-input');
+            const cameraSection = document.getElementById('camera-section');
+            const fileUploadSection = document.getElementById('file-upload-section');
+            const fotoInput = document.querySelector("input[name='foto_actual']");
 
-            // Función para acceder a la cámara y mostrar el video
-            captureBtn.addEventListener("click", async () => {
-                if (video.style.display === "none") {
-                    try {
-                        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                        video.srcObject = stream;
-                        video.style.display = "block";
-                        captureBtn.textContent = "Capturar";
-                    } catch (error) {
-                        console.error("No se puede acceder a la cámara:", error);
+            let isCameraAvailable = false;
+
+            navigator.mediaDevices.enumerateDevices()
+                .then(devices => {
+                    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                    if (videoDevices.length > 0) {
+                        return navigator.mediaDevices.getUserMedia({ video: true });
+                    } else {
+                        throw new Error("No se encontraron dispositivos de cámara.");
                     }
-                } else {
-                    // Captura la imagen desde el video
+                })
+                .then(stream => {
+                    isCameraAvailable = true;
+                    video.srcObject = stream;
+                    cameraSection.style.display = "block";
+                    fileUploadSection.style.display = "none";
+                })
+                .catch(error => {
+                    console.error("No se puede acceder a la cámara:", error);
+                    cameraSection.style.display = "none";
+                    fileUploadSection.style.display = "block";
+                });
+
+            captureBtn.addEventListener("click", () => {
+                if (isCameraAvailable) {
                     const context = canvas.getContext("2d");
                     canvas.width = video.videoWidth;
                     canvas.height = video.videoHeight;
                     context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
-                    
-                    // Detiene el video
-                    const stream = video.srcObject;
-                    const tracks = stream.getTracks();
-                    tracks.forEach(track => track.stop());
-                    video.style.display = "none";
-                    
-                    // Muestra la previsualización de la foto
+
                     const imageDataURL = canvas.toDataURL("image/png");
                     photoPreview.src = imageDataURL;
                     photoPreview.style.display = "block";
-                    
-                    // Convierte la imagen en un archivo para subir
-                    const blob = await fetch(imageDataURL).then(res => res.blob());
-                    const file = new File([blob], "foto_actual.png", { type: "image/png" });
-                    
-                    // Asigna el archivo al input para el envío en el formulario
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    fotoInput.files = dataTransfer.files;
-                    
-                    captureBtn.textContent = "Tomar otra foto";
+
+                    fetch(imageDataURL)
+                        .then(res => res.blob())
+                        .then(blob => {
+                            const file = new File([blob], "foto_actual.png", { type: "image/png" });
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+                            fotoInput.files = dataTransfer.files;
+                        });
+                }
+            });
+
+            document.getElementById("register-form").addEventListener("submit", function(event) {
+                if (cameraSection.style.display === "block" && photoPreview.style.display === "none") {
+                    event.preventDefault();
+                    alert("Por favor, captura una foto antes de enviar el formulario.");
                 }
             });
         });

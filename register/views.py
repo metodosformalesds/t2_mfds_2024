@@ -222,35 +222,37 @@ def client_register(request):
             if UserAccount.objects.filter(user_email=email).exists():
                 messages.error(request, 'El correo ya está registrado. Por favor, usa otro.')
             else:
-                # Guardar las imágenes temporalmente para verificación
+                # Crear directorio temporal si no existe
                 temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp')
                 if not os.path.exists(temp_dir):
                     os.makedirs(temp_dir)
                 
-                # Obtener los archivos de las imágenes de identificación y foto tomada
+                # Obtener imágenes de identificación y foto actual
                 identificacion_img = request.FILES['identificacion']
                 foto_actual_img = request.FILES['foto_actual']
 
-                # Define rutas de guardado temporal
+                # Definir rutas temporales para guardar las imágenes
                 identificacion_path = os.path.join(temp_dir, 'identificacion.jpg')
                 foto_actual_path = os.path.join(temp_dir, 'foto_actual.jpg')
 
-                # Guarda las imágenes manualmente en la carpeta 'temp'
+                # Guardar las imágenes en las rutas temporales
                 with open(identificacion_path, 'wb') as f:
                     f.write(identificacion_img.read())
                 with open(foto_actual_path, 'wb') as f:
                     f.write(foto_actual_img.read())
 
                 try:
-                    # Compara las imágenes usando Rekognition
-                    match = compare_faces_with_rekognition(identificacion_path, foto_actual_path)
-
-                    # Mensaje en caso de que las fotos no coincidan
-                    face_mismatch_message = 'La verificación facial ha fallado. Por favor, asegúrate de que la foto tomada coincida con la identificación.'
-
-                    # Verifica la coincidencia de los rostros antes de permitir el registro
-                    if not match:
-                        messages.error(request, face_mismatch_message)
+                    # Verificar condiciones
+                    if not detect_keywords_in_document(identificacion_path, KEYWORDS):
+                        messages.error(request, 'Identificación no válida. Asegúrate de que sea una identificación oficial.')
+                    elif not detect_face(identificacion_path):
+                        messages.error(request, 'La identificación no muestra claramente el rostro.')
+                    elif not detect_face(foto_actual_path):
+                        messages.error(request, 'La foto actual no muestra claramente el rostro.')
+                    elif are_images_identical(identificacion_path, foto_actual_path):
+                        messages.error(request, 'Las imágenes no deben ser idénticas. Sube fotos diferentes.')
+                    elif not compare_faces_with_rekognition(identificacion_path, foto_actual_path):
+                        messages.error(request, 'Los rostros no coinciden.')
                     else:
                         # Guarda el cliente y muestra mensaje de éxito
                         form.save()
@@ -264,7 +266,6 @@ def client_register(request):
                         os.remove(foto_actual_path)
         else:
             messages.error(request, 'El formulario no es válido. Revisa los datos.')
-        
     else:
         form = ClientRegisterForm()
 
