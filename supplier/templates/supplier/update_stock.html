@@ -17,23 +17,7 @@
 <div class="header-botones">
   
     <div class="container">
-        <div class="row">
-    
-    <div class="col-md-9"><!--columna2 abre-->
-        
-        <!--
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle botones" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Categoria
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item opciones" href="#">Planchas</a></li>
-              <li><a class="dropdown-item opciones" href="#">Soleras</a></li>
-            </ul>
-          </div>
-          -->
-    </div><!--columna 2 cierra-->
-    </div> <!--row-->
+
     <div class="d-flex justify-content-left ">
       <button class="btn btn-outline-secondary" onclick="window.location.href='{% url 'supplier_menu' %}'">
           <span class="me-1">&larr;</span> Volver
@@ -73,21 +57,22 @@
               <input type="hidden" name="product_id" value="{{ Product.id_product }}">
               <div class="card mb-3">
                   <div class="row g-0">
-                      <div class="col-md-4">
-                          <img src="{{ Product.product_image.url }}" class="img-fluid rounded-start" style="width: auto; height: 244.4px; width:auto" alt="...">
-                      </div>
+                    <div class="col-md-4">
+                        <img src="{{ Product.product_image.url }}" class="img-fluid rounded-start" alt="...">
+                    </div>
                       <div class="col-md-8">
                           <div class="card-body ">
-                              <div class="d-flex align-items-center">
-                                  <h5 class="card-title principal">{{ Product.product_name }} Precio:&nbsp;</h5>
-                                  <input type="number" class="form-control-sm dato-entrada" name="new_price" min="0" step="0.01" required placeholder="{{ Product.product_price }}">
-                              </div>
+                            <h3 class="card-title principal">{{ Product.product_name }}</h3>
                               <p class="card-text description">{{ Product.product_material }}&nbsp;-&nbsp;{{ Product.product_description }}&nbsp;-&nbsp;Espesor:&nbsp;{{ Product.product_thickness }}&nbsp;mm</p>
                               <div class="container">
-                                  <div class="row align-items-center">
+                                  <div class="column align-items-center">
+                                    <div class="col-md-6">
+                                        <label class="card-title principal">Precio:&nbsp;</label>
+                                        <input type="number" class="form-control dato-entrada" name="new_price" min="0" step="10.00" required value="{{ Product.product_price }}">
+                                    </div>
                                       <div class="col-md-6">
                                           <label for="stockInput" class="form-label">Cantidad</label>
-                                          <input type="number" class="form-control cantidad" name="new_stock" min="0" required placeholder="{{ Product.product_stock }}">
+                                          <input type="number" class="form-control cantidad" name="new_stock" min="0" step="10.00" required value="{{ Product.product_stock }}">
                                       </div>
                                   </div>
                                   
@@ -116,12 +101,6 @@
     </div>
     </div>
 </div>
-
-<div>
-
-</div>
-
 <script src="https://kit.fontawesome.com/c75f30fc9e.js" crossorigin="anonymous"></script>
-<script>
 
 {% endblock %}
