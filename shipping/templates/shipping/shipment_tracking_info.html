@@ -1,0 +1,21 @@
+{% extends "base_without_image.html" %}
+{% load static %}
+
+{% block content %}
+  <h1>Información de Envío</h1>
+
+  <p><strong>Número de Seguimiento:</strong> {{ shipment_record.shipment_tracking_number }}</p>
+  <p><strong>Transportista:</strong> {{ shipment_record.shipment_carrier }}</p>
+  <p><strong>Estado:</strong> {{ shipment.shipment_status }}</p>
+  <p><strong>Fecha de Envío:</strong> {{ shipment_record.shipment_date|date:"d/m/Y H:i" }}</p>
+  <p><strong>Fecha Estimada de Entrega:</strong> {{ shipment_record.shipment_estimated_delivery_date|date:"d/m/Y H:i" }}</p>
+  <p><strong>Fecha de Entrega Real:</strong> 
+    {% if shipment_record.shipment_actual_delivery_date %}
+      {{ shipment_record.shipment_actual_delivery_date|date:"d/m/Y H:i" }}
+    {% else %}
+      No entregado aún
+    {% endif %}
+  </p>
+
+  <a href="{% url 'paid_orders' %}">Volver a Pedidos Pagados</a>
+{% endblock %}

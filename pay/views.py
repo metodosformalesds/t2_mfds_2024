@@ -2,9 +2,10 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.contrib import messages
 from paypalrestsdk import Payment
-from product.models import ShoppingCart, UserAccount, Client
+from product.models import ShoppingCart, UserAccount, Client, Order, Shipment
 from django.views.decorators.http import require_POST
 from .paypal import paypalrestsdk
+from django.utils import timezone
 
 @require_POST
 def iniciar_pago_view(request):
@@ -83,7 +84,6 @@ def iniciar_pago_view(request):
         return redirect("cart")  # Redirige de nuevo al carrito en caso de error
 
 
-
 def pago_exitoso_view(request):
     payment_id = request.GET.get("paymentId")
     payer_id = request.GET.get("PayerID")
@@ -92,9 +92,46 @@ def pago_exitoso_view(request):
     pago = Payment.find(payment_id)
     if pago.execute({"payer_id": payer_id}):
         messages.success(request, "Pago completado con éxito")
-        # Limpia el carrito del usuario
+        
+        # Obtener el ID del usuario
         user_id = request.session.get('user_id')
-        ShoppingCart.objects.filter(client_id=user_id).delete()
+        
+        # Obtener el cliente asociado y limpiar el carrito
+        client = Client.objects.get(user__id_user=user_id)
+        carrito_items = ShoppingCart.objects.filter(client=client)
+
+        # Crear un nuevo pedido
+        nuevo_pedido = Order.objects.create(
+            client=client,
+            address=client.clientaddress_set.first(),  # Suponiendo que usas la primera dirección del cliente
+            order_date=timezone.now()
+        )
+
+        # Agregar productos del carrito al pedido
+        for item in carrito_items:
+            nuevo_pedido.orderitem_set.create(
+                product=item.product,
+                quantity=item.cart_product_quantity,
+                price_at_purchase=item.product.product_price
+            )
+
+        # Crear el envío asociado al pedido con estado "Pendiente"
+        nuevo_envio = Shipment.objects.create(
+            order=nuevo_pedido,
+            shipment_tracking_number=f"TRACK{nuevo_pedido.id_order}{timezone.now().strftime('%Y%m%d%H%M%S')}",  # Genera un número de seguimiento dinámico
+            shipment_carrier="Ship24",
+            shipment_status="Pendiente",  # Estado inicial del envío
+            shipment_date=timezone.now(),
+            shipment_estimated_delivery_date=timezone.now() + timezone.timedelta(days=7),
+            shipment_actual_delivery_date=None
+        )
+        
+        # Depuración: imprime para verificar el estado del envío
+        print(f"Nuevo envío creado: {nuevo_envio}")
+
+        # Limpiar el carrito
+        carrito_items.delete()
+
         return redirect("cart")
     else:
         messages.error(request, "Error al confirmar el pago")

@@ -11,10 +11,35 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 import os
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+    'django': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+        'propagate': False,
+    },
+}
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -235,3 +260,6 @@ STRIPE_PUBLIC_KEY = ""
 STRIPE_SECRET_KEY_TEST = "sk_test_51QGZYaKIVqnl5aZZLPrAwNWgMwRxAL7Ies2QuDqfN2ZigszcL7jfaG6eFQYGe57mCjH2yQ3MUa8XWq8TyXfEfEXf00T5ZEH2jQ"
 STRIPE_WEBHOOK_SECRET = ""
 REDIRECT_DOMAIN = 'http://127.0.0.1:8000'
+
+#ship24
+SHIP24_API_KEY = config('SHIP24_API_KEY')

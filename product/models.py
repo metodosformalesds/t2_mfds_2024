@@ -147,7 +147,7 @@ class Shipment(models.Model):
     shipment_status = models.CharField(max_length=50)
     shipment_date = models.DateTimeField()
     shipment_estimated_delivery_date = models.DateTimeField()
-    shipment_actual_delivery_date = models.DateTimeField()
+    shipment_actual_delivery_date = models.DateTimeField(null=True, blank=True)
  
     def __str__(self):
         return f"Shipment {self.id_shipment}"
@@ -156,7 +156,7 @@ class Shipment(models.Model):
  
 class Payment(models.Model):
     id_payment = models.AutoField(primary_key=True)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True) #modificar para ship24
     payment_method = models.CharField(max_length=20, choices=PaymentMethod.choices)
     payment_amount = models.FloatField()
     payment_date = models.DateTimeField(auto_now_add=True)

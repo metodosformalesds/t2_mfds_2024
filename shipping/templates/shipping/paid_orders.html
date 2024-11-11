@@ -1,0 +1,33 @@
+{% extends "base_without_image.html" %}
+{% load static %}
+
+{% block content %}
+<h2>Envíos pendientes</h2>
+
+{% if shipments %}
+    <ul>
+    {% for shipment in shipments %}
+        <li>
+            <strong>Número de Orden:</strong> {{ shipment.order.id_order }}<br>
+            <strong>Fecha del Pedido:</strong> {{ shipment.order.order_date }}<br>
+            <strong>Estado del Envío:</strong> {{ shipment.shipment_status }}<br>
+            
+            <!-- Mostrar el número de seguimiento para depuración -->
+            <strong>Número de Seguimiento:</strong> "{{ shipment.shipment_tracking_number }}"<br>
+
+            {% if shipment.shipment_tracking_number %}
+                <button class="btn btn-custom" type="button" onclick="window.location.href='{% url 'shipment_tracking_info' tracking_number=shipment.shipment_tracking_number %}'">
+                    <i class="bi bi-truck"></i>
+                </button>
+            {% else %}
+                <button class="btn btn-custom" type="button" disabled>
+                    <i class="bi bi-truck"></i> No disponible
+                </button>
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No hay envíos pendientes.</p>
+{% endif %}
+{% endblock %}
