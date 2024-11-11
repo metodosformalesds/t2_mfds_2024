@@ -39,3 +39,30 @@ footer img {
 footer img:hover {
     filter: none;
 }
+
+.cantidad:active,
+.cantidad:focus {
+    background-color: #E3E3E3 !important;
+    border-color: #767676 !important;
+    box-shadow: none !important;
+    transition: none !important;
+}
+
+.botones {
+    background-color: #E3E3E3;
+    border-color: #767676;
+    color: #1E1E1E;
+}
+
+.botones:active,
+.botones:focus {
+    background-color: #767676 !important;
+    border-color: #767676 !important;
+    box-shadow: none !important;
+    transition: none !important;
+}
+
+.botones:hover {
+    background-color: #767676;
+    border-color: #767676;
+}

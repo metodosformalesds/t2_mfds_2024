@@ -67,6 +67,19 @@
     max-width: 3%;
 }
 
+/* Aumentar el tamaño de los labels */
+label {
+    font-size: 1.1em !important;  /* Ajusta el tamaño según sea necesario */
+    margin-top: 15px !important;
+}
+
+/* Estilizar los mensajes de error */
+.error-message {
+    color: red !important;
+    font-size: 0.9em !important;  /* Tamaño de fuente para los mensajes de error */
+    margin-top: 5px !important;   /* Espacio entre el input y el mensaje de error */
+}
+
 
 .dato-entrada {
     width: 80% !important; 
@@ -87,5 +100,26 @@
 
     .cartas {
         width: 100%;
+    }
+}
+
+/* update product.html */
+.img-fluid {
+    max-width: 100%;
+    height: auto; /* Mantiene la proporción de la imagen */
+    object-fit: cover; /* Recorta la imagen para que se ajuste al contenedor */
+}
+
+.card .col-md-4 img {
+    height: 244px; /* Ajusta la altura para que todas las imágenes sean uniformes */
+    width: 100%; /* Ocupa todo el ancho del contenedor */
+    object-fit: cover; /* Ajusta la imagen al contenedor manteniendo las proporciones */
+}
+
+@media (max-width: 990px) {
+    .card .col-md-4 {
+        display: flex;
+        justify-content: center; /* Centra horizontalmente la imagen */
+        align-items: center; /* Centra verticalmente si es necesario */
     }
 }
