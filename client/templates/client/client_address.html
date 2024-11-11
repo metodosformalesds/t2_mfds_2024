@@ -3,31 +3,38 @@
 
 {% block title %}Establecer Informacion del Envio - Solid Steel{% endblock %}
 
-{%block head%} <link rel="stylesheet" href="{% static 'css/style_cart.css' %}"> {%endblock%}
+{%block head%} <link rel="stylesheet" href="{% static 'css/client_style.css' %}"> {%endblock%}
 
 {% block content %}
-<h2>{% if form.instance.id_address %}Actualizar{% else %}Agregar{% endif %} Dirección de Cliente</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+           
+        </div>
+
+        <div class="col-md-8">
+<h2 class align="center">{% if form.instance.id_address %}Actualizar{% else %}Agregar{% endif %} Dirección de Cliente</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">{% if form.instance.id_address %}Actualizar{% else %}Agregar{% endif %}</button>
+    <button class="btn btn-primary botones" align="center"  type="submit">{% if form.instance.id_address %}Actualizar{% else %}Agregar{% endif %}</button>
 </form>
 
 <div class="payment-container mt-4">
     <div class="container">
         <div class="row">
-            <div class="col">
+            <div class="col" class align="center">
 
                 <form action="{% url 'iniciar_pago' %}" method="POST">
                     {% csrf_token %}
-                    <button class="btn btn-primary" {% if total == 0 %}disabled{% endif %}>
+                    <button class="btn btn-primary"  {% if total == 0 %}disabled{% endif %}>
                         Pagar
                     </button>
                 </form>
 
             </div>
 
-            <div class="col" >
+            <div class="col"  >
 
                 <form action="{% url 'cart' %}" method="POST">
 
@@ -37,5 +44,13 @@
                 </form>
 
             </div>
+        </div>
+
+        <div class="col-md-2">
+
+        </div>
+
+    </div>
+</div>
         </div>
     {% endblock %}

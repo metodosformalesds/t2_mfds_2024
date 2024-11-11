@@ -27,4 +27,11 @@ class ClientForm(forms.ModelForm):
 class ClientAddressForm(forms.ModelForm):
     class Meta:
         model = ClientAddress
-        fields = ['client', 'client_address', 'client_city', 'client_state', 'client_zip_code', 'client_address_additional_information']
+        fields = ['client_address', 'client_city', 'client_state', 'client_zip_code', 'client_address_additional_information']
+        widgets = {
+            'client_address': forms.TextInput(attrs={'class': 'form-control cantidad', 'placeholder': 'Ingrese la dirección'}),
+            'client_city': forms.TextInput(attrs={'class': 'form-control cantidad', 'placeholder': 'Ingrese la ciudad'}),
+            'client_state': forms.TextInput(attrs={'class': 'form-control cantidad', 'placeholder': 'Ingrese el estado'}),
+            'client_zip_code': forms.NumberInput(attrs={'class': 'form-control cantidad', 'placeholder': 'Ingrese el código postal'}),
+            'client_address_additional_information': forms.TextInput(attrs={'class': 'form-control cantidad', 'placeholder': 'Información adicional'}),
+        }
