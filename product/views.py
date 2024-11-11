@@ -23,13 +23,46 @@ def product_list(request):
     # Obtener productos
     productos = Product.objects.all()
 
+    # Obtener y procesar las medidas sin duplicados y ordenadas
+    thicknesses = productos.values_list('product_thickness', flat=True).distinct().order_by('product_thickness')
+    widths = productos.values_list('product_width', flat=True).distinct().order_by('product_width')
+    heights = productos.values_list('product_height', flat=True).distinct().order_by('product_height')
+
     # Obtener parámetros de búsqueda y orden
-    query = request.GET.get('q', '')  # Valor de búsqueda
-    order = request.GET.get('order', '')  # Orden de los productos
+    query = request.GET.get('q', '')
+    order = request.GET.get('order', '')
+    thickness = request.GET.get('thickness', '')
+    category = request.GET.get('category', '')
+    price_min = request.GET.get('price_min', '')
+    price_max = request.GET.get('price_max', '')
+    width = request.GET.get('width', '')
+    height = request.GET.get('height', '')
 
     # Filtrar productos según búsqueda
     if query:
         productos = productos.filter(product_name__icontains=query)
+
+    # Filtrar por espesor
+    if thickness:
+        productos = productos.filter(product_thickness=thickness)
+
+    # Filtrar por categoría
+    if category:
+        productos = productos.filter(product_material=category)
+
+    # Filtrar por precio
+    if price_min:
+        productos = productos.filter(product_price__gte=price_min)
+    if price_max:
+        productos = productos.filter(product_price__lte=price_max)
+
+    # Filtrar por ancho
+    if width:
+        productos = productos.filter(product_width=width)
+
+    # Filtrar por alto
+    if height:
+        productos = productos.filter(product_height=height)
 
     # Ordenar productos
     if order == 'asc':
@@ -39,13 +72,14 @@ def product_list(request):
     elif order == 'new':
         productos = productos.order_by('-id_product')
 
-    # Renderizar la plantilla con los productos filtrados y ordenados
-    return render(request, "product/products_menu.html", {"productos": productos})
-
+    return render(request, "product/products_menu.html", {
+        "productos": productos,
+        "thicknesses": thicknesses,
+        "widths": widths,
+        "heights": heights
+    })
 
 def product_detail(request, id):
-    
-    productos=Product.objects.all()
-    product_info = get_object_or_404(Product, id_product= id)
-
-    return render(request, 'product/product_view.html', {'product_info': product_info, "productos":productos})
+    productos = Product.objects.all()
+    product_info = get_object_or_404(Product, id_product=id)
+    return render(request, 'product/product_view.html', {'product_info': product_info, "productos": productos})
