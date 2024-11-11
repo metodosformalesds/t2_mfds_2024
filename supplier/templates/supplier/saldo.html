@@ -45,6 +45,7 @@
                 <!-- Columna de Movimientos -->
                 <div class="col-md-6 col-lg-4 d-flex flex-column movimientos mx-lg-2"> <!-- Añadir flex-column para alinear el contenido internamente -->
                     <h2>Movimientos</h2>
+                    
                     <ul class="movimientos-lista flex-grow-1"> <!-- flex-grow-1 para que se extienda si es necesario -->
                         {% for movimiento in movimientos %}
                         <li class="movimiento-item">
@@ -69,7 +70,7 @@
                     <h2>Saldo</h2>
                     <div class="saldo-info text-center flex-grow-1"> <!-- flex-grow-1 para mantener el tamaño equilibrado -->
                         <i class="fas fa-wallet saldo-icon"></i> <!-- Icono de Font Awesome -->
-                        <span class="saldo-cantidad d-block">${{ saldo }}.00</span>
+                        <span class="saldo-cantidad d-block">${{supplier.balance}}</span>
                     </div>
                     <button type="button" class="button-refresh w-100" onclick="window.location.href='{% url 'retirar_saldo' %}'">Retirar Saldo</button>
                     <button type="button" class="button-continue w-100" onclick="window.location.href='/supplier/editar-retiro/'">Cambiar datos de Retiro</button>

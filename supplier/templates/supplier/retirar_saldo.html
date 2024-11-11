@@ -18,7 +18,7 @@
                     <h2 class="text-center">Saldo</h2>
                     <div class="saldo-info text-center">
                         <i class="fas fa-wallet saldo-icon"></i> <!-- Icono de la cartera -->
-                        <span class="saldo-cantidad d-block">$3,241.00</span>
+                        <span class="saldo-cantidad d-block">${{supplier.balance}}</span>
                     </div>
     
                     <!-- Botones y campo de cantidad -->
@@ -35,7 +35,7 @@
                 <!-- Sección de detalles -->
                 <div class="col-md-4 detalles-titular text-left align-self-start-0">
                     <h5 class="fw-bold">Nombre del titular</h5>
-                    <p>Juan Pérez</p>
+                    <p>{{supplier.supplier_name}}</p>
                     <h5 class="fw-bold">Cuenta de Paypal</h5>
                     <p>asdaewewads@#####.com</p>
                 </div>

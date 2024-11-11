@@ -66,6 +66,11 @@ def saldo_view(request):
         messages.error(request, 'No estás autorizado para agregar productos. Inicia sesión como proveedor.')
         return redirect('index')
     # Simulación de datos
+
+     
+    user = get_object_or_404(UserAccount, pk=supplier_id) 
+    supplier = get_object_or_404(Supplier, user=user) 
+
     saldo = 3241
     metas = {
         'saldo': saldo,
@@ -87,11 +92,12 @@ def saldo_view(request):
         'metas': metas,
         'movimientos': movimientos
     }
-    return render(request, 'supplier/saldo.html', context)
+    return render(request, 'supplier/saldo.html',  {'supplier': supplier})
 
 # Vista para retirar saldo
 def retirar_saldo(request):
-    # Aquí agregas la lógica para el retiro del saldo
+    
+   
     return redirect('saldo_view')  # Redirige a la vista de saldo después del retiro
 
 # Vista para actualizar datos de retiro
@@ -115,13 +121,15 @@ def retirar_saldo_view(request):
     if supplier_id is None:
         messages.error(request, 'No estás autorizado para agregar productos. Inicia sesión como proveedor.')
         return redirect('index')
-    supplier_id = request.session.get('supplier_id')
+    
+    user = get_object_or_404(UserAccount, pk=supplier_id) 
+    supplier = get_object_or_404(Supplier, user=user) 
 
     if supplier_id is None:
         messages.error(request, 'No estás autorizado para agregar productos. Inicia sesión como proveedor.')
         return redirect('menu:index')
     
-    return render(request, 'supplier/retirar_saldo.html')
+    return render(request, 'supplier/retirar_saldo.html' , {'supplier': supplier})
 
 def supplier_menu(request):
 

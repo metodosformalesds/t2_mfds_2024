@@ -4,6 +4,7 @@ from django.utils import timezone
 from product.models import Product, ShoppingCart, UserAccount, Client, Payment, Order, ClientAddress
 from django.conf import settings
 from django.http import HttpResponse
+from django.db import transaction
 import stripe
 import time
 from django.http import JsonResponse 
@@ -97,6 +98,13 @@ def payment_successful(request):
 
     carrito_items = ShoppingCart.objects.filter(client=client)
     total = sum(item.product.product_price * item.cart_product_quantity for item in carrito_items)
+
+    with transaction.atomic():
+        for item in carrito_items:
+            supplier = item.product.supplier
+            supplier.balance += item.product.product_price * item.cart_product_quantity
+            supplier.save()
+
 
     # Suponiendo que 'order' ya existe o debes crearla primero
     address = ClientAddress.objects.filter(client=client).first()  

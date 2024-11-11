@@ -56,6 +56,7 @@ class UserAccount(models.Model):
  
 class Supplier(models.Model):
     id_supplier = models.AutoField(primary_key=True)
+    balance = models.FloatField(default=0.0) 
     supplier_name = models.CharField(max_length=50)
     supplier_rating = models.FloatField(default=0)
     supplier_address = models.CharField(max_length=100)
