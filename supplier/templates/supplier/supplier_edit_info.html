@@ -7,6 +7,7 @@
     {% load static %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'general/css/style_general_supplier.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     </head> 
     {%endblock%}
 
@@ -55,9 +56,21 @@
                     <input type="text" id="supplier_address" name="supplier_address" class="form-control" value="{{ form.supplier_address.value }}" placeholder="Address">
                     <small id="addressHelp" class="form-text text-danger d-none">La dirección solo debe contener letras, números y signos de puntuación básicos.</small>
                 </div>
-                <div class="col-md-6 mb-3">
+                <div class="col-md-6 mb-3 position-relative">
                     <label for="user_password" class="form-label">Contraseña</label>
-                    <input type="password" id="user_password" name="user_password" class="form-control" placeholder="Ingrese su contraseña">
+                    <div class="input-group">
+                        <input type="password" id="user_password" name="user_password" class="form-control" placeholder="Ingrese su contraseña">
+                        <button 
+                            type="button" 
+                            class="btn btn-outline-secondary" 
+                            onclick="togglePassword()" 
+                            style="border-left: none;">
+                            <!-- Ícono de ojo cerrado -->
+                            <i id="eyeIconClosed" class="bi bi-eye-slash"></i>
+                            <!-- Ícono de ojo abierto -->
+                            <i id="eyeIconOpen" class="bi bi-eye" style="display: none;"></i>
+                        </button>
+                    </div>
                     <small id="passwordHelp" class="form-text text-danger d-none">La contraseña debe tener al menos 8 caracteres, una letra mayúscula, un número y un carácter especial.</small>
                 </div>
             </div>
@@ -92,8 +105,46 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        function togglePassword() {
+            const passwordField = document.getElementById('user_password');
+            const eyeIconClosed = document.getElementById('eyeIconClosed');
+            const eyeIconOpen = document.getElementById('eyeIconOpen');
+        
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                eyeIconClosed.style.display = 'none';
+                eyeIconOpen.style.display = 'block';
+            } else {
+                passwordField.type = 'password';
+                eyeIconClosed.style.display = 'block';
+                eyeIconOpen.style.display = 'none';
+            }
+        }       
+    </script>
+    <script>
+        function validatePassword() {
+            const passwordInput = document.getElementById("user_password");
+            const passwordHelp = document.getElementById("passwordHelp");
+            const password = passwordInput.value;
+            const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/; // Asegúrate de que la expresión regular incluya mayúsculas, números y caracteres especiales
+        
+            if (!regex.test(password)) {
+                passwordHelp.classList.remove("d-none");
+                return false;
+            }
+            passwordHelp.classList.add("d-none");
+            return true;
+        }
+        
         function validateForm() {
+
             let isValid = true;
+
+            // Validación de la contraseña
+            if (!validatePassword()) {
+            isValid = false;
+            }
+  
 
             // Validación de nombre
             const nameInput = document.getElementById("supplier_name");
@@ -126,17 +177,6 @@
                 isValid = false;
             } else {
                 addressHelp.classList.add("d-none");
-            }
-
-            // Validación de contraseña
-            const passwordInput = document.getElementById("user_password");
-            const passwordHelp = document.getElementById("passwordHelp");
-            const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])(?=.{8,})/;
-            if (!passwordRegex.test(passwordInput.value)) {
-                passwordHelp.classList.remove("d-none");
-                isValid = false;
-            } else {
-                passwordHelp.classList.add("d-none");
             }
 
             // Validación de ciudad

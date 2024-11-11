@@ -10,6 +10,15 @@
 
     <link rel="stylesheet" href="{% static 'css/style_register.css' %}">
     <link rel="stylesheet" href="{% static 'general/css/style_general.css' %}">
+    <style>
+        .rounded-oval {
+            width: 100%;
+            max-width: 250px;
+            height: 320px;
+            border-radius: 50%; /* Forma de óvalo vertical */
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
     <header class="bg-dark text-white text-center p-4"></header>
@@ -99,10 +108,10 @@
                         <!-- Sección de la cámara -->
                         <label for="foto_actual" class="form-label" id="title_foto_actual">Foto Actual</label>
                         <div class="d-flex flex-column align-items-center" id="camera-section" style="display: none;">
-                            <video id="video" width="100%" autoplay></video>
+                            <video id="video" class="rounded-oval" autoplay></video>
                             <canvas id="canvas" style="display: none;"></canvas>
                             <button type="button" id="capture-btn" class="btn btn-primary mt-2">Tomar Foto</button>
-                            <img id="photo-preview" src="#" alt="Foto previa" style="display: none; width: 100%; max-width: 300px;">
+                            <img id="photo-preview" class="rounded-oval" src="#" alt="Foto previa" style="display: none;">
                         </div>
                         
                         <!-- Sección de carga de archivo -->
@@ -348,5 +357,56 @@ if (!fotoInput.files || fotoInput.files.length === 0) {
             });
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const captureBtn = document.getElementById('capture-btn');
+            const photoPreview = document.getElementById('photo-preview');
+            const retakeBtn = document.createElement("button");
+            const fotoInput = document.querySelector("input[name='foto_actual']");
+    
+            let isCameraAvailable = true; // Suponiendo que la cámara esté disponible
+    
+            // Configuración del botón para tomar otra foto
+            retakeBtn.textContent = "Tomar otra foto";
+            retakeBtn.classList.add("btn", "btn-secondary", "mt-2");
+            retakeBtn.style.display = "none"; // Oculta el botón inicialmente
+            document.getElementById('camera-section').appendChild(retakeBtn);
+    
+            captureBtn.addEventListener("click", () => {
+                if (isCameraAvailable) {
+                    const context = canvas.getContext("2d");
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+    
+                    const imageDataURL = canvas.toDataURL("image/png");
+                    photoPreview.src = imageDataURL;
+                    photoPreview.style.display = "block"; // Muestra la vista previa de la foto
+                    video.style.display = "none"; // Oculta el video de la cámara
+                    captureBtn.style.display = "none"; // Oculta el botón de tomar foto
+                    retakeBtn.style.display = "block"; // Muestra el botón para tomar otra foto
+    
+                    fetch(imageDataURL)
+                        .then(res => res.blob())
+                        .then(blob => {
+                            const file = new File([blob], "foto_actual.png", { type: "image/png" });
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+                            fotoInput.files = dataTransfer.files;
+                        });
+                }
+            });
+    
+            // Evento para volver a activar la cámara
+            retakeBtn.addEventListener("click", () => {
+                video.style.display = "block"; // Muestra el video de la cámara nuevamente
+                captureBtn.style.display = "block"; // Muestra el botón de tomar foto
+                photoPreview.style.display = "none"; // Oculta la vista previa de la foto
+                retakeBtn.style.display = "none"; // Oculta el botón de tomar otra foto
+            });
+        });
+    </script>    
 </body>
 </html>

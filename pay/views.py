@@ -149,3 +149,7 @@ def mostrar_pagos_view(request):
     monto_total = sum(item.product.price * item.cart_product_quantity for item in carrito_items)
 
     return render(request, "pagos.html", {"monto_total": monto_total})
+
+
+def escojer_metodo_view(request):
+    return render(request, "opcion_pago.html")
