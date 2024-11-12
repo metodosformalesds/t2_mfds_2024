@@ -15,6 +15,9 @@ from decouple import config
 import os
 import environ
 
+env = environ.Env()
+environ.Env.read_env()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -243,3 +246,7 @@ REDIRECT_DOMAIN = 'http://127.0.0.1:8000'
 PAYPAL_CLIENT_ID = 'Ac5BQjW9bnHkgwXKnjQuNW9SkK16mz5UpHfvkKFKdib9UDpWTEQjKsyMaERUO_BcsPkSDmw9UANyuYIu'
 PAYPAL_CLIENT_SECRET = 'EN91Qny9RUxxqPZYaETkQVSIJbxjEvEVpgnTYoVpbEUAwlqUTNL2u_10JGNnld0Zx9i6xiBRdtJF7v9d'
 PAYPAL_MODE = 'sandbox'
+
+
+SHIP24_API_KEY = 'apik_whxXKXjidHeQeWqhKvVMbYfxe3L8QN'
+SHIP24_WEBHOOK_SECRET = 'whs_RSnMsLUGtQbw4AK5jeNbV4Wm3Itd25'
