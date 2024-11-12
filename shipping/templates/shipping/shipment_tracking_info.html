@@ -12,7 +12,7 @@
   <p><strong>Fecha de Entrega Real:</strong> 
     {% if shipment_record.shipment_actual_delivery_date %}
       {{ shipment_record.shipment_actual_delivery_date|date:"d/m/Y H:i" }}
-    {% else %}
+    {% else %}.-
       No entregado aún
     {% endif %}
   </p>

@@ -6,7 +6,12 @@ from product.models import ShoppingCart, UserAccount, Client, Order, Shipment
 from django.views.decorators.http import require_POST
 from .paypal import paypalrestsdk
 from django.utils import timezone
+from django.conf import settings
+import requests 
+import logging
+from django.http import JsonResponse, HttpResponse
 
+logger = logging.getLogger(__name__)
 @require_POST
 def iniciar_pago_view(request):
     # Obtener el ID del usuario desde la sesión
@@ -82,8 +87,7 @@ def iniciar_pago_view(request):
         print("Error al crear el pago en PayPal:", pago.error)  # Detalle del error en consola
         messages.error(request, "Error al crear el pago con PayPal")
         return redirect("cart")  # Redirige de nuevo al carrito en caso de error
-
-
+    
 def pago_exitoso_view(request):
     payment_id = request.GET.get("paymentId")
     payer_id = request.GET.get("PayerID")
@@ -93,21 +97,16 @@ def pago_exitoso_view(request):
     if pago.execute({"payer_id": payer_id}):
         messages.success(request, "Pago completado con éxito")
         
-        # Obtener el ID del usuario
         user_id = request.session.get('user_id')
-        
-        # Obtener el cliente asociado y limpiar el carrito
         client = Client.objects.get(user__id_user=user_id)
         carrito_items = ShoppingCart.objects.filter(client=client)
 
-        # Crear un nuevo pedido
+        # Crear pedido y agregar productos
         nuevo_pedido = Order.objects.create(
             client=client,
-            address=client.clientaddress_set.first(),  # Suponiendo que usas la primera dirección del cliente
+            address=client.clientaddress_set.first(),
             order_date=timezone.now()
         )
-
-        # Agregar productos del carrito al pedido
         for item in carrito_items:
             nuevo_pedido.orderitem_set.create(
                 product=item.product,
@@ -115,23 +114,42 @@ def pago_exitoso_view(request):
                 price_at_purchase=item.product.product_price
             )
 
-        # Crear el envío asociado al pedido con estado "Pendiente"
+        # Crear el envío y registrar el seguimiento en Ship24
+        tracking_number = f"TRACK{nuevo_pedido.id_order}{timezone.now().strftime('%Y%m%d%H%M%S')}"
         nuevo_envio = Shipment.objects.create(
             order=nuevo_pedido,
-            shipment_tracking_number=f"TRACK{nuevo_pedido.id_order}{timezone.now().strftime('%Y%m%d%H%M%S')}",  # Genera un número de seguimiento dinámico
-            shipment_carrier="Ship24",
-            shipment_status="Pendiente",  # Estado inicial del envío
+            shipment_tracking_number=tracking_number,
+            shipment_carrier="dhl",  # Reemplaza con el código de courier adecuado
+            shipment_status="Pendiente",
             shipment_date=timezone.now(),
             shipment_estimated_delivery_date=timezone.now() + timezone.timedelta(days=7),
             shipment_actual_delivery_date=None
         )
-        
-        # Depuración: imprime para verificar el estado del envío
-        print(f"Nuevo envío creado: {nuevo_envio}")
 
-        # Limpiar el carrito
+        # Llamada a la API de Ship24
+        api_key = settings.SHIP24_API_KEY
+        url = "https://api.ship24.com/trackings"
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "trackingNumber": tracking_number,
+            "courier": "DHL",  # Especifica el código del courier si es necesario
+        }
+
+        try:
+            response = requests.post(url, headers=headers, json=payload)
+            response.raise_for_status()
+            data = response.json()
+            nuevo_envio.shipment_status = data.get("status", "Pendiente")
+            nuevo_envio.save()
+        except requests.exceptions.RequestException as e:
+            messages.error(request, "Error al iniciar el seguimiento en Ship24")
+            logger.error(f"Error en la API de Ship24: {str(e)}")
+            return redirect("cart")
+
         carrito_items.delete()
-
         return redirect("cart")
     else:
         messages.error(request, "Error al confirmar el pago")

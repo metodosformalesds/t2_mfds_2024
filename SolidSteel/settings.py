@@ -15,30 +15,9 @@ from decouple import config
 import os
 import environ
 
-env = environ.Env()
-environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',
-    },
-    'django': {
-        'handlers': ['console'],
-        'level': 'DEBUG',
-        'propagate': False,
-    },
-}
 
 
 # Quick-start development settings - unsuitable for production
@@ -262,4 +241,6 @@ STRIPE_WEBHOOK_SECRET = ""
 REDIRECT_DOMAIN = 'http://127.0.0.1:8000'
 
 #ship24
-SHIP24_API_KEY = config('SHIP24_API_KEY')
+#SHIP24_API_KEY = config('SHIP24_API_KEY')
+SHIP24_API_KEY='apik_whxXKXjidHeQeWqhKvVMbYfxe3L8QN'
+SHIP24_WEBHOOK_SECRET = 'whs_RSnMsLUGtQbw4AK5jeNbV4Wm3Itd25'
