@@ -56,6 +56,7 @@ class UserAccount(models.Model):
  
 class Supplier(models.Model):
     id_supplier = models.AutoField(primary_key=True)
+    balance = models.FloatField(default=0.0) 
     supplier_name = models.CharField(max_length=50)
     supplier_rating = models.FloatField(default=0)
     supplier_address = models.CharField(max_length=100)
@@ -214,22 +215,23 @@ class PasswordReset(models.Model):
  
 class SupplierPaymentMethodModel(models.Model):
     id_supplier_payment = models.AutoField(primary_key=True)
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, related_name='payment_methods')
-    supplier_method_id = models.CharField(max_length=255)
+    supplier = models.OneToOneField(Supplier, on_delete=models.CASCADE, related_name='payment_methods')
+
     supplier_payment_method = models.CharField(
-    max_length=20,
-    choices=SupplierPaymentMethod.choices  # Usar así para las opciones del campo
-)
-    supplier_payment_email = models.CharField(max_length=50)
+        max_length=20,
+        choices=[('PayPal', 'PayPal')]
+    )
+    supplier_payment_email = models.EmailField(max_length=100)  # Cambiado a EmailField para validación
+    supplier_payment_name = models.CharField(max_length=100)  # Nombre asociado a PayPal
 
     def __str__(self):
-        return f"Supplier Payment {self.id_supplier_payment}"
+        return f"Supplier Payment {self.id_supplier_payment} - {self.supplier_payment_method}"
  
  
  
 class SupplierSales(models.Model):
     Supplier_order_sales = models.AutoField(primary_key=True)
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)
+    supplier = models.OneToOneField(Supplier, on_delete=models.CASCADE)
     total_sales = models.FloatField(default=0)
  
     def __str__(self):

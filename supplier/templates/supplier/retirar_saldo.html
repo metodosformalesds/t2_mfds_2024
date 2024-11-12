@@ -18,26 +18,32 @@
                     <h2 class="text-center">Saldo</h2>
                     <div class="saldo-info text-center">
                         <i class="fas fa-wallet saldo-icon"></i> <!-- Icono de la cartera -->
-                        <span class="saldo-cantidad d-block">$3,241.00</span>
+                        <span class="saldo-cantidad d-block">${{supplier.balance}}</span>
                     </div>
     
                     <!-- Botones y campo de cantidad -->
                     <div class="mt-4">
-                        <button type="button" class="button-continue w-100" onclick="window.location.href='/supplier/editar-retiro/'">Cambiar datos de retiro</button>
-                        <div class="form-group">
-                            <label for="cantidad">Cantidad</label>
-                            <input type="number" class="form-control" id="cantidad" placeholder="$">
-                        </div>
-                        <button class="button-continue w-100 mt-4" onclick="window.location.href='{% url 'confirmacion_retiro' %}'">Retirar Saldo</button>
+                        <form id="withdrawForm" method="POST" action="{% url 'create_payout' %}">
+                            {% csrf_token %}
+                            <label for="cantidad">Cantidad a Retirar:</label>
+                            <input type="number" id="cantidad" name="cantidad" min="0.01" step="0.01" required>
+                            
+                            <button type="submit">Retirar Dinero</button>
+                        </form>
+                        
+                        <!-- Contenedor para mostrar mensajes de éxito o error -->
+                        <div id="message"></div>
+                        
+                       
                     </div>
                 </div>
     
                 <!-- Sección de detalles -->
                 <div class="col-md-4 detalles-titular text-left align-self-start-0">
                     <h5 class="fw-bold">Nombre del titular</h5>
-                    <p>Juan Pérez</p>
+                    <p>{{pago.supplier_payment_name}}</p>
                     <h5 class="fw-bold">Cuenta de Paypal</h5>
-                    <p>asdaewewads@#####.com</p>
+                    <p>{{pago.supplier_payment_email}}</p>
                 </div>
             </div>
         </div>

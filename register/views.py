@@ -194,6 +194,7 @@ def supplier_register(request):
                         return render(request, 'home/supplier_register.html', {'form': form})
                     else:
                         form.save()
+                        
                         messages.success(request, success_message)
                         return redirect('supplier_login')  # Redirigir a la página de inicio de sesión
                 

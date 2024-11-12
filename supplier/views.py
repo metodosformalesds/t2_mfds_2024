@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from product.models import Supplier, UserAccount, Product
+from product.models import Supplier, UserAccount, Product, SupplierPaymentMethodModel
 from django.contrib import messages
 from .forms import SupplierForm, AgregarProductoForm, ActualizarProductosForm
 from django.contrib.auth.decorators import login_required
+from supplier.forms import SupplierPaymentMethodForm
 def supplier_edit_info(request):
     supplier_id = request.session.get('supplier_id')
 
@@ -66,6 +67,11 @@ def saldo_view(request):
         messages.error(request, 'No estás autorizado para agregar productos. Inicia sesión como proveedor.')
         return redirect('index')
     # Simulación de datos
+
+     
+    user = get_object_or_404(UserAccount, pk=supplier_id) 
+    supplier = get_object_or_404(Supplier, user=user) 
+
     saldo = 3241
     metas = {
         'saldo': saldo,
@@ -87,11 +93,12 @@ def saldo_view(request):
         'metas': metas,
         'movimientos': movimientos
     }
-    return render(request, 'supplier/saldo.html', context)
+    return render(request, 'supplier/saldo.html',  {'supplier': supplier})
 
 # Vista para retirar saldo
 def retirar_saldo(request):
-    # Aquí agregas la lógica para el retiro del saldo
+    
+   
     return redirect('saldo_view')  # Redirige a la vista de saldo después del retiro
 
 # Vista para actualizar datos de retiro
@@ -115,13 +122,16 @@ def retirar_saldo_view(request):
     if supplier_id is None:
         messages.error(request, 'No estás autorizado para agregar productos. Inicia sesión como proveedor.')
         return redirect('index')
-    supplier_id = request.session.get('supplier_id')
+    
+    user = get_object_or_404(UserAccount, pk=supplier_id) 
+    supplier = get_object_or_404(Supplier, user=user) 
+    supplier_payment = get_object_or_404(SupplierPaymentMethodModel, supplier = supplier)
 
     if supplier_id is None:
         messages.error(request, 'No estás autorizado para agregar productos. Inicia sesión como proveedor.')
         return redirect('menu:index')
     
-    return render(request, 'supplier/retirar_saldo.html')
+    return render(request, 'supplier/retirar_saldo.html' , {'supplier': supplier, 'pago': supplier_payment})
 
 def supplier_menu(request):
 
@@ -218,19 +228,29 @@ def log_out(request):
     return redirect('index')
 
 
-from .forms import EditarRetiroForm  # Si vas a utilizar un formulario de Django (opcional)
+
 from django.contrib import messages
 
-def editar_retiro(request):
+def add_supplier_payment_method(request):
+    supplier_id = request.session.get('supplier_id')
+    supplier = Supplier.objects.get(user__id_user=supplier_id)
+
+    
+    payment_method, created = SupplierPaymentMethodModel.objects.get_or_create(supplier=supplier)
+
     if request.method == 'POST':
-        form = EditarRetiroForm(request.POST)
+        form = SupplierPaymentMethodForm(request.POST, instance=payment_method)
         if form.is_valid():
-            # Aquí guardas la lógica para actualizar los datos del titular y la cuenta PayPal
-            form.save()
-            messages.success(request, 'Datos de retiro actualizados correctamente.')
-            return redirect('editar_retiro')  # Redirigir después de guardar
+            supplier_payment = form.save(commit=False)
+            supplier_payment.supplier = supplier
+            supplier_payment.save()
+            if created:
+                messages.success(request, "Payment method added successfully.")
+            else:
+                messages.success(request, "Payment method updated successfully.")
+            return redirect('retirar_saldo')  
     else:
-        form = EditarRetiroForm()
+        form = SupplierPaymentMethodForm(instance=payment_method)
 
     return render(request, 'supplier/editar_retiro.html', {'form': form})
 

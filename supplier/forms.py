@@ -1,5 +1,5 @@
 from django import forms
-from product.models import Supplier, Product
+from product.models import Supplier, Product, SupplierPaymentMethodModel
 
 class SupplierForm(forms.ModelForm):
     user_email = forms.EmailField()  # Campo de email del usuario
@@ -17,13 +17,14 @@ class SupplierForm(forms.ModelForm):
 from django import forms
 from .models import DatosRetiro
 
-class EditarRetiroForm(forms.ModelForm):
+class SupplierPaymentMethodForm(forms.ModelForm):
     class Meta:
-        model = DatosRetiro
-        fields = ['nombre_titular', 'cuenta_paypal']  # Ajusta según los campos del modelo
-        widgets = {
-            'nombre_titular': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del Titular'}),
-            'cuenta_paypal': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Cuenta de PayPal'}),
+        model = SupplierPaymentMethodModel
+        fields = ['supplier_payment_method', 'supplier_payment_email', 'supplier_payment_name']
+        labels = {
+            'supplier_payment_method': 'Payment Method',
+            'supplier_payment_email': 'PayPal Email',
+            'supplier_payment_name': 'PayPal Account Name'
         }
 
 from django import forms
@@ -131,3 +132,14 @@ class ActualizarProductosForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['product_price','product_stock']
+
+class WithdrawForm(forms.Form):
+    cantidad = forms.FloatField(
+        min_value=0.01,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'required': True,
+            'step': '0.01'
+        }),
+        label="Cantidad a Retirar"
+    )
