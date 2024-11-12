@@ -8,6 +8,12 @@
 <!-- Enlace al archivo CSS específico para esta sección -->
 <link rel="stylesheet" href="{% static 'css/movimientos.css' %}">
 
+<div class="container mt-5">
+    <div class="d-flex justify-content-left">
+        <button class="btn btn-outline-secondary" onclick="window.location.href='{% url 'saldo_view' %}'">
+            <span class="me-1">&larr;</span> Volver
+        </button>
+    </div>
 <main class="main-container">
     <div class="container-movimientos">
         <div class="section-title">
