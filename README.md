@@ -14,4 +14,16 @@
 | **PythonAnywhere** | ![#306998](https://via.placeholder.com/15/306998/000000?text=+) [SolidSteel en PythonAnywhere](https://SolidSteel.pythonanywhere.com) |
 | **AWS Deployment** | ![#FF9900](https://via.placeholder.com/15/FF9900/000000?text=+) [SolidSteel en AWS](https://solid-steels.com/) |
 
+paypal
+sb-ns03j33817918@business.example.com 
+
+sb-gupcl33784304@personal.example.com  
+
+Cacahuate11% 
+
+stripe card
+4242 4242 4242 4242
+
+
+
 # Fecha de entrega del proyecto para el día 21 de noviembre
