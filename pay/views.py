@@ -5,6 +5,7 @@ from paypalrestsdk import Payment
 from product.models import ShoppingCart, UserAccount, Client
 from django.views.decorators.http import require_POST
 from .paypal import paypalrestsdk
+from django.db import transaction
 
 @require_POST
 def iniciar_pago_view(request):
@@ -90,12 +91,25 @@ def pago_exitoso_view(request):
     
     # Ejecutar el pago en PayPal
     pago = Payment.find(payment_id)
+    user_id = request.session.get('user_id')
+    user_account = UserAccount.objects.get(id_user=user_id)
+    client = Client.objects.get(user=user_account)
+
+    carrito_items = ShoppingCart.objects.filter(client=client)
+    total = sum(item.product.product_price * item.cart_product_quantity for item in carrito_items)
+
+    with transaction.atomic():
+        for item in carrito_items:
+            supplier = item.product.supplier
+            supplier.balance += item.product.product_price * item.cart_product_quantity
+            supplier.save()
+
     if pago.execute({"payer_id": payer_id}):
         messages.success(request, "Pago completado con éxito")
         # Limpia el carrito del usuario
         user_id = request.session.get('user_id')
         ShoppingCart.objects.filter(client_id=user_id).delete()
-        return redirect("cart")
+        return redirect("cart")#modificar el pago exitoso
     else:
         messages.error(request, "Error al confirmar el pago")
         return redirect("cart")
