@@ -132,3 +132,14 @@ class ActualizarProductosForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['product_price','product_stock']
+
+class WithdrawForm(forms.Form):
+    cantidad = forms.FloatField(
+        min_value=0.01,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'required': True,
+            'step': '0.01'
+        }),
+        label="Cantidad a Retirar"
+    )

@@ -1,11 +1,15 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from paypalrestsdk import Payment
-from product.models import ShoppingCart, UserAccount, Client
+from product.models import ShoppingCart, UserAccount, Client, Supplier, SupplierPaymentMethodModel
 from django.views.decorators.http import require_POST
 from .paypal import paypalrestsdk
 from django.db import transaction
+from django.http import JsonResponse
+from supplier.forms import WithdrawForm
+import random
+import string
 
 @require_POST
 def iniciar_pago_view(request):
@@ -130,3 +134,65 @@ def mostrar_pagos_view(request):
 
 def escojer_metodo_view(request):
     return render(request, "opcion_pago.html")
+
+def generar_id_unico():
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=12))
+
+def create_payout(request):
+    if request.method == "POST":
+        form = WithdrawForm(request.POST)
+        if form.is_valid():
+            cantidad_retirar = form.cleaned_data['cantidad']
+
+        user_id = request.session.get('supplier_id')
+        user = get_object_or_404(UserAccount, pk=user_id)
+        supplier = get_object_or_404(Supplier, user=user)
+
+        cantidad_retirar = float(request.POST.get("cantidad"))
+
+        # Verifica si el balance es suficiente
+        if float(cantidad_retirar) > float(supplier.balance):
+            return JsonResponse({"status": "error", "message": "Saldo insuficiente para retirar esta cantidad."})
+
+        # Descuenta la cantidad del balance
+        supplier.balance -= cantidad_retirar
+        supplier.save()
+
+        # Genera IDs aleatorios para sender_batch_id y sender_item_id
+        sender_batch_id = generar_id_unico()
+        sender_item_id = generar_id_unico()
+
+        # Configura el payout
+        payment_method = get_object_or_404(SupplierPaymentMethodModel, supplier=supplier)
+        supplier_email = payment_method.supplier_payment_email  # Reemplaza con el email correcto
+        payout = paypalrestsdk.Payout({
+            "sender_batch_header": {
+                "sender_batch_id": sender_batch_id,
+                "email_subject": "You've received a payment from [Your App Name]!"
+            },
+            "items": [
+                {
+                    "recipient_type": "EMAIL",
+                    "amount": {
+                        "value": str(cantidad_retirar),  # Convertir a string para PayPal API
+                        "currency": "USD"
+                    },
+                    "receiver": supplier_email,
+                    "note": "Payment for services rendered",
+                    "sender_item_id": sender_item_id
+                }
+            ]
+        })
+
+        # Intenta crear el payout
+        if payout.create(sync_mode=False):
+            return JsonResponse({
+                "status": "success",
+                "message": "Dinero retirado con éxito.",
+                "nuevo_balance": supplier.balance,
+                "payout_id": payout.batch_header.payout_batch_id
+            })
+        else:
+            return JsonResponse({"status": "error", "error": payout.error})
+
+    return JsonResponse({"status": "error", "message": "Solicitud inválida."})
