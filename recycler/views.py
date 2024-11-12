@@ -6,3 +6,4 @@ def recycler(request):
 
 def recycler_map_view(request):
     return render(request, 'map.html')
+

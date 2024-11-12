@@ -6,7 +6,10 @@
 {% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{% static 'css/custom_style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style_recycler.css' %}">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -14,17 +17,53 @@
   <h2 class="mb-3">Recicladoras</h2>
   <p class="text-muted">¡Contáctate con la más cercana!</p>
 
+  <!-- Modal -->
+<div class="modal fade" id="companyInfoModal" tabindex="-1" aria-labelledby="companyInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="companyInfoModalLabel">Información de la Empresa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h5 id="companyName">Nombre de la Empresa</h5>
+          <p id="companyDescription">Descripción de la empresa aquí...</p>
+          <p id="companyLocation">Ubicación: Ciudad Juárez</p>
+          <!-- Puedes agregar más información según lo que necesites -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showCompanyInfo(name, description, location) {
+      // Asigna los valores proporcionados a los elementos del modal
+      document.getElementById('companyName').innerText = name;
+      document.getElementById('companyDescription').innerText = description;
+      document.getElementById('companyLocation').innerText = "Ubicación: " + location;
+      
+      // Abre el modal
+      var myModal = new bootstrap.Modal(document.getElementById('companyInfoModal'));
+      myModal.show();
+    }
+  </script>
+  
+  
+
   <div class="recycler-list">
       <div class="card mb-4 shadow-sm recycler-card">
           <div class="row g-0">
               <div class="col-md-3">
-                  <img src="https://via.placeholder.com/150" class="img-fluid rounded-start" alt="Recicladora">
+                  <img src="{% static 'images/MORLIM.png' %}" class="img-fluid rounded-start" alt="Recicladora">
               </div>
               <div class="col-md-9">
                   <div class="card-body">
-                      <h5 class="card-title">Recicladora Méndez</h5>
-                      <p class="card-text text-muted">Centro de reciclaje en Ciudad Juárez</p>
-                      <button class="btn btn-outline-secondary">Contáctanos!</button>
+                      <h5 class="card-title">Reciclados MORLIM</h5>
+                      <p class="card-text text-muted">Empresa de reciclaje especializada en Ciudad Juárez.</p>
+                      <button class="btn btn-contact" onclick="showCompanyInfo('Reciclados MORLIM', 'Empresa de reciclaje especializada en Ciudad Juárez.', 'Ciudad Juárez')">Contáctanos!</button>
                   </div>
               </div>
           </div>
@@ -33,13 +72,14 @@
       <div class="card mb-4 shadow-sm recycler-card">
           <div class="row g-0">
               <div class="col-md-3">
-                  <img src="https://via.placeholder.com/150" class="img-fluid rounded-start" alt="Recicladora">
+                  <img src="{% static 'images/recodi.png' %}" class="img-fluid rounded-start" alt="Recicladora">
               </div>
               <div class="col-md-9">
                   <div class="card-body">
-                      <h5 class="card-title">Recicladora El 20</h5>
-                      <p class="card-text text-muted">Centro de reciclaje en Ciudad Juárez</p>
-                      <button class="btn btn-outline-secondary">Contáctanos!</button>
+                      <h5 class="card-title">RECODI Group</h5>
+                      <p class="card-text text-muted">Líderes en soluciones integrales y manejo de materiales reciclables
+                        para la empresa maquiladora.</p>
+                        <button class="btn btn-contact" onclick="showCompanyInfo('RECODI Group', 'Empresa de reciclaje en Ciudad Juárez.', 'Ciudad Juárez')">Contáctanos!</button>
                   </div>
               </div>
           </div>
@@ -48,34 +88,53 @@
       <div class="card mb-4 shadow-sm recycler-card">
           <div class="row g-0">
               <div class="col-md-3">
-                  <img src="https://via.placeholder.com/150" class="img-fluid rounded-start" alt="Recicladora">
+                  <img src="{% static 'images/reomca.jpg' %}" class="img-fluid" alt="Recicladora">
               </div>
               <div class="col-md-9">
                   <div class="card-body">
-                      <h5 class="card-title">Recicladora JRZ #1</h5>
-                      <p class="card-text text-muted">Centro de reciclaje en Ciudad Juárez</p>
-                      <button class="btn btn-outline-secondary">Contáctanos!</button>
+                      <h5 class="card-title">Reomca </h5>
+                      <p class="card-text text-muted">Tu recicladora en Cd. Juarez, Chih., México</p>
+                      <button class="btn btn-contact" onclick="showCompanyInfo('Reomca', 'Empresa de reciclaje en Ciudad Juárez.', 'Ciudad Juárez')">Contáctanos!</button>
                   </div>
               </div>
           </div>
       </div>
   </div>
 
-  <nav aria-label="Page navigation example">
-      <ul class="pagination justify-content-center">
-          <li class="page-item disabled">
-              <a class="page-link" href="#" tabindex="-1">&larr; Previous</a>
-          </li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item"><span class="page-link">...</span></li>
-          <li class="page-item"><a class="page-link" href="#">67</a></li>
-          <li class="page-item"><a class="page-link" href="#">68</a></li>
-          <li class="page-item">
-              <a class="page-link" href="#">Next &rarr;</a>
-          </li>
-      </ul>
-  </nav>
+  <div class="card mb-4 shadow-sm recycler-card">
+    <div class="row g-0">
+        <div class="col-md-3">
+            <img src="{% static 'images/disma.png' %}" class="img-fluid" alt="Recicladora">
+        </div>
+        <div class="col-md-9">
+            <div class="card-body">
+                <h5 class="card-title">DISMA Recycling</h5>
+                <p class="card-text text-muted">Empresa recicladora al servicio de la industria maquiladora</p>
+                <button class="btn btn-contact" onclick="showCompanyInfo('Reomca', 'Empresa de reciclaje en Ciudad Juárez.', 'Ciudad Juárez')">Contáctanos!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+</div>
+<div class="card mb-4 shadow-sm recycler-card">
+    <div class="row g-0">
+        <div class="col-md-3">
+            <img src="{% static 'images/mendez.png' %}" class="img-fluid" alt="Recicladora">
+        </div>
+        <div class="col-md-9">
+            <div class="card-body">
+                <h5 class="card-title">Recicladora Méndez</h5>
+                <p class="card-text text-muted">Recolección y Compra de Metales</p>
+                <button class="btn btn-contact" onclick="showCompanyInfo('Reomca', 'Empresa de reciclaje en Ciudad Juárez.', 'Ciudad Juárez')">Contáctanos!</button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
 </main>
 {% endblock %}

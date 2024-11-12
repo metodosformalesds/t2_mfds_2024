@@ -8,13 +8,24 @@ body {
 }
 
 .recycler-card {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch; /* Asegura que las tarjetas se estiren por igual */
   border-radius: 8px;
   overflow: hidden;
   transition: transform 0.2s ease-in-out;
+  min-height: 250px; /* Ajusta el valor según lo necesario */
 }
 
 .recycler-card:hover {
   transform: scale(1.02);
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Distribuye el contenido uniformemente */
+  padding: 15px;
 }
 
 .card-title {
@@ -24,7 +35,23 @@ body {
 .card-text {
   margin-bottom: 10px;
   color: #6c757d;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limita a 3 líneas */
+  -webkit-box-orient: vertical;
+  line-height: 1.5; /* Define la altura de línea */
+  max-height: calc(1.5em * 3); /* Calcula la altura máxima para 3 líneas */
 }
+
+.img-fluid {
+  max-height: 150px; /* Limita la altura máxima de la imagen */
+  object-fit: cover; /* Asegura que la imagen se ajuste sin distorsión */
+  width: 100%; /* Asegura que la imagen ocupe todo el ancho del contenedor */
+  border-radius: 0; /* Ajusta el borde para que se vea mejor */
+}
+
+
 
 .page-link {
   color: #6c757d;
@@ -49,31 +76,36 @@ body {
 }
 
 .btn-contact {
-  background-color: #007bff;
-  color: white;
+  background-color: #6c757d; /* Cambia el color de fondo a gris */
+  color: white; /* Mantén el texto en blanco para mejor visibilidad */
   border: none;
   border-radius: 30px;
-  padding: 10px 20px;
+  padding: 8px 16px; /* Ajusta el padding si es necesario */
   text-transform: uppercase;
   font-weight: bold;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  width: auto; /* Asegura que el botón no ocupe todo el ancho */
+  display: inline-block; /* Mantiene el botón del tamaño adecuado */
+  text-align: center; /* Centra el texto dentro del botón */
 }
 
 .btn-contact:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
+  background-color: #5a6268; /* Un tono más oscuro de gris para el efecto hover */
+  transform: scale(1.05); /* Mantén el efecto de escala */
 }
+
 
 @media (max-width: 576px) {
   .recycler-card {
-    flex-direction: column;
+      flex-direction: column; /* Apila los elementos en pantallas pequeñas */
   }
-  
+
   .btn-contact {
-    width: 100%;
+      width: 100%; /* Botones de ancho completo en pantallas pequeñas */
   }
-  
+
   .pagination {
-    flex-wrap: wrap;
+      flex-wrap: wrap; /* Asegura que la paginación se ajuste en pantallas pequeñas */
   }
 }
+
