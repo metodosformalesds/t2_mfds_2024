@@ -21,6 +21,18 @@
             </div>
             <div class="col-md-3 text-end">
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'cart' %}'"><i class="bi bi-cart2"></i></button>
+                
+                <!--traer el id del usuario y buscar el traking number-->
+                {% if shipment.shipment_tracking_number %}
+                    <button class="btn btn-custom" type="button" onclick="window.location.href='{% url 'shipment_tracking_info' tracking_number=shipment.shipment_tracking_number %}'">
+                        <i class="bi bi-truck"></i>
+                    </button>
+                {% else %}
+                    <button class="btn btn-custom" type="button" disabled>
+                        <i class="bi bi-truck"></i> No disponible
+                    </button>
+                {% endif %}
+
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'client_edit_info' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'client_edit_info' %}'"><i class="bi bi-gear"></i></button>
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'client_login' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'client_login' %}'"><i class="bi bi-box-arrow-left"></i></button>
             </div>

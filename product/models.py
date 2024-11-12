@@ -138,26 +138,35 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"Order Item {self.id_order_item}"
  
- 
- 
 class Shipment(models.Model):
     id_shipment = models.AutoField(primary_key=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     shipment_tracking_number = models.CharField(max_length=50)
     shipment_carrier = models.CharField(max_length=50)
     shipment_status = models.CharField(max_length=50)
+    status_code = models.CharField(max_length=50, null=True, blank=True)
+    status_category = models.CharField(max_length=50, null=True, blank=True)
+    status_milestone = models.CharField(max_length=50, null=True, blank=True)
     shipment_date = models.DateTimeField()
     shipment_estimated_delivery_date = models.DateTimeField()
-    shipment_actual_delivery_date = models.DateTimeField()
- 
+    shipment_actual_delivery_date = models.DateTimeField(null=True, blank=True)
+    courier_codes = models.CharField(max_length=255, blank=True, null=True)
+
     def __str__(self):
         return f"Shipment {self.id_shipment}"
- 
+
+    def set_courier_codes(self, codes):
+        if len(codes) > 3:
+            raise ValueError("Se permiten hasta 3 códigos de mensajeros.")
+        self.courier_codes = ','.join(codes)
+
+    def get_courier_codes(self):
+        return self.courier_codes.split(',') if self.courier_codes else []
  
  
 class Payment(models.Model):
     id_payment = models.AutoField(primary_key=True)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True) #modificar para ship24
     payment_method = models.CharField(max_length=20, choices=PaymentMethod.choices)
     payment_amount = models.FloatField()
     payment_date = models.DateTimeField(auto_now_add=True)
