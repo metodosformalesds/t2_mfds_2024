@@ -23,6 +23,7 @@ class SupplierRegisterForm(forms.ModelForm):
             'supplier_city': forms.TextInput(attrs={'class': 'form-control'}),
             'supplier_zip_code': forms.TextInput(attrs={'class': 'form-control'}),
             'supplier_state': forms.TextInput(attrs={'class': 'form-control'}),
+            'balance':0,
         }
 
     def save(self, commit=True):
