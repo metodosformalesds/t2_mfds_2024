@@ -1,25 +1,83 @@
 {% extends "base_without_image.html" %}
-
 {% load static %}
 
-{% block title %}Confirmación de Retiro{% endblock %}
+{% block title %}Establecer Información del Envío - Solid Steel{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/client_style.css' %}">
+<style>
+  /* Estilo para centrar el contenedor en la pantalla */
+  .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top:15px;
+      height: 70vh;
+  }
+
+  .container-confirmacion {
+      text-align: center;
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+  }
+
+  .check-icon {
+      color: #28a745; /* Color verde para éxito */
+      margin-bottom: 20px;
+  }
+
+  .title-success {
+      font-size: 24px;
+      font-weight: bold;
+      color: #28a745;
+      margin-bottom: 20px;
+  }
+
+  .table th {
+      text-align: left;
+      font-weight: bold;
+  }
+
+  .table td {
+      text-align: right;
+  }
+
+  /* Estilo para el botón de finalizar */
+  .finalizar-btn {
+      background-color: #28a745;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+  }
+
+  .finalizar-btn:hover {
+      background-color: #218838;
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/confirmacion_retiro.css' %}">
-
 <main class="main-container">
-    <div class="text-center">
-        <h1 class="title-success">TRANSACCIÓN EXITOSA</h1>
-        <div class="check-icon" >
-            <i class="fas fa-check-circle" style="font-size: 100px; color: #28a745;"></i>
-        </div>        
-    </div>
-    <div class="container-confirmacion mt-5">
-        <table class="table">
+    <div class="container-confirmacion">
+        <div class="text-center">
+            <h1 class="title-success">Ticket de compra</h1>
+            <div class="check-icon">
+                <i class="fas fa-check-circle" style="font-size: 100px;"></i>
+            </div>        
+        </div>
+        <table class="table mt-4">
             <tbody>
                 <tr>
-                    <th>Estado de transacción</th>
-                    <td>En Proceso</td>
+                    <th>Exitosa</th>
+                    <td>{{ status }}</td>
                 </tr>
                 <tr>
                     <th>Nombre del comercio</th>
@@ -27,40 +85,32 @@
                 </tr>
                 <tr>
                     <th>Fecha de pago</th>
-                    <td>22 de Septiembre</td>
+                    <td>{{ payment_date|date:"m/d/Y" }}</td>
                 </tr>
                 <tr>
                     <th>Hora de pago</th>
-                    <td>18:30</td>
+                    <td>{{ payment_date|time:"h:i A" }}</td>
                 </tr>
                 <tr>
                     <th>ID de la transacción</th>
-                    <td>#12345678910</td>
-                </tr>
-                <tr>
-                    <th>CUS</th>
-                    <td>1234567891</td>
-                </tr>
-                <tr>
-                    <th>Cuenta</th>
-                    <td>asdaeredsass@####.com</td>
+                    <td>#{{ transaction_id }}</td>
                 </tr>
                 <tr>
                     <th>Método de pago</th>
-                    <td>Paypal Transacción</td>
+                    <td>{{ payment_method }}</td>
                 </tr>
                 <tr>
                     <th>Costo subtotal</th>
-                    <td>$150</td>
+                    <td>${{ subtotal }}</td>
                 </tr>
                 <tr>
                     <th>Total</th>
-                    <td><strong>$150</strong></td>
+                    <td><strong>${{ total }}</strong></td>
                 </tr>
             </tbody>
         </table>
         <div class="text-center mt-4">
-            <button type="button" class="btn btn-primary w-100 finalizar-btn">Finalizar</button>
+            <button type="button" class="finalizar-btn w-100">Finalizar</button>
         </div>
     </div>
 </main>

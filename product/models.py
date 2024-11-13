@@ -162,14 +162,14 @@ class Payment(models.Model):
     payment_amount = models.FloatField()
     payment_date = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(max_length=20, choices=PaymentStatus.choices)
-
     app_user = models.ForeignKey(Client, on_delete=models.CASCADE)
     payment_bool = models.BooleanField(default=False)
     stripe_checkout_id = models.CharField(max_length=500)
- 
+    customer_email = models.EmailField(max_length=255, null=True, blank=True)  # campo para el correo
+
     def __str__(self):
         return f"Payment {self.id_payment}"
- 
+
  
 class ShoppingCart(models.Model):
     id_cart = models.AutoField(primary_key=True)

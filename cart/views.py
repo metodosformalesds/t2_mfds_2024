@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
-from product.models import Product, ShoppingCart, UserAccount, Client, Payment, Order, ClientAddress
+from product.models import Product, ShoppingCart, UserAccount, Client, Payment, Order, ClientAddress, OrderItem
+
 from django.conf import settings
 from django.http import HttpResponse
 from django.db import transaction
@@ -86,48 +87,74 @@ def stripe_webhook(request):
     return HttpResponse(status = 200)
 
 #4242424242424242
-def payment_successful(request):  
+def payment_successful(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
     checkout_session_id = request.GET.get('session_id', None)
     session = stripe.checkout.Session.retrieve(checkout_session_id)
-    customer = stripe.Customer.retrieve(session.customer)
 
+    # Extrae el correo electrónico del cliente desde la sesión de Stripe
+    customer_email = session.get('customer_email', None)
+    
     user_id = request.session.get('user_id')
     user_account = UserAccount.objects.get(id_user=user_id)
     client = Client.objects.get(user=user_account)
 
+    # Obtener items del carrito y calcular el total
     carrito_items = ShoppingCart.objects.filter(client=client)
-    total = sum(item.product.product_price * item.cart_product_quantity for item in carrito_items)
+    subtotal = sum(item.product.product_price * item.cart_product_quantity for item in carrito_items)
+    total = subtotal  # Si tienes impuestos u otros cálculos, ajústalo aquí
 
+    # Extraer datos de la transacción
+    transaction_id = session.payment_intent
+    payment_date = timezone.now()  # Usar la fecha y hora actual
+    payment_method = "Stripe"
+
+    # Crear una nueva orden
+    address = ClientAddress.objects.filter(client=client).first()
+    order = Order.objects.create(
+        client=client,
+        address=address,
+        order_date=payment_date
+    )
+
+    # Crear los items de la orden
     with transaction.atomic():
         for item in carrito_items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.cart_product_quantity,
+                price_at_purchase=item.product.product_price
+            )
             supplier = item.product.supplier
             supplier.balance += item.product.product_price * item.cart_product_quantity
             supplier.save()
 
-
-    # Suponiendo que 'order' ya existe o debes crearla primero
-    address = ClientAddress.objects.filter(client=client).first()  
-
-    # Crea la orden con los datos especificados
-    order = Order.objects.create(
-        client=client,
-        address=address,
-        order_date=timezone.now()  # Asigna la fecha actual
-    )
-
-    # Llama a la función para crear el registro de pago
-    payment = Payment.objects.create(
+    # Crear el registro del pago con los detalles correctos
+    Payment.objects.create(
         order=order,
-        payment_method="Stripe",
+        payment_method=payment_method,
         payment_amount=total,
-        payment_status="Completed",
+        payment_status="Exitosa",  # Estado del pago
         app_user=client,
         stripe_checkout_id=checkout_session_id,
-        payment_bool=True  # Marcado como pagado
+        payment_bool=True,
+        customer_email=customer_email
     )
 
-    return render(request, 'cart/success.html')
+    # Limpia el carrito del usuario
+    ShoppingCart.objects.filter(client=client).delete()
+
+    # Pasar los datos al contexto para mostrarlos en la plantilla
+    return render(request, 'cart/success.html', {
+        'transaction_id': transaction_id,
+        'payment_date': payment_date,
+        'payment_method': payment_method,
+        'subtotal': f"{subtotal:.2f}",  # Formatear a dos decimales
+        'total': f"{total:.2f}",  # Formatear a dos decimales
+        'status': "Exitosa",
+        'customer_email': customer_email
+    })
 
 
 def payment_cancelled(request):
