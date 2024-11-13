@@ -109,3 +109,46 @@ body {
   }
 }
 
+/* Estilo para mejorar la apariencia de las tarjetas */
+.recycler-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.recycler-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.recycler-card img {
+  width: 233px;
+  height: auto;
+  object-fit: cover;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.map-container {
+  height: 200px;
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.card-body {
+  padding: 15px;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.card-text {
+  font-size: 0.95rem;
+  color: #555;
+}

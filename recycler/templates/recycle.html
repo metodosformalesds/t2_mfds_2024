@@ -7,134 +7,160 @@
 
 {% block head %}
     <link rel="stylesheet" href="{% static 'css/style_recycler.css' %}">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        #map {
+            height: 300px;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
 <main class="container py-5">
-  <h2 class="mb-3">Recicladoras</h2>
-  <p class="text-muted">¡Contáctate con la más cercana!</p>
+  <h2 class="mb-3">Recicladoras Cercanas</h2>
+  <p class="text-muted">¡Estamos buscando las recicladoras más cercanas a tu ubicación!</p>
 
   <!-- Modal -->
-<div class="modal fade" id="companyInfoModal" tabindex="-1" aria-labelledby="companyInfoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="companyInfoModalLabel">Información de la Empresa</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <h5 id="companyName">Nombre de la Empresa</h5>
-          <p id="companyDescription">Descripción de la empresa aquí...</p>
-          <p id="companyLocation">Ubicación: Ciudad Juárez</p>
-          <!-- Puedes agregar más información según lo que necesites -->
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+  <div class="modal fade" id="companyInfoModal" tabindex="-1" aria-labelledby="companyInfoModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="companyInfoModalLabel">Información de la Empresa</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <h5 id="companyName">Nombre de la Empresa</h5>
+            <p id="companyDescription">Descripción de la empresa aquí...</p>
+            <p id="companyLocation">Ubicación: </p>
+            <div id="map"></div> <!-- Contenedor para el mapa de Google Maps -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
         </div>
       </div>
-    </div>
+  </div>
+
+  <!-- Contenedor para las tarjetas de las empresas recicladoras -->
+  <div class="recycler-list" id="recycler-list"></div>
+
+  <!-- Botón para cargar más recicladoras -->
+  <div class="text-center mt-4">
+      <button id="load-more-btn" class="btn btn-primary">Ver más</button>
   </div>
 
   <script>
-    function showCompanyInfo(name, description, location) {
-      // Asigna los valores proporcionados a los elementos del modal
-      document.getElementById('companyName').innerText = name;
-      document.getElementById('companyDescription').innerText = description;
-      document.getElementById('companyLocation').innerText = "Ubicación: " + location;
-      
-      // Abre el modal
-      var myModal = new bootstrap.Modal(document.getElementById('companyInfoModal'));
-      myModal.show();
-    }
+      let map;
+      let service;
+      let geocoder;
+      let currentResults = []; // Almacena todos los resultados
+      let resultsIndex = 0; // Índice de la posición actual en los resultados
+      const resultsPerPage = 5; // Número de recicladoras que se mostrarán por carga
+
+      // Inicializar el mapa de Google Maps
+      function initMap() {
+          map = new google.maps.Map(document.getElementById('map'), {
+              zoom: 12,
+              center: { lat: 31.6904, lng: -106.4245 } // Coordenadas por defecto
+          });
+          geocoder = new google.maps.Geocoder();
+
+          // Obtener la ubicación del usuario
+          if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                  (position) => {
+                      const userLocation = {
+                          lat: position.coords.latitude,
+                          lng: position.coords.longitude
+                      };
+                      map.setCenter(userLocation);
+                      buscarRecicladorasCercanas(userLocation);
+                  },
+                  () => {
+                      alert('No se pudo obtener tu ubicación. Asegúrate de permitir el acceso a la ubicación.');
+                  }
+              );
+          } else {
+              alert('Tu navegador no soporta la geolocalización.');
+          }
+      }
+
+      // Buscar recicladoras cercanas usando Google Places API
+      function buscarRecicladorasCercanas(location) {
+          const request = {
+              location: location,
+              radius: 5000, // Radio de búsqueda en metros
+              keyword: 'recycling center'
+          };
+
+          service = new google.maps.places.PlacesService(map);
+          service.nearbySearch(request, (results, status) => {
+              if (status === google.maps.places.PlacesServiceStatus.OK) {
+                  currentResults = results;
+                  mostrarRecicladoras(); // Mostrar las primeras recicladoras
+              } else {
+                  alert('No se encontraron recicladoras cercanas.');
+              }
+          });
+      }
+
+      // Mostrar recicladoras en la vista
+      function mostrarRecicladoras() {
+          const recyclerList = document.getElementById('recycler-list');
+          for (let i = resultsIndex; i < resultsIndex + resultsPerPage && i < currentResults.length; i++) {
+              const place = currentResults[i];
+              const card = document.createElement('div');
+              card.className = 'card mb-4 shadow-sm recycler-card';
+              card.innerHTML = `
+                  <div class="row g-0">
+                      <div class="col-md-3">
+                          <img src="${place.photos ? place.photos[0].getUrl() : '{% static "images/default.png" %}'}" class="img-fluid rounded-start" alt="Recicladora">
+                      </div>
+                      <div class="col-md-9">
+                          <div class="card-body">
+                              <h5 class="card-title">${place.name}</h5>
+                              <p class="card-text text-muted">${place.vicinity}</p>
+                              <button class="btn btn-contact" onclick="showCompanyInfo('${place.name}', '${place.vicinity}', '${place.geometry.location.lat()}, ${place.geometry.location.lng()}')">Contáctanos!</button>
+                          </div>
+                      </div>
+                  </div>
+              `;
+              recyclerList.appendChild(card);
+          }
+          resultsIndex += resultsPerPage; // Incrementar el índice
+
+          // Ocultar el botón si ya no hay más resultados
+          if (resultsIndex >= currentResults.length) {
+              document.getElementById('load-more-btn').style.display = 'none';
+          }
+      }
+
+      // Evento para cargar más recicladoras al hacer clic en "Ver más"
+      document.getElementById('load-more-btn').addEventListener('click', mostrarRecicladoras);
+
+      function showCompanyInfo(name, address, coords) {
+          // Asigna los valores proporcionados a los elementos del modal
+          document.getElementById('companyName').innerText = name;
+          document.getElementById('companyDescription').innerText = address;
+          document.getElementById('companyLocation').innerText = "Ubicación: " + address;
+
+          const [lat, lng] = coords.split(', ').map(Number);
+          map.setCenter({ lat: lat, lng: lng });
+          new google.maps.Marker({
+              map: map,
+              position: { lat: lat, lng: lng }
+          });
+
+          // Abre el modal
+          var myModal = new bootstrap.Modal(document.getElementById('companyInfoModal'));
+          myModal.show();
+      }
   </script>
-  
-  
 
-  <div class="recycler-list">
-      <div class="card mb-4 shadow-sm recycler-card">
-          <div class="row g-0">
-              <div class="col-md-3">
-                  <img src="{% static 'images/MORLIM.png' %}" class="img-fluid rounded-start" alt="Recicladora">
-              </div>
-              <div class="col-md-9">
-                  <div class="card-body">
-                      <h5 class="card-title">Reciclados MORLIM</h5>
-                      <p class="card-text text-muted">Empresa de reciclaje especializada en Ciudad Juárez.</p>
-                      <button class="btn btn-contact" onclick="showCompanyInfo('Reciclados MORLIM', 'Empresa de reciclaje especializada en Ciudad Juárez.', 'Ciudad Juárez')">Contáctanos!</button>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-      <div class="card mb-4 shadow-sm recycler-card">
-          <div class="row g-0">
-              <div class="col-md-3">
-                  <img src="{% static 'images/recodi.png' %}" class="img-fluid rounded-start" alt="Recicladora">
-              </div>
-              <div class="col-md-9">
-                  <div class="card-body">
-                      <h5 class="card-title">RECODI Group</h5>
-                      <p class="card-text text-muted">Líderes en soluciones integrales y manejo de materiales reciclables
-                        para la empresa maquiladora.</p>
-                        <button class="btn btn-contact" onclick="showCompanyInfo('RECODI Group', 'Empresa de reciclaje en Ciudad Juárez.', 'Ciudad Juárez')">Contáctanos!</button>
-                  </div>
-              </div>
-          </div>
-      </div>
-
-      <div class="card mb-4 shadow-sm recycler-card">
-          <div class="row g-0">
-              <div class="col-md-3">
-                  <img src="{% static 'images/reomca.jpg' %}" class="img-fluid" alt="Recicladora">
-              </div>
-              <div class="col-md-9">
-                  <div class="card-body">
-                      <h5 class="card-title">Reomca </h5>
-                      <p class="card-text text-muted">Tu recicladora en Cd. Juarez, Chih., México</p>
-                      <button class="btn btn-contact" onclick="showCompanyInfo('Reomca', 'Empresa de reciclaje en Ciudad Juárez.', 'Ciudad Juárez')">Contáctanos!</button>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  <div class="card mb-4 shadow-sm recycler-card">
-    <div class="row g-0">
-        <div class="col-md-3">
-            <img src="{% static 'images/disma.png' %}" class="img-fluid" alt="Recicladora">
-        </div>
-        <div class="col-md-9">
-            <div class="card-body">
-                <h5 class="card-title">DISMA Recycling</h5>
-                <p class="card-text text-muted">Empresa recicladora al servicio de la industria maquiladora</p>
-                <button class="btn btn-contact" onclick="showCompanyInfo('Reomca', 'Empresa de reciclaje en Ciudad Juárez.', 'Ciudad Juárez')">Contáctanos!</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-</div>
-<div class="card mb-4 shadow-sm recycler-card">
-    <div class="row g-0">
-        <div class="col-md-3">
-            <img src="{% static 'images/mendez.png' %}" class="img-fluid" alt="Recicladora">
-        </div>
-        <div class="col-md-9">
-            <div class="card-body">
-                <h5 class="card-title">Recicladora Méndez</h5>
-                <p class="card-text text-muted">Recolección y Compra de Metales</p>
-                <button class="btn btn-contact" onclick="showCompanyInfo('Reomca', 'Empresa de reciclaje en Ciudad Juárez.', 'Ciudad Juárez')">Contáctanos!</button>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
-
-
+  <!-- Incluir el script de la API de Google Maps con Places API y async defer -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZWjlVC9wu6AvP-8TEx7vkbEVJpqRPLoE&libraries=places&callback=initMap"></script>
 </main>
 {% endblock %}
