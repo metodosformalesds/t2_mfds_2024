@@ -16,6 +16,7 @@ from product.models import Supplier, UserAccount  # Importamos los modelos
 from .forms import SupplierRegisterForm
 from .forms import ClientRegisterForm
 
+
 #codigo para crear un archivo temporal para las imagenes del reconocimiento
 if not os.path.exists(os.path.join(settings.MEDIA_ROOT, 'temp')):
     os.makedirs(os.path.join(settings.MEDIA_ROOT, 'temp'))
@@ -144,6 +145,7 @@ def supplier_register(request):
     if request.method == 'POST':
         
         form = SupplierRegisterForm(request.POST, request.FILES)
+        unique_id = request.POST.get('unique_id')
         if form.is_valid():
             email = form.cleaned_data['email']
             
@@ -153,22 +155,32 @@ def supplier_register(request):
             else:
                 # Verifica que la carpeta 'temp' exista
                 temp_dir = os.path.join(settings.MEDIA_ROOT, 'temp')
+                
                 if not os.path.exists(temp_dir):
                     os.makedirs(temp_dir)
 
                 # Obtener los archivos de las imágenes
                 identificacion_img = request.FILES['identificacion']
-                foto_actual_img = request.FILES['foto_actual']
-
                 # Define rutas de guardado
                 identificacion_path = os.path.join(temp_dir, 'identificacion.jpg')
-                foto_actual_path = os.path.join(temp_dir, 'foto_actual.jpg')
+
 
                 # Guarda las imágenes manualmente en la carpeta 'temp'
                 with open(identificacion_path, 'wb') as f:
                     f.write(identificacion_img.read())
-                with open(foto_actual_path, 'wb') as f:
-                    f.write(foto_actual_img.read())
+
+                # Verificar si la foto actual se tomó con la cámara o si se subió a través del QR
+                # Lógica para `foto_actual`
+                if 'foto_actual' in request.FILES:  # Si la foto fue tomada con la cámara
+                    foto_actual_img = request.FILES['foto_actual']
+                    foto_actual_path = os.path.join(temp_dir, 'foto_actual.jpg')
+                    with open(foto_actual_path, 'wb') as f:
+                        f.write(foto_actual_img.read())
+                else:  # Si la foto fue subida mediante el QR
+                    foto_actual_path = os.path.join(settings.MEDIA_ROOT, f"{unique_id}.jpg")
+                    if not os.path.exists(foto_actual_path):
+                        messages.error(request, 'No se encontró la foto subida. Asegúrate de subir tu foto correctamente usando el qr.')
+                        return render(request, 'home/supplier_register.html', {'form': form})       
 
                 try:
                     # Definir mensajes
@@ -205,6 +217,7 @@ def supplier_register(request):
                     if os.path.exists(foto_actual_path):
                         os.remove(foto_actual_path)
         else:
+            print("Errores del formulario:", form.errors)
             messages.error(request, 'El formulario no es válido. Revisa los datos.')
         
     else:
@@ -216,6 +229,7 @@ def supplier_register(request):
 def client_register(request):
     if request.method == 'POST':
         form = ClientRegisterForm(request.POST, request.FILES)
+        unique_id = request.POST.get('unique_id')
         if form.is_valid():
             email = form.cleaned_data['email']
             
@@ -230,17 +244,25 @@ def client_register(request):
                 
                 # Obtener imágenes de identificación y foto actual
                 identificacion_img = request.FILES['identificacion']
-                foto_actual_img = request.FILES['foto_actual']
-
                 # Definir rutas temporales para guardar las imágenes
                 identificacion_path = os.path.join(temp_dir, 'identificacion.jpg')
-                foto_actual_path = os.path.join(temp_dir, 'foto_actual.jpg')
 
                 # Guardar las imágenes en las rutas temporales
                 with open(identificacion_path, 'wb') as f:
                     f.write(identificacion_img.read())
-                with open(foto_actual_path, 'wb') as f:
-                    f.write(foto_actual_img.read())
+
+                                # Verificar si la foto actual se tomó con la cámara o si se subió a través del QR
+                # Lógica para `foto_actual`
+                if 'foto_actual' in request.FILES:  # Si la foto fue tomada con la cámara
+                    foto_actual_img = request.FILES['foto_actual']
+                    foto_actual_path = os.path.join(temp_dir, 'foto_actual.jpg')
+                    with open(foto_actual_path, 'wb') as f:
+                        f.write(foto_actual_img.read())
+                else:  # Si la foto fue subida mediante el QR
+                    foto_actual_path = os.path.join(settings.MEDIA_ROOT, f"{unique_id}.jpg")
+                    if not os.path.exists(foto_actual_path):
+                        messages.error(request, 'No se encontró la foto subida. Asegúrate de subir tu foto correctamente usando el qr.')
+                        return render(request, 'home/client_register.html', {'form': form})    
 
                 try:
                     # Verificar condiciones
@@ -271,3 +293,30 @@ def client_register(request):
         form = ClientRegisterForm()
 
     return render(request, 'home/client_register.html', {'form': form})
+
+
+import os
+from django.shortcuts import render
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.http import JsonResponse
+
+def cargar_foto(request, unique_id):
+    if request.method == 'POST' and request.FILES.get('foto'):
+        foto = request.FILES['foto']
+        # Guardar la foto con el nombre de la ID única
+        foto_name = f"{unique_id}.jpg"  # Asegúrate de que el nombre esté correcto
+        foto_path = os.path.join(settings.MEDIA_ROOT, foto_name)
+        
+        try:
+            default_storage.save(foto_path, foto)
+            messages.success(request, 'Foto cargada correctamente, termina de rellenar el formulario!')
+        except Exception as e:
+            # Manejar cualquier error durante la carga
+            messages.error(request, 'La foto no pudo ser cargada correctamente, vuelve a intentarlo.')
+            print(f"Error al guardar la foto: {e}")
+
+        return render(request, 'home/cargar_foto.html', {'unique_id': unique_id})
+    
+    return render(request, 'home/cargar_foto.html', {'unique_id': unique_id})
+

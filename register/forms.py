@@ -11,7 +11,7 @@ class SupplierRegisterForm(forms.ModelForm):
     
     # Nuevos campos para cargar las imágenes
     identificacion = forms.ImageField(required=True)
-    foto_actual = forms.ImageField(required=True)
+    foto_actual = forms.ImageField(required=False)
     
     
     class Meta:
@@ -47,6 +47,10 @@ class SupplierRegisterForm(forms.ModelForm):
 class ClientRegisterForm(forms.ModelForm):
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    
+    
+    identificacion = forms.ImageField(required=True)
+    foto_actual = forms.ImageField(required=False)
     
     class Meta:
         model = Client

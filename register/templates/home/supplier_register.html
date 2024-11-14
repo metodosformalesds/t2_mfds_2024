@@ -114,12 +114,11 @@
                             <img id="photo-preview" class="rounded-oval" src="#" alt="Foto previa" style="display: none;">
                         </div>
                         
-                        <!-- Sección de carga de archivo -->
-                        <div id="file-upload-section">
-                            <label for="id_identificacion" class="form-label">Subir foto actual</label>
-                            <input type="file" name="foto_actual" class="form-control" accept="image/*">
-                            <small id="fotoHelp" class="form-text text-danger d-none">La foto debe ser un archivo de imagen en formato JPEG, PNG o BMP.</small>
+                        <div class="text-center mb-3" id="qr-code-section">
+                            <h5>Escanea el código QR para subir tu foto</h5>
+                            <canvas id="qr-code"></canvas>
                         </div>
+                        <input type="hidden" id="unique-id-input" name="unique_id" value="">
                     </div>
 
                     <button type="submit" class="btn btn-dark w-100">Registrar</button>
@@ -142,6 +141,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrious/dist/qrious.min.js"></script>
+
     <script>
         function togglePassword() {
             const passwordField = document.getElementById('passwordField');
@@ -158,6 +159,29 @@
                 eyeIconOpen.style.display = 'none';
             }
         }
+
+
+        //qr
+        function generateUniqueId() {
+            // Generar una secuencia de 20 números aleatorios
+            let uniqueId = '';
+            for (let i = 0; i < 20; i++) {
+                uniqueId += Math.floor(Math.random() * 10); // Genera un número aleatorio de 0 a 9
+            }
+            return uniqueId;
+        }
+    
+        // Generar la ID única
+        const uniqueId = generateUniqueId(); // Asegúrate de que `unique_id` esté en el contexto
+        document.getElementById("unique-id-input").value = uniqueId; // Asignar el valor al campo oculto
+        const qrUrl = `https://8lhlxg61-8000.usw3.devtunnels.ms/register/cargar_foto/${uniqueId}/`;
+        console.log(uniqueId);
+    // Crear el código QR
+    const qr = new QRious({
+        element: document.getElementById('qr-code'),
+        value: qrUrl,
+        size: 200 // Tamaño del código QR
+    });
     </script>
     <script>
         //Validate form
@@ -290,7 +314,7 @@ if (!fotoInput.files || fotoInput.files.length === 0) {
             const photoPreview = document.getElementById('photo-preview');
             const cameraSection = document.getElementById('camera-section');
             const titleCameraSection = document.getElementById('title_foto_actual');
-            const fileUploadSection = document.getElementById('file-upload-section');
+            const qr_code_section = document.getElementById('qr-code-section');
             const fotoInput = document.querySelector("input[name='foto_actual']");
         
             let isCameraAvailable = false; // Para rastrear la disponibilidad de la cámara
@@ -310,13 +334,13 @@ if (!fotoInput.files || fotoInput.files.length === 0) {
                     isCameraAvailable = true;
                     video.srcObject = stream;
                     cameraSection.style.display = "block";
-                    fileUploadSection.style.display = "none";
+                    qr_code_section.style.display = "none";
                 })
                 .catch(error => {
                     // Si la cámara no está disponible, muestra la carga de archivo
                     console.error("No se puede acceder a la cámara:", error);
                     cameraSection.style.display = "none";
-                    fileUploadSection.style.display = "block";
+                    qr_code_section.style.display = "block";
                     titleCameraSection.style.display="none";
         
                     // Forzar que la sección de la cámara no sea visible
