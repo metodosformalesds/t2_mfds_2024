@@ -1,58 +1,72 @@
+/* Estilos generales */
 body {
   background-color: #f8f9fa;
   font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
+/* Contenedor de la lista de recicladoras */
 .recycler-list {
   margin-top: 20px;
 }
 
+/* Estilo de las tarjetas de recicladoras */
 .recycler-card {
   display: flex;
   flex-direction: row;
-  align-items: stretch; /* Asegura que las tarjetas se estiren por igual */
+  align-items: stretch;
   border-radius: 8px;
   overflow: hidden;
-  transition: transform 0.2s ease-in-out;
-  min-height: 250px; /* Ajusta el valor según lo necesario */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  max-height: 250px;
+  border: 1px solid #ddd; /* Borde de las tarjetas */
+  margin-bottom: 20px; /* Separación entre tarjetas */
 }
 
+/* Efecto al pasar el mouse por encima de las tarjetas */
 .recycler-card:hover {
   transform: scale(1.02);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Sombra al hacer hover */
 }
 
+/* Estilo de los contenedores dentro de las tarjetas */
 .card-body {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Distribuye el contenido uniformemente */
+  justify-content: space-between;
   padding: 15px;
 }
 
+/* Título de las tarjetas */
 .card-title {
   font-weight: bold;
+  font-size: 1.25rem;
+  margin-bottom: 8px;
 }
 
+/* Descripción de las tarjetas */
 .card-text {
   margin-bottom: 10px;
   color: #6c757d;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 3; /* Limita a 3 líneas */
   -webkit-box-orient: vertical;
-  line-height: 1.5; /* Define la altura de línea */
-  max-height: calc(1.5em * 3); /* Calcula la altura máxima para 3 líneas */
+  line-height: 1.5;
+  max-height: calc(1.5em * 3); /* Limita la altura a 3 líneas */
 }
 
-.img-fluid {
-  max-height: 150px; /* Limita la altura máxima de la imagen */
-  object-fit: cover; /* Asegura que la imagen se ajuste sin distorsión */
-  width: 100%; /* Asegura que la imagen ocupe todo el ancho del contenedor */
-  border-radius: 0; /* Ajusta el borde para que se vea mejor */
+/* Imagen de la tarjeta */
+.recycler-card img {
+  width: 233px; /* Ancho fijo de 233px */
+  height: 150px; /* Altura fija de 150px */
+  object-fit: cover; /* Asegura que la imagen no se distorsione */
+  border-radius: 0; /* Sin bordes redondeados en la imagen */
+  background-color: #f0f0f0; /* Fondo gris claro cuando no hay imagen */
 }
 
-
-
+/* Estilo de la paginación */
 .page-link {
   color: #6c757d;
   background-color: #e9ecef;
@@ -75,61 +89,53 @@ body {
   margin-top: 20px;
 }
 
+/* Botón de contacto */
 .btn-contact {
-  background-color: #6c757d; /* Cambia el color de fondo a gris */
-  color: white; /* Mantén el texto en blanco para mejor visibilidad */
+  background-color: #6c757d;
+  color: white; /* Color blanco para el texto del botón */
   border: none;
   border-radius: 30px;
-  padding: 8px 16px; /* Ajusta el padding si es necesario */
+  padding: 8px 16px;
   text-transform: uppercase;
   font-weight: bold;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  width: auto; /* Asegura que el botón no ocupe todo el ancho */
-  display: inline-block; /* Mantiene el botón del tamaño adecuado */
-  text-align: center; /* Centra el texto dentro del botón */
+  width: auto; /* Evita que el botón ocupe todo el ancho */
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
 }
 
 .btn-contact:hover {
-  background-color: #5a6268; /* Un tono más oscuro de gris para el efecto hover */
-  transform: scale(1.05); /* Mantén el efecto de escala */
+  background-color: #5a6268; /* Color más oscuro al hacer hover */
+  transform: scale(1.05); /* Efecto de escalado */
 }
 
+/* Botón con texto específico */
+.btn-contact span {
+  color: #ffffff; /* Asegura que el texto dentro del botón sea blanco */
+}
 
+/* Diseño para pantallas pequeñas */
 @media (max-width: 576px) {
   .recycler-card {
-      flex-direction: column; /* Apila los elementos en pantallas pequeñas */
-  }
-
-  .btn-contact {
-      width: 100%; /* Botones de ancho completo en pantallas pequeñas */
+    flex-direction: column; /* Apila los elementos en pantallas pequeñas */
   }
 
   .pagination {
-      flex-wrap: wrap; /* Asegura que la paginación se ajuste en pantallas pequeñas */
+    flex-wrap: wrap; /* Asegura que la paginación se ajuste en pantallas pequeñas */
   }
 }
 
-/* Estilo para mejorar la apariencia de las tarjetas */
-.recycler-card {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.recycler-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
+/* Estilo de la imagen dentro de la tarjeta */
 .recycler-card img {
   width: 233px;
-  height: auto;
+  height: 150px;
   object-fit: cover;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
 }
 
+/* Estilo del contenedor del mapa */
 .map-container {
   height: 200px;
   width: 100%;
