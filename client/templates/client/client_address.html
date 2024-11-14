@@ -25,6 +25,7 @@
       color: red;
       font-size: 0.9em;
       margin-top: 5px;
+      
   }
 </style>
 {% endblock %}
@@ -33,23 +34,23 @@
 <div class="container">
     <div class="row">
         <div class="col-md-2">
-                <div class="d-flex justify-content-left">
+                <div class="d-flex justify-content-left" style="margin-top:25px;">
                     <button class="btn btn-outline-secondary" onclick="window.location.href='{% url 'product_list' %}'">
                         <span class="me-1">&larr;</span> Volver
                     </button>
                 </div>
         
-        </div>
-        <div class="col-md-8">
+        </div> 
+        <div class="col-md-8" style="margin-top:25px;">
             {% if messages %}
-                    <div class="list-group mt-3">
+                    <div class="list-group mt-3" style="margin-top:15px !important;">
                         {% for message in messages %}
                             <span class="list-group-item list-group-item-{{ message.tags }}">{{ message }}</span>
                         {% endfor %}<br>
                     </div>
                 {% endif %}
     
-            <h2 class="text-center">Actualizar Dirección</h2>
+            <h2 class="text-center" style="margin-top:25px;">Actualizar Dirección</h2>
             <form method="post" id="address-form">
                 {% csrf_token %}
 

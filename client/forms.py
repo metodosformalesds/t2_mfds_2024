@@ -67,8 +67,8 @@ class ClientAddressForm(forms.ModelForm):
 
     def clean_client_city(self):
         city = self.cleaned_data['client_city']
-        if not city.isalpha():
-            raise ValidationError("La ciudad solo puede contener letras.")
+        if not re.match(r'^[a-zA-Z\s]+$', city):
+            raise ValidationError("La ciudad solo puede contener letras y espacios.")
         return city
 
     def clean_client_state(self):

@@ -1,8 +1,8 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
-from paypalrestsdk import Payment
-from product.models import ShoppingCart, UserAccount, Client, Supplier, SupplierPaymentMethodModel
+from paypalrestsdk import Payment as PayPalPayment
+from product.models import ShoppingCart, UserAccount, Client, Supplier, SupplierPaymentMethodModel,ClientAddress,OrderItem,Order,Payment
 from django.views.decorators.http import require_POST
 from .paypal import paypalrestsdk
 from django.db import transaction
@@ -10,6 +10,7 @@ from django.http import JsonResponse
 from supplier.forms import WithdrawForm
 import random
 import string
+from django.utils import timezone
 
 @require_POST
 def iniciar_pago_view(request):
@@ -48,7 +49,7 @@ def iniciar_pago_view(request):
         return redirect("cart")
 
     # Crear el pago en PayPal
-    pago = Payment({
+    pago = PayPalPayment({
         "intent": "sale",
         "payer": {
             "payment_method": "paypal"
@@ -93,29 +94,75 @@ def pago_exitoso_view(request):
     payment_id = request.GET.get("paymentId")
     payer_id = request.GET.get("PayerID")
     user_id = request.session.get('user_id')
-    
+
     # Ejecutar el pago en PayPal
-    pago = Payment.find(payment_id)
+    pago = PayPalPayment.find(payment_id)  # Cambiar a PayPalPayment
     user_account = UserAccount.objects.get(id_user=user_id)
     client = Client.objects.get(user=user_account)
 
-    carrito_items = ShoppingCart.objects.filter(client=client)
-    total = sum(item.product.product_price * item.cart_product_quantity for item in carrito_items)
-
-    with transaction.atomic():
-        for item in carrito_items:
-            supplier = item.product.supplier
-            supplier.balance += item.product.product_price * item.cart_product_quantity
-            supplier.save()
-
     if pago.execute({"payer_id": payer_id}):
-        messages.success(request, "Pago completado con éxito")
-        # Limpia el carrito del usuario
+        # Pago exitoso
+        payment_date = timezone.now()  # Usar la fecha y hora actual
+        payment_method = "PayPal"
+
+        # Obtener el ID de la transacción de PayPal
+        transaction_id = pago.transactions[0].related_resources[0].sale.id
+
+        # Obtener items del carrito y calcular el total
+        carrito_items = ShoppingCart.objects.filter(client=client)
+        subtotal = sum(item.product.product_price * item.cart_product_quantity for item in carrito_items)
+        total = subtotal  # Si tienes impuestos u otros cálculos, ajústalo aquí
+
+        # Crear una nueva orden
+        address = ClientAddress.objects.filter(client=client).first()
+        order = Order.objects.create(
+            client=client,
+            address=address,
+            order_date=payment_date
+        )
+
+        # Crear los items de la orden y actualizar el balance del proveedor
+        with transaction.atomic():
+            for item in carrito_items:
+                OrderItem.objects.create(
+                    order=order,
+                    product=item.product,
+                    quantity=item.cart_product_quantity,
+                    price_at_purchase=item.product.product_price
+                )
+                supplier = item.product.supplier
+                supplier.balance += item.product.product_price * item.cart_product_quantity
+                supplier.save()
+
+        # Crear el registro del pago con los detalles correctos
+        Payment.objects.create(
+            order=order,
+            payment_method=payment_method,
+            payment_amount=total,
+            payment_status="Exitosa",
+            app_user=client,
+            payment_bool=True,
+            stripe_checkout_id=payment_id
+        )
+
+        # Limpiar el carrito del usuario
         ShoppingCart.objects.filter(client=client).delete()
-        return redirect("cart")#modificar el pago exitoso
+
+        # Pasar los datos al contexto para mostrarlos en la plantilla
+        return render(request, 'cart/success.html', {
+            'transaction_id': transaction_id,
+            'payment_date': payment_date,
+            'payment_method': payment_method,
+            'subtotal': f"{subtotal:.2f}",  # Formatear a dos decimales
+            'total': f"{total:.2f}",  # Formatear a dos decimales
+            'status': "Exitosa"
+        })
     else:
+        # Error en el pago
         messages.error(request, "Error al confirmar el pago")
-        return redirect("cart")
+        return redirect("cart/error")
+
+
 
 def pago_cancelado_view(request):
     messages.info(request, "El pago fue cancelado.")

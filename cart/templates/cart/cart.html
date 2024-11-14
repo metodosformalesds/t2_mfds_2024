@@ -58,8 +58,11 @@
         <p class align="center">Total: ${{ total }}</p>
         
         <div align="center">
+            {% if total > 0 %}
         <a href="{% url "update_client_address" %}" class="btn btn-primary">Continuar</a>
+        {% endif %}
         </div>
+        
     </div>
 </main>
 {% endblock %}

@@ -61,6 +61,7 @@
   .finalizar-btn:hover {
       background-color: #218838;
   }
+  
 </style>
 {% endblock %}
 
@@ -110,8 +111,9 @@
             </tbody>
         </table>
         <div class="text-center mt-4">
-            <button type="button" class="finalizar-btn w-100">Finalizar</button>
+            <a href="{% url 'product_list' %}" class="finalizar-btn w-100" style="text-decoration: none;">Finalizar</a>
         </div>
+        
     </div>
 </main>
 {% endblock %}
