@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block title %}Carrito de Compras - Solid Steel{% endblock %}
+
 {% block head %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'general/css/style_general.css' %}">
@@ -11,58 +12,78 @@
 {% endblock %}
 
 {% block content %}
-<main class="container mt-5">
-    <button class="btn btn-outline-secondary" onclick="window.location.href='/products/1/'">
+<main class="container mx-auto mt-5">
+    <button class="btn btn-outline-secondary mb-3" onclick="window.location.href='/products/1/'">
         <span class="me-1">&larr;</span> Volver
     </button>   
-        <div class="list-group mt-3">
-            {% for message in messages %}
-                {% if 'edit' in message.tags %}
-                    <span class="list-group-item list-group-item-{{ message.tags }}">{{ message }}</span>
-                {% endif %}
-            {% endfor %}
-    <h2 class="carrito">Carrito</h2>
-    <div class="list-group">
-        {% if carrito_items %}
-            {% for item in carrito_items %}
-                <div class="list-group-item">
-                    <div class="card">
-                        <div class="row g-0">
-                            <div class="col-md-4">
-                                <img src="{{ item.product.product_image.url }}" class="img-fluid" alt="{{ item.product.product_name }}">
-                            </div>
-                            <div class="col-md-8">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ item.product.product_name }}</h5>
-                                    <p class="price"><strong>Precio: ${{ item.product.product_price }}</strong></p>
-                                    <p>Material: {{ item.product.product_material }}</p>
-                                    <p>Cantidad: {{ item.cart_product_quantity }}</p>
-                                    <div class="btn-group" role="group" aria-label="Cart controls">
-                                        <a href="{% url 'agregar_al_carrito' item.product.id_product %}" class="btn btn-secondary">+1</a>
-                                        <a href="{% url 'restar_del_carrito' item.product.id_product %}" class="btn btn-warning">-1</a>
-                                        <a href="{% url 'eliminar_del_carrito' item.product.id_product %}" class="btn btn-danger">Eliminar producto</a>
+
+    <div class="list-group mt-3">
+        {% for message in messages %}
+            {% if 'edit' in message.tags %}
+                <span class="list-group-item list-group-item-{{ message.tags }} p-3">{{ message }}</span>
+            {% endif %}
+        {% endfor %}
+
+        <h2 class="text-3xl font-semibold text-center text-gray-700 mb-5">Carrito</h2>
+        
+        <div class="list-group">
+            {% if carrito_items %}
+                {% for item in carrito_items %}
+                    <div class="list-group-item shadow-lg mb-4 rounded-lg">
+                        <div class="card">
+                            <div class="row g-0">
+                                <div class="col-md-4">
+                                    <img src="{{ item.product.product_image.url }}" class="img-fluid rounded-lg" alt="{{ item.product.product_name }}">
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-xl font-bold">{{ item.product.product_name }}</h5>
+                                        <p class="price text-lg text-gray-700"><strong>Precio: ${{ item.product.product_price }}</strong></p>
+                                        <p class="text-gray-600">Material: {{ item.product.product_material }}</p>
+                                        <p class="text-gray-600">Cantidad: {{ item.cart_product_quantity }}</p>
+
+                                        <div class="mt-4" id="botonesitem">
+                                            <!-- Formulario para agregar -->
+                                            <form method="post" action="{% url 'agregar_al_carrito' item.product.id_product %}" class="form-group mb-3">
+                                                {% csrf_token %}
+                                                <input type="number" name="cantidad" min="1" value="1" class="form-control">
+                                                <div class="button-container">
+                                                    <button type="submit" class="btn btn-secondary">Agregar</button>
+                                                </div>
+                                            </form>
+                                        
+                                            <!-- Formulario para restar -->
+                                            <form method="post" action="{% url 'restar_del_carrito' item.product.id_product %}" class="form-group mb-3">
+                                                {% csrf_token %}
+                                                <input type="number" name="restar" min="1" value="1" class="form-control">
+                                                <div class="button-container">
+                                                    <button type="submit" class="btn btn-warning">Restar</button>
+                                                </div>
+                                            </form>
+                                        
+                                            <!-- Botón para eliminar producto -->
+                                            <div class="flex mb-3">
+                                                <a href="{% url 'eliminar_del_carrito' item.product.id_product %}" class="btn btn-danger w-full">Eliminar</a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No hay productos en tu carrito.</p>
-        {% endif %}
+                {% endfor %}
+            {% else %}
+                <p>No hay productos en tu carrito.</p>
+            {% endif %}
+        </div>
     </div>
-
-
-        </div>
-        <p class align="center">Total: ${{ total }}</p>
-        
-        <div align="center">
-            {% if total > 0 %}
-        <a href="{% url "update_client_address" %}" class="btn btn-primary">Continuar</a>
+    
+    <p class="text-center text-lg font-semibold text-gray-700">Total: ${{ total }}</p>
+    
+    <div class="text-center">
+        {% if total > 0 %}
+            <a href="{% url 'update_client_address' %}" class="btn btn-primary px-6 py-3 rounded-md text-white">Continuar</a>
         {% endif %}
-        </div>
-        
     </div>
 </main>
 {% endblock %}

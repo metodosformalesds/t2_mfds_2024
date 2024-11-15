@@ -201,7 +201,7 @@ def agregar_al_carrito(request, id):
 # Vista para restar una unidad de un producto del carrito
 def restar_del_carrito(request, id):
     user_id = request.session.get('user_id')
-    
+
     # Verificar si el usuario ha iniciado sesión
     if not user_id:
         messages.error(request, "No has iniciado sesión. Por favor, inicia sesión.", extra_tags='edit')
@@ -216,12 +216,15 @@ def restar_del_carrito(request, id):
         return redirect('cart')
 
     carrito_item = get_object_or_404(ShoppingCart, client=client, product_id=id)
-    if carrito_item.cart_product_quantity > 1:
-        carrito_item.cart_product_quantity -= 1
+    cantidad = int(request.POST.get('cantidad', 1))
+
+    if carrito_item.cart_product_quantity > cantidad:
+        carrito_item.cart_product_quantity -= cantidad
         carrito_item.save()
     else:
         carrito_item.delete()
     return redirect('cart')
+
 
 # Vista para eliminar productos del carrito
 def eliminar_del_carrito(request, id):

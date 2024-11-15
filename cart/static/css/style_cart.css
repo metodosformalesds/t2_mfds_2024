@@ -183,3 +183,33 @@ footer img:hover {
 .card-title, .price, .btn-group {
     margin-top: 5px; /* Separación entre cada elemento */
 }
+/* styles.css */
+
+/* ...el resto de tu CSS previo... */
+
+/* Ajustes para el contenedor de botones */
+#botonesitem {
+    display: flex;
+    justify-content: flex-end; /* Alinea los botones a la derecha */
+    margin-top: 10px; /* Espaciado adicional entre el input y los botones */
+}
+
+/* Flexbox para los formularios */
+.form-group {
+    display: flex;
+    align-items: center; /* Centra verticalmente los elementos en el formulario */
+    justify-content: space-between; /* Espacia los elementos para que se distribuyan mejor */
+    width: 100%; /* Asegura que el formulario use todo el ancho disponible */
+}
+
+/* Ajustes para inputs */
+.form-control {
+    width: 60px; /* Ajusta el ancho del input */
+    text-align: center; /* Centra el texto dentro del input */
+}
+
+.flex {
+    display: flex; /* Flex para el botón de eliminar */
+    justify-content: flex-end; /* Alinea el botón de eliminar a la derecha */
+    margin-top: 10px;
+}
