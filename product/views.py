@@ -80,6 +80,6 @@ def product_list(request):
     })
 
 def product_detail(request, id):
-    productos = Product.objects.all()
+    productos_aleatorios = Product.objects.all().order_by('?')[:3]
     product_info = get_object_or_404(Product, id_product=id)
-    return render(request, 'product/product_view.html', {'product_info': product_info, "productos": productos})
+    return render(request, 'product/product_view.html', {'product_info': product_info, "productos": productos_aleatorios})
