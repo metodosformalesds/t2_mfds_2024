@@ -210,6 +210,38 @@ footer img:hover {
 
 .flex {
     display: flex; /* Flex para el botón de eliminar */
-    justify-content: flex-end; /* Alinea el botón de eliminar a la derecha */
+    justify-content: f; /* Alinea el botón de eliminar a la derecha */
     margin-top: 10px;
+}
+
+#botonesitem {
+    display: flex;
+    justify-content: flex-start; /* Opcional: Cambia a flex-end o center según tus necesidades */
+    gap: 15px; /* Espacio entre los botones */
+    margin-top: 10px;
+}
+
+/* Ajustes para los formularios */
+.botones-container form {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Espacio entre el input y el botón */
+}
+
+.botones-container .btn {
+    margin: 0;
+    padding: 5px 10px;
+    font-size: 14px; /* Ajusta el tamaño del texto */
+}
+
+.botones-container .form-control {
+    width: 50px; /* Tamaño uniforme para los inputs */
+    text-align: center;
+}
+
+.botones-container a.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
 }
