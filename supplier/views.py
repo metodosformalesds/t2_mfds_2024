@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from product.models import Supplier, UserAccount, Product, SupplierPaymentMethodModel
+from product.models import Supplier, UserAccount, Product, SupplierPaymentMethodModel, Payment, Order, OrderItem
 from django.contrib import messages
 from .forms import SupplierForm, AgregarProductoForm, ActualizarProductosForm
 from django.contrib.auth.decorators import login_required
@@ -71,29 +71,33 @@ def saldo_view(request):
      
     user = get_object_or_404(UserAccount, pk=supplier_id) 
     supplier = get_object_or_404(Supplier, user=user) 
+    payment_method = get_object_or_404(SupplierPaymentMethodModel, supplier=supplier)
+    supplier_products = Product.objects.filter(supplier=supplier)
 
-    saldo = 3241
-    metas = {
-        'saldo': saldo,
-        'meta_saldo': 10000,
-        'paypal': 324,
-        'meta_paypal': 1000,
-        'otra_meta': 200,
-        'meta_otra': 200,
-    }
-    movimientos = [
-        {'tipo': 'Compra', 'id': '0002', 'monto': 540, 'metodo': '', 'tipo_mov': 'positivo'},
-        {'tipo': 'Retirado', 'id': 'Paypal', 'monto': -300, 'metodo': 'Paypal', 'tipo_mov': 'negativo'},
-        {'tipo': 'Retirado', 'id': 'Paypal', 'monto': -350, 'metodo': 'Paypal', 'tipo_mov': 'negativo'},
-        {'tipo': 'Retirado', 'id': 'Paypal', 'monto': -360, 'metodo': 'Paypal', 'tipo_mov': 'negativo'},
-    ]
+    # Obtener todos los OrderItems de los productos del Supplier
+    order_items = OrderItem.objects.filter(product__in=supplier_products)
 
-    context = {
-        'saldo': saldo,
-        'metas': metas,
-        'movimientos': movimientos
-    }
-    return render(request, 'supplier/saldo.html',  {'supplier': supplier})
+    # Filtrar los pagos exitosos que estén asociados a estos OrderItems
+    payments = Payment.objects.filter(
+        order__orderitem__in=order_items,
+        payment_status='Exitosa'
+    ).distinct()  # Usamos distinct para evitar duplicados si hay varios OrderItems para una misma Order
+
+    # Crear un resumen de las transacciones
+    transactions = []
+    for payment in payments:
+        # Filtramos los OrderItems relacionados con la Order y el Supplier
+        order_items_related = order_items.filter(order=payment.order)
+        for order_item in order_items_related:
+            transactions.append({
+                'product_name': order_item.product.product_name,
+                'quantity_sold': order_item.quantity,
+                'amount_earned': payment.payment_amount,  # Si el pago es por toda la orden, ajustar aquí
+                
+            })
+    
+
+    return render(request, 'supplier/saldo.html',  {'supplier': supplier, 'mail':payment_method, 'transactions': transactions})
 
 # Vista para retirar saldo
 def retirar_saldo(request):
@@ -107,14 +111,41 @@ def actualizar_datos_retiro(request):
     return render(request, 'supplier/actualizar_datos.html')  # Muestra una plantilla para actualizar los datos
 
 def todos_los_movimientos(request):
-    # Aquí puedes agregar la lógica para obtener todos los movimientos
-    movimientos = [
-        {'id': '0001', 'tipo': 'Compra', 'monto': 540.00, 'tipo_mov': 'positivo'},
-        {'id': 'Paypal', 'tipo': 'Retirado', 'monto': -300.00, 'tipo_mov': 'negativo'},
-        {'id': 'Paypal', 'tipo': 'Retirado', 'monto': -350.00, 'tipo_mov': 'negativo'},
-        {'id': 'Paypal', 'tipo': 'Retirado', 'monto': -360.00, 'tipo_mov': 'negativo'},
-    ]
-    return render(request, 'supplier/todos_los_movimientos.html', {'movimientos': movimientos})
+    supplier_id = request.session.get('supplier_id')
+
+    if supplier_id is None:
+        messages.error(request, 'No estás autorizado para agregar productos. Inicia sesión como proveedor.')
+        return redirect('index')
+    # Simulación de datos
+
+     
+    user = get_object_or_404(UserAccount, pk=supplier_id) 
+    supplier = get_object_or_404(Supplier, user=user) 
+    payment_method = get_object_or_404(SupplierPaymentMethodModel, supplier=supplier)
+    supplier_products = Product.objects.filter(supplier=supplier)
+
+    # Obtener todos los OrderItems de los productos del Supplier
+    order_items = OrderItem.objects.filter(product__in=supplier_products)
+
+    # Filtrar los pagos exitosos que estén asociados a estos OrderItems
+    payments = Payment.objects.filter(
+        order__orderitem__in=order_items,
+        payment_status='Exitosa'
+    ).distinct()  # Usamos distinct para evitar duplicados si hay varios OrderItems para una misma Order
+
+    # Crear un resumen de las transacciones
+    transactions = []
+    for payment in payments:
+        # Filtramos los OrderItems relacionados con la Order y el Supplier
+        order_items_related = order_items.filter(order=payment.order)
+        for item in order_items_related:
+            transactions.append({
+                'product_name': item.product.product_name,  # Si el OrderItem tiene el producto
+                'quantity_sold': item.quantity,     # Cantidad vendida
+                'amount_earned': item.price_at_purchase * item.quantity,  # Ganancia por ese artículo
+                'transaction_date': payment.payment_date,  # Fecha del pago
+            })
+    return render(request, 'supplier/todos_los_movimientos.html', {'transactions': transactions})
 
 def retirar_saldo_view(request):
     supplier_id = request.session.get('supplier_id')
@@ -128,7 +159,7 @@ def retirar_saldo_view(request):
     supplier_payment = get_object_or_404(SupplierPaymentMethodModel, supplier = supplier)
 
     if supplier_id is None:
-        messages.error(request, 'No estás autorizado para agregar productos. Inicia sesión como proveedor.')
+        messages.error(request, 'No estás autorizado para esta accion. Inicia sesión como proveedor.')
         return redirect('menu:index')
     
     return render(request, 'supplier/retirar_saldo.html' , {'supplier': supplier, 'pago': supplier_payment})

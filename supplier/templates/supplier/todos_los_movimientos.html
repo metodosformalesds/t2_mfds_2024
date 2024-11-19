@@ -20,21 +20,28 @@
             <h1>Movimientos</h1>
         </div>
         <ul class="movimientos-lista">
-            {% for movimiento in movimientos %}
-            <li class="movimiento-item">
-                <div class="movimiento-tipo">
-                    <span>{{ movimiento.tipo }}</span>
-                    <!-- Solo muestra el ID si es una compra -->
-                    {% if movimiento.tipo == 'Compra' %}
-                        <span class="movimiento-id">ID: {{ movimiento.id }}</span>
-                    {% endif %}
-                </div>
-                <!-- Muestra el monto en color verde si es positivo o naranja si es negativo -->
-                <div class="movimiento-monto {% if movimiento.tipo_mov == 'negativo' %}negativo{% else %}positivo{% endif %}">
-                    {{ movimiento.monto|floatformat:2 }}
-                </div>
-            </li>
-            {% endfor %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Monto Ganado</th>
+                        <th>Fecha de Transacción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.product_name }}</td>
+                        <td>+&nbsp;${{ transaction.amount_earned }}</td>
+                        <td>{{ transaction.transaction_date }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">No hay transacciones recientes.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </ul>
     </div>
 </main>
