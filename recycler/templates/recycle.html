@@ -14,6 +14,9 @@
             width: 100%;
             margin-top: 20px;
         }
+        .slider-container {
+            margin: 20px 0;
+        }
     </style>
 {% endblock %}
 
@@ -21,6 +24,11 @@
 <main class="container py-5">
   <h2 class="mb-3">Recicladoras Cercanas</h2>
   <p class="text-muted">¡Estamos buscando las recicladoras más cercanas a tu ubicación!</p>
+  
+  <div class="slider-container">
+      <label for="radiusSlider">Radio de búsqueda: <span id="radiusValue">10000</span> metros</label>
+      <input type="range" id="radiusSlider" min="1000" max="50000" step="1000" value="10000">
+  </div>
 
   <!-- Modal -->
   <div class="modal fade" id="companyInfoModal" tabindex="-1" aria-labelledby="companyInfoModalLabel" aria-hidden="true">
@@ -34,16 +42,14 @@
             <h5 id="companyName">Nombre de la Empresa</h5>
             <p id="companyDescription">Descripción de la empresa aquí...</p>
             <p id="companyLocation">Ubicación: </p>
-            <div id="map"></div> <!-- Contenedor para el mapa de Google Maps -->
+            <div id="map"></div>
           </div>
         </div>
       </div>
   </div>
 
-  <!-- Contenedor para las tarjetas de las empresas recicladoras -->
   <div class="recycler-list row g-0" id="recycler-list"></div>
 
-  <!-- Botón para cargar más recicladoras -->
   <div class="text-center mt-4">
       <button id="load-more-btn" class="btn btn-primary">Ver más</button>
   </div>
@@ -52,19 +58,17 @@
       let map;
       let service;
       let geocoder;
-      let currentResults = []; // Almacena todos los resultados
-      let resultsIndex = 0; // Índice de la posición actual en los resultados
-      const resultsPerPage = 5; // Número de recicladoras que se mostrarán por carga
+      let currentResults = [];
+      let resultsIndex = 0;
+      const resultsPerPage = 5;
 
-      // Inicializar el mapa de Google Maps
       function initMap() {
           map = new google.maps.Map(document.getElementById('map'), {
               zoom: 12,
-              center: { lat: 31.6904, lng: -106.4245 } // Coordenadas por defecto
+              center: { lat: 31.6904, lng: -106.4245 }
           });
           geocoder = new google.maps.Geocoder();
 
-          // Obtener la ubicación del usuario
           if (navigator.geolocation) {
               navigator.geolocation.getCurrentPosition(
                   (position) => {
@@ -76,7 +80,7 @@
                       buscarRecicladorasCercanas(userLocation);
                   },
                   () => {
-                      alert('No se pudo obtener tu ubicación. Asegúrate de permitir el acceso a la ubicación.');
+                      alert('No se pudo obtener tu ubicación.');
                   }
               );
           } else {
@@ -84,11 +88,11 @@
           }
       }
 
-      // Buscar recicladoras cercanas usando Google Places API
       function buscarRecicladorasCercanas(location) {
+          const radius = document.getElementById('radiusSlider').value; // Obtener el valor del slider
           const request = {
               location: location,
-              radius: 10000, // Radio de búsqueda en metros
+              radius: parseInt(radius), // Convertir a número entero
               keyword: 'recycling center'
           };
 
@@ -100,7 +104,7 @@
               if (status === google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
                   currentResults = results;
                   messageElement.textContent = "¡Aquí están las recicladoras más cercanas!";
-                  mostrarRecicladoras(); // Mostrar las primeras recicladoras
+                  mostrarRecicladoras();
               } else {
                   messageElement.textContent = "No se encontraron recicladoras cercanas.";
                   loadMoreButton.disabled = true;
@@ -109,7 +113,6 @@
           });
       }
 
-      // Mostrar recicladoras en la vista
       function mostrarRecicladoras() {
           const recyclerList = document.getElementById('recycler-list');
           for (let i = resultsIndex; i < resultsIndex + resultsPerPage && i < currentResults.length; i++) {
@@ -117,34 +120,42 @@
               const card = document.createElement('div');
               card.className = 'card mb-4 shadow-sm recycler-card';
               card.innerHTML = `
-
-                      <div class="col-sm-3" style="width:190px;">
-                          <img src="${place.photos ? place.photos[0].getUrl() : '{% static "images/default.png" %}'}" style="width:100%;" class="img-fluid rounded-start" alt="Recicladora">
-                      </div>
-
-                          <div class="card-body col-md-9">
-                              <h5 class="card-title">${place.name}</h5>
-                              <p class="card-text text-muted">${place.vicinity}</p>
-                              <button class="btn btn-contact" style="width:300px ;  " onclick="showCompanyInfo('${place.name}', '${place.vicinity}', '${place.geometry.location.lat()}, ${place.geometry.location.lng()}')">Encuentranos!</button>
-                          </div>
-
-
+                  <div class="col-sm-3" style="width:190px;">
+                      <img src="${place.photos ? place.photos[0].getUrl() : '{% static "images/default.png" %}'}" style="width:100%;" class="img-fluid rounded-start" alt="Recicladora">
+                  </div>
+                  <div class="card-body col-md-9">
+                      <h5 class="card-title">${place.name}</h5>
+                      <p class="card-text text-muted">${place.vicinity}</p>
+                      <button class="btn btn-contact" style="width:300px;" onclick="showCompanyInfo('${place.name}', '${place.vicinity}', '${place.geometry.location.lat()}, ${place.geometry.location.lng()}')">Encuentranos!</button>
+                  </div>
               `;
               recyclerList.appendChild(card);
           }
-          resultsIndex += resultsPerPage; // Incrementar el índice
+          resultsIndex += resultsPerPage;
 
-          // Ocultar el botón si ya no hay más resultados
           if (resultsIndex >= currentResults.length) {
               document.getElementById('load-more-btn').style.display = 'none';
           }
       }
 
-      // Evento para cargar más recicladoras al hacer clic en "Ver más"
       document.getElementById('load-more-btn').addEventListener('click', mostrarRecicladoras);
+      
+      document.getElementById('radiusSlider').addEventListener('input', function() {
+          document.getElementById('radiusValue').textContent = this.value; // Actualizar el valor mostrado
+          resultsIndex = 0; // Reiniciar el índice para que se muestren los resultados correctos
+          document.getElementById('recycler-list').innerHTML = ''; // Limpiar la lista antes de buscar de nuevo
+          if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition((position) => {
+                  const userLocation = {
+                      lat: position.coords.latitude,
+                      lng: position.coords.longitude
+                  };
+                  buscarRecicladorasCercanas(userLocation); // Buscar de nuevo con el nuevo radio
+              });
+          }
+      });
 
       function showCompanyInfo(name, address, coords) {
-          // Asigna los valores proporcionados a los elementos del modal
           document.getElementById('companyName').innerText = name;
           document.getElementById('companyDescription').innerText = address;
           document.getElementById('companyLocation').innerText = "Ubicación: " + address;
@@ -156,13 +167,11 @@
               position: { lat: lat, lng: lng }
           });
 
-          // Abre el modal
           var myModal = new bootstrap.Modal(document.getElementById('companyInfoModal'));
           myModal.show();
       }
   </script>
 
-  <!-- Incluir el script de la API de Google Maps con Places API y async defer -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZWjlVC9wu6AvP-8TEx7vkbEVJpqRPLoE&libraries=places&callback=initMap"></script>
 </main>
 {% endblock %}
