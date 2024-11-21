@@ -111,6 +111,7 @@
                             <video id="video" class="rounded-oval" autoplay></video>
                             <canvas id="canvas" style="display: none;"></canvas>
                             <button type="button" id="capture-btn" class="btn btn-primary mt-2">Tomar Foto</button>
+                            <input type="file" name="foto_actual" id="foto_actual" style="display: none;">
                             <img id="photo-preview" class="rounded-oval" src="#" alt="Foto previa" style="display: none;">
                         </div>
                         
@@ -315,7 +316,7 @@ if (!fotoInput.files || fotoInput.files.length === 0) {
             const cameraSection = document.getElementById('camera-section');
             const titleCameraSection = document.getElementById('title_foto_actual');
             const qr_code_section = document.getElementById('qr-code-section');
-            const fotoInput = document.querySelector("input[name='foto_actual']");
+            const fotoInput = document.getElementById('foto_actual');
         
             let isCameraAvailable = false; // Para rastrear la disponibilidad de la cámara
         

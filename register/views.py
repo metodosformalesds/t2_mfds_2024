@@ -179,7 +179,7 @@ def supplier_register(request):
                 else:  # Si la foto fue subida mediante el QR
                     foto_actual_path = os.path.join(settings.MEDIA_ROOT, f"{unique_id}.jpg")
                     if not os.path.exists(foto_actual_path):
-                        messages.error(request, 'No se encontró la foto subida. Asegúrate de subir tu foto correctamente usando el qr.')
+                        messages.error(request, 'No se encontró la foto subida. Asegúrate de subir tu foto correctamente, o utilizando el qr.')
                         return render(request, 'home/supplier_register.html', {'form': form})       
 
                 try:
@@ -261,7 +261,7 @@ def client_register(request):
                 else:  # Si la foto fue subida mediante el QR
                     foto_actual_path = os.path.join(settings.MEDIA_ROOT, f"{unique_id}.jpg")
                     if not os.path.exists(foto_actual_path):
-                        messages.error(request, 'No se encontró la foto subida. Asegúrate de subir tu foto correctamente usando el qr.')
+                        messages.error(request, 'No se encontró la foto subida. Asegúrate de subir tu foto correctamente, o utilizando el qr.')
                         return render(request, 'home/client_register.html', {'form': form})    
 
                 try:
