@@ -72,7 +72,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 #id en el sitio de administrador de django
-SITE_ID = 2  
+SITE_ID = 3 
 
 #Para evitar el menú o pantalla intermedia de Google con inicio de sesion o registro
 SOCIALACCOUNT_LOGIN_ON_GET = True
