@@ -54,6 +54,8 @@
                         Espesor: {{ product_info.product_thickness }}
                     </p>
 
+                    
+
                     <!-- Formulario para agregar el producto al carrito -->
                     <form method="POST" action="{% url 'agregar_al_carrito' product_info.id_product %}">
                         {% csrf_token %}
@@ -65,6 +67,14 @@
                             </button>
                         </div>
                     </form>
+                    <!-- Botón para agregar el producto a la lista de deseos -->
+                    <div class="d-grid gap-2 mt-3">
+                        <form method="POST" action="{% url 'add_to_wishlist' product_info.id_product %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary bi bi-bookmark-heart-fill"> </button>
+                        </form>
+                        <p id="wishlist-message" class="mt-2 text-success" style="display: none;">¡Producto añadido a favoritos!</p>
+                    </div>
 
                     <div class="accordion mt-3" id="accordionPanelsStayOpenExample">
                         <div class="accordion-item">
@@ -89,6 +99,28 @@
         </div>
     </div>
 </div>
+
+<script>
+    function addToWishlist(productId) {
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        fetch(`/wishlist/add/${productId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                document.getElementById('wishlist-message').style.display = 'block';
+            } else {
+                alert('No se pudo añadir el producto a tu lista de deseos.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>
+
 
 <!-- Productos Similares -->
 <div style="padding: 20px; margin: 0 20px">

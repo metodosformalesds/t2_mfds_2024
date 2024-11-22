@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Product
+from .models import Product, WishItem, Client, UserAccount
 from functools import wraps
 from product.models import UserRole  # Importar UserRole
 
@@ -164,3 +164,84 @@ def product_detail(request, id):
     productos_aleatorios = Product.objects.all().order_by('?')[:3]
     product_info = get_object_or_404(Product, id_product=id)
     return render(request, 'product/product_view.html', {'product_info': product_info, "productos": productos_aleatorios})
+
+def add_to_wishlist(request, product_id):
+    """
+    Agrega un producto a la lista de deseos del cliente.
+
+    Parámetros:
+        - request: Objeto HttpRequest que contiene la información de la solicitud.
+        - product_id: ID del producto que se desea agregar a la lista de deseos.
+
+    Proceso:
+        1. Valida que la solicitud sea de tipo POST.
+        2. Obtiene el producto correspondiente al `product_id`.
+        3. Recupera al cliente asociado al usuario en sesión.
+        4. Verifica si el producto ya está en la lista de deseos del cliente:
+            - Si ya está, muestra un mensaje informativo.
+            - Si no está, agrega el producto a la lista de deseos y muestra un mensaje de éxito.
+        5. Redirige al detalle del producto.
+
+    Manejo de errores:
+        - Si no se encuentra un cliente asociado al usuario en sesión, muestra un mensaje de error.
+        - Si la solicitud no es de tipo POST, muestra un mensaje de error.
+
+    Retorno:
+        - Redirige al detalle del producto con un mensaje de éxito, información o error.
+
+    Notas:
+        - La función utiliza mensajes de Django para informar al usuario sobre el estado de la operación.
+    """
+    if request.method == 'POST':
+        product = get_object_or_404(Product, id_product=product_id)
+        user_id = request.session.get('user_id')
+        user_account = UserAccount.objects.get(id_user=user_id)
+        client = Client.objects.get(user=user_account)
+        
+        if not client:
+            messages.error(request, "No se encontró un cliente asociado a tu cuenta.")
+            return redirect('product_detail', id=product_id)
+
+        # Verificar si ya está en la lista de deseos
+        if WishItem.objects.filter(client=client, product=product).exists():
+            messages.info(request, "Este producto ya está en tu lista de favoritos.")
+        else:
+            WishItem.objects.create(client=client, product=product)
+            messages.success(request, "Producto agregado a la lista de favoritos.")
+
+        return redirect('product_detail', id=product_id)
+
+    messages.error(request, "Método no permitido.")
+    return redirect('product_detail', id=product_id)
+
+
+def wishlist(request):
+    """
+    Muestra la lista de deseos del cliente.
+
+    Parámetros:
+        - request: Objeto HttpRequest que contiene la información de la solicitud.
+
+    Proceso:
+        1. Recupera al usuario en sesión a través de `user_id` almacenado en la sesión.
+        2. Obtiene al cliente asociado al usuario.
+        3. Consulta los productos en la lista de deseos del cliente.
+        4. Renderiza la plantilla `wishlist.html` con los productos de la lista de deseos.
+
+    Contexto para la plantilla:
+        - wishlist_items: Productos que el cliente tiene en su lista de deseos.
+        - productos: Lista completa de productos disponibles (opcional).
+
+    Retorno:
+        - Renderiza la página de la lista de deseos del cliente (`wishlist.html`).
+
+    Notas:
+        - La plantilla debe manejar la visualización de los productos de la lista de deseos.
+        - Utiliza `select_related` en la consulta para optimizar la recuperación de productos relacionados.
+    """
+    user_id = request.session.get('user_id')
+    user_account = UserAccount.objects.get(id_user=user_id)
+    client = Client.objects.get(user=user_account)
+    wishlist_items = WishItem.objects.filter(client=client).select_related('product')
+    productos = Product.objects.all()
+    return render(request, 'client/wishlist.html', {'wishlist_items': wishlist_items, 'productos': productos})
