@@ -1,3 +1,35 @@
+<!-- 
+Template Name: Recycler Finder
+File: recycle.html
+Author: Hugo Abisai Reyes Trejo - 215201
+Description:
+    Esta plantilla de Django muestra recicladoras cercanas utilizando Google Maps API y Places API. 
+    Permite al usuario interactuar con un mapa dinámico para encontrar centros de reciclaje dentro de un radio configurable. 
+    Incluye un modal para mostrar información adicional sobre cada recicladora.
+
+Características principales:
+    - Slider para ajustar el radio de búsqueda.
+    - Lista dinámica de recicladoras basada en la ubicación del usuario.
+    - Mapa interactivo que centra la ubicación del usuario y permite ver recicladoras.
+    - Botón "Ver más" para cargar más resultados en la lista.
+    - Modal para mostrar detalles de las recicladoras, incluyendo su ubicación en el mapa.
+
+Bloques utilizados:
+    - {% block title %}: Define el título de la página.
+    - {% block head %}: Incluye estilos y scripts necesarios (Bootstrap y Google Maps API).
+    - {% block content %}: Contiene el mapa, la lista de recicladoras y el slider.
+
+Scripts principales:
+    - initMap(): Inicializa el mapa centrado en la ubicación del usuario.
+    - buscarRecicladorasCercanas(location): Realiza una búsqueda de recicladoras cercanas usando Google Places API.
+    - mostrarRecicladoras(): Renderiza los resultados en tarjetas en la interfaz.
+    - showCompanyInfo(name, address, coords): Muestra detalles específicos de una recicladora en un modal.
+
+Notas:
+    - Requiere una clave de API válida para Google Maps y Places API.
+    - Los estilos personalizados están en style_recycler.css.
+-->
+
 {% extends "base_without_image.html" %}
 {% load static %}
 

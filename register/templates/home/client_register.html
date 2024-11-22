@@ -1,3 +1,42 @@
+<!--
+Template Name: Registro de Cliente con Validación Biométrica
+File: register_client.html
+Author: Hugo Abisai Reyes Trejo - 215201
+Description:
+    Esta plantilla permite a los clientes registrarse en el sistema con validaciones de campos y soporte para 
+    biometría a través de captura de imagen por cámara. También incluye la opción de cargar una identificación oficial 
+    y un código QR para cargar fotos desde otros dispositivos.
+
+Características principales:
+    - Validación en tiempo real de campos como nombre, apellido, teléfono, correo electrónico y contraseña.
+    - Subida de identificación oficial con restricciones de formato (JPEG y PNG).
+    - Captura de foto actual mediante la cámara del dispositivo:
+        - Muestra un video en vivo desde la cámara.
+        - Permite tomar una foto y subirla como archivo al formulario.
+        - Genera una vista previa de la foto tomada.
+        - Incluye opción para retomar la foto si no es satisfactoria.
+    - Alternativa para cargar una foto mediante un código QR generado dinámicamente.
+    - Integración de estilos personalizados con Bootstrap para diseño responsive.
+
+Validaciones:
+    - Nombre y apellido: Solo se aceptan letras y espacios.
+    - Teléfono: Debe tener al menos 10 dígitos numéricos.
+    - Correo electrónico: Validación de formato estándar.
+    - Contraseña: Al menos 8 caracteres, un número y un carácter especial.
+    - Identificación oficial: Archivos en formato JPEG o PNG.
+    - Foto actual: Validación de formato y existencia del archivo.
+
+Secciones dinámicas:
+    - Captura de foto desde la cámara, con previsualización y opción para retomar.
+    - Generación de un código QR único para facilitar la subida de fotos desde otros dispositivos.
+    - Mensajes dinámicos para advertencias y validaciones de formularios.
+
+Notas:
+    - La validación biométrica usa Amazon Rekognition en el backend para comparar la foto capturada con la identificación oficial.
+    - La cámara se activa solo si está disponible en el dispositivo. De lo contrario, se muestra la opción de subir una foto manualmente.
+    - La generación del código QR se basa en un identificador único para cada usuario.
+-->
+
 <!DOCTYPE html>
 <html lang="es">
 <head>

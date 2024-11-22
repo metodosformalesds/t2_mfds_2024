@@ -1,3 +1,47 @@
+<!--
+Template Name: Registro de Proveedores con Validación Biométrica
+File: supplier_register.html
+Author: César Andrade
+Coauthor: Hugo Abisai Reyes Trejo - 215201
+Description:
+    Esta plantilla permite a los proveedores registrarse en el sistema con funcionalidades avanzadas de validación 
+    de datos y biometría facial. Incluye la captura de fotos en tiempo real mediante la cámara del dispositivo 
+    y la opción de subir fotos mediante un código QR único.
+
+Features:
+    - Validación avanzada en tiempo real para:
+        - Nombre, dirección, ciudad, código postal, estado, correo electrónico y contraseña.
+    - Captura de foto en tiempo real utilizando la cámara del dispositivo:
+        - Genera una vista previa de la foto tomada.
+        - Incluye un botón para retomar la foto si no es satisfactoria.
+    - Subida de identificación oficial con restricciones de formato (JPEG y PNG).
+    - Generación dinámica de un código QR para permitir la carga de fotos desde otros dispositivos.
+    - Integración de estilos modernos con Bootstrap para un diseño responsivo.
+    - Mensajes dinámicos de error o éxito para guiar al usuario durante el proceso de registro.
+
+Validation:
+    - Nombre y ciudad: Solo letras y espacios.
+    - Dirección: Letras, números y un mínimo de 5 caracteres.
+    - Código postal: Solo números y un mínimo de 5 dígitos.
+    - Correo electrónico: Formato estándar.
+    - Contraseña: Al menos 8 caracteres, incluyendo un número y un carácter especial.
+    - Identificación oficial: Archivos en formato JPEG o PNG.
+    - Foto actual: Formato JPEG o PNG, capturada en tiempo real o subida a través del código QR.
+
+Dynamic Sections:
+    - Captura de foto con cámara:
+        - Oculta la cámara si no está disponible y habilita la opción de subida manual.
+    - Generación de código QR único:
+        - Permite cargar fotos desde dispositivos alternativos.
+    - Vista previa de la foto capturada.
+
+Notes:
+    - La validación biométrica se realiza en el backend utilizando Amazon Rekognition.
+    - Esta plantilla es parte de un flujo más amplio que incluye el almacenamiento de datos temporales y la verificación 
+      facial en el backend.
+    - El diseño es completamente responsivo para garantizar una experiencia óptima en dispositivos móviles y de escritorio.
+-->
+
 <!DOCTYPE html>
 <html lang="es">
 <head>

@@ -1,3 +1,47 @@
+"""
+Module: Registro de Usuarios con Validación Biométrica
+Author: César Andrade
+Coauthor: Hugo Abisai Reyes Trejo - 215201
+Description:
+    Este módulo implementa funcionalidades avanzadas para el registro de usuarios (proveedores y clientes) con validación
+    biométrica. Se utiliza Amazon Rekognition para verificar coincidencias faciales entre una identificación oficial y
+    una foto actual capturada o subida por el usuario. También incluye detección de palabras clave en documentos para
+    garantizar la validez de las identificaciones.
+
+Features:
+    - Registro de proveedores y clientes:
+        - Validación de identificaciones oficiales mediante detección de palabras clave en imágenes.
+        - Comparación de rostros entre una identificación oficial y una foto actual.
+        - Manejo de imágenes capturadas por cámara o cargadas a través de un código QR único.
+        - Validación de que las imágenes no sean idénticas para evitar fraudes.
+    - Carga de imágenes en una carpeta temporal (`temp`) para procesamiento.
+    - Eliminación automática de archivos temporales después del uso.
+    - Mensajes de error y éxito para guiar al usuario durante el proceso.
+
+Functions:
+    - `create_rekognition_client()`: Crea y configura un cliente de Amazon Rekognition.
+    - `detect_keywords_in_document(image_path, keywords)`: Detecta palabras clave en un documento utilizando OCR de Rekognition.
+    - `detect_face(image_path)`: Detecta rostros en una imagen.
+    - `compare_faces_with_rekognition(identificacion_path, foto_actual_path)`: Compara dos imágenes para determinar si los rostros coinciden.
+    - `are_images_identical(identificacion_path, foto_actual_path)`: Verifica si dos imágenes son idénticas en contenido.
+    - `supplier_register(request)`: Gestiona el registro de proveedores con validación biométrica.
+    - `client_register(request)`: Gestiona el registro de clientes con validación biométrica.
+    - `cargar_foto(request, unique_id)`: Permite cargar una foto mediante un identificador único generado dinámicamente.
+
+Notes:
+    - Se utilizan las credenciales configuradas en `settings.py` para acceder a Amazon Rekognition.
+    - La carpeta `temp` se utiliza como almacenamiento temporal para las imágenes procesadas.
+    - Las palabras clave incluyen términos comunes en documentos oficiales como licencias, pasaportes y credenciales de elector.
+    - El umbral de similitud facial se configura en 90% para considerar coincidencias válidas.
+
+Error Handling:
+    - Si las imágenes no son válidas o no cumplen con las condiciones, se muestran mensajes específicos al usuario.
+    - Manejo de errores en la carga de imágenes y validaciones biométricas para asegurar una experiencia fluida.
+
+Dependencies:
+    - Amazon Rekognition (boto3)
+    - Django: settings, mensajes, almacenamiento y renderizado de plantillas.
+"""
 
 #Dependencias para reconociminiento de imagne
 import boto3
