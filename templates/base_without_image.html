@@ -8,40 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'general/css/noimage.css' %}">
     {% block head %}{% endblock %}
-    <style>
-        /* Contenedor del botón del carrito */
-        .cart-button {
-          position: relative; /* Relativo para que el contador se posicione dentro del botón */
-          display: inline-block;
-        }
-      
-        /* Estilo para el numerito del contador */
-        .cart-count {
-          position: absolute;
-          top: -5px; /* Ajusta según el tamaño del botón */
-          right: -5px; /* Ajusta según el tamaño del botón */
-          background-color: red; /* Fondo rojo */
-          color: white; /* Texto blanco */
-          font-size: 12px; /* Tamaño de fuente */
-          font-weight: bold; /* Texto en negrita */
-          border-radius: 50%; /* Forma circular */
-          width: 20px; /* Ancho fijo */
-          height: 20px; /* Alto fijo */
-          display: flex; /* Centrar el texto */
-          align-items: center; /* Centrar verticalmente */
-          justify-content: center; /* Centrar horizontalmente */
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra */
-          z-index: 10; /* Asegura que el contador quede encima */
-        }
-
-        .cart-count.large-count {
-             padding: 6px 10px; /* Más espacio para '+99' */
-            font-size: 12px; /* Aumentar tamaño del texto */
-            min-width: 25px; /* Más ancho para acomodar '+99' */
-            height: 25px; /* Más alto para mantener el diseño circular */
-        }
-
-      </style>
 </head>
 <body>
     <div class="container-fluid" style="background-color: white; padding: 10px 0;">
@@ -61,18 +27,36 @@
                       display: inline-block;
                     }
                   
-                <!-- Botón del carrito con el contador -->
-
-                <div class="cart-button">
+                    /* Estilo para el numerito del contador */
+                    .cart-count {
+                      position: absolute;
+                      top: -5px; /* Ajusta según el tamaño del botón */
+                      right: -5px; /* Ajusta según el tamaño del botón */
+                      background-color: red; /* Fondo rojo */
+                      color: white; /* Texto blanco */
+                      font-size: 12px; /* Tamaño de fuente */
+                      font-weight: bold; /* Texto en negrita */
+                      border-radius: 50%; /* Forma circular */
+                      width: 20px; /* Ancho fijo */
+                      height: 20px; /* Alto fijo */
+                      display: flex; /* Centrar el texto */
+                      align-items: center; /* Centrar verticalmente */
+                      justify-content: center; /* Centrar horizontalmente */
+                      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra */
+                      z-index: 10; /* Asegura que el contador quede encima */
+                    }
+                  </style>
+                  
+                  <!-- Botón del carrito con el contador -->
+                  <div class="cart-button">
                     <button class="btn btn-custom {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'cart' %}'">
                         <i class="bi bi-cart2"></i>
                     </button>
                     {% if cart_items_count > 0 %}
-                        <span class="cart-count {% if cart_items_display == '+99' %}large-count{% endif %}">
-                            {{ cart_items_display }}
-                        </span>
+                        <span class="cart-count">{{ cart_items_count }}</span>
                     {% endif %}
                 </div>
+                
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'paid_orders' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'paid_orders' %}'">
                     <i class="bi bi-truck"></i>
                 </button>
