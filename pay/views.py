@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from paypalrestsdk import Payment as PayPalPayment
-from product.models import ShoppingCart, UserAccount, Client, Supplier, SupplierPaymentMethodModel,ClientAddress,OrderItem,Order,Payment
+from product.models import ShoppingCart, UserAccount, Client, Supplier, SupplierPaymentMethodModel,ClientAddress,OrderItem,Order,Payment, Shipment, HistorialCompras
 from django.views.decorators.http import require_POST
 from .paypal import paypalrestsdk
 from django.db import transaction
@@ -11,6 +11,177 @@ from supplier.forms import WithdrawForm
 import random
 import string
 from django.utils import timezone
+from django.conf import settings
+import requests 
+from django.http import JsonResponse, HttpResponse
+import stripe
+import random
+import string
+from datetime import timedelta
+import logging
+from django.utils.timezone import now
+from shipping.views import determinar_courier_code
+from django.conf import settings
+
+stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
+
+logger = logging.getLogger(__name__)
+
+def generar_tracking_number():
+    """
+    Genera un número de seguimiento válido para Ship24.
+    """
+    prefix = ''.join(random.choices(string.ascii_uppercase, k=2))  # Prefijo con letras mayúsculas
+    middle = ''.join(random.choices(string.digits, k=8))  # Ocho dígitos
+    suffix = ''.join(random.choices(string.ascii_uppercase, k=2))  # Sufijo con letras mayúsculas
+    return f"{prefix}{middle}{suffix}"
+
+def crear_tracker_ship24(tracking_number, courier_code, destination_postcode, shipment_date=None):
+    """
+    Crea un tracker en Ship24 y retorna el trackerId.
+    """
+    # Validación y formato de datos
+    destination_postcode = str(destination_postcode)  # Convertir a string
+
+    url = "https://api.ship24.com/public/v1/trackers"
+    headers = {
+        "Authorization": f"Bearer {settings.SHIP24_API_KEY}",
+        "Content-Type": "application/json",
+    }
+
+    # Usar la fecha proporcionada o la actual
+    shipping_date = shipment_date.isoformat() if shipment_date else now().isoformat()
+
+    payload = {
+        "trackingNumber": tracking_number,
+        "shipmentReference": f"order_{tracking_number}",
+        "originCountryCode": "MX",  # Siempre México
+        "destinationCountryCode": "MX",  # Siempre México
+        "destinationPostCode": destination_postcode,
+        "shippingDate": shipping_date,  # Se envía como ISO-8601
+        "courierCode": [courier_code],
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=payload)
+        if response.status_code == 400:
+            logger.error(f"Error 400 al crear tracker: {response.json()}")
+        response.raise_for_status()
+
+        data = response.json()
+        tracker_id = data.get("data", {}).get("tracker", {}).get("trackerId")
+        if tracker_id:
+            logger.info(f"Tracker creado correctamente en Ship24: {tracker_id}")
+            return tracker_id
+        else:
+            logger.error(f"Error al crear tracker: {data}")
+            return None
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error al conectar con Ship24: {e}")
+        return None
+        
+def registrar_rastreador_y_envio(order, client, item):
+    """
+    Registra un rastreador en Ship24 y guarda el trackerId en la base de datos.
+    """
+    tracking_number = generar_tracking_number()
+
+    # Obtener código postal del cliente
+    try:
+        address = client.clientaddress_set.first()
+        if not address:
+            raise ValueError("El cliente no tiene una dirección registrada.")
+        destination_postcode = str(address.client_zip_code)  # Convertir ZIP a string
+    except Exception as e:
+        logger.error(f"Error al obtener la dirección del cliente: {e}")
+        destination_postcode = "00000"  # Valor por defecto
+
+    # Crear un nuevo envío en la base de datos con una fecha de envío válida
+    shipment_date = timezone.now()  # Fecha de envío actual
+    nuevo_envio = Shipment.objects.create(
+        order=order,
+        shipment_tracking_number=tracking_number,
+        shipment_carrier="dhl",  # Cambiar según lógica
+        shipment_status="Pendiente",
+        shipment_date=shipment_date,  # Fecha actual para evitar errores de NULL
+        shipment_estimated_delivery_date=shipment_date + timedelta(days=7),
+    )
+
+    # Crear tracker en Ship24
+    try:
+        tracker_id = crear_tracker_ship24(
+            tracking_number=tracking_number,
+            courier_code="dhl",
+            destination_postcode=destination_postcode,
+            shipment_date=shipment_date
+        )
+        if tracker_id:
+            nuevo_envio.tracker_id = tracker_id
+            nuevo_envio.save()
+            logger.info(f"Tracker creado correctamente para {tracking_number}")
+        else:
+            logger.error(f"Error creando tracker para {tracking_number}")
+    except Exception as e:
+        logger.error(f"Error al registrar rastreador: {e}")
+
+@require_POST
+def iniciar_pago_stripe(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "Debes iniciar sesión para realizar un pago.")
+        return redirect("client_login")
+
+    try:
+        carrito_items = ShoppingCart.objects.filter(client_id=user_id)
+        if not carrito_items.exists():
+            messages.error(request, "Tu carrito está vacío.")
+            return redirect("cart")
+
+        monto_total = sum(item.product.product_price * item.cart_product_quantity for item in carrito_items)
+        monto_total_cents = int(monto_total * 100)  # Stripe usa centavos
+
+        # Crear la sesión de Stripe Checkout
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'usd',
+                        'product_data': {
+                            'name': "Compra de productos",
+                        },
+                        'unit_amount': monto_total_cents,
+                    },
+                    'quantity': 1,
+                }
+            ],
+            mode='payment',
+            success_url=request.build_absolute_uri(reverse('pago_exitoso_stripe')) + "?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url=request.build_absolute_uri(reverse('cart')),
+            metadata={
+                'user_id': user_id,  # Asociar el ID de usuario
+            },
+        )
+
+        return redirect(session.url, code=303)
+    except Exception as e:
+        logger.error(f"Error al crear la sesión de Stripe: {e}")
+        messages.error(request, "Error al procesar el pago.")
+        return redirect("cart")
+
+def validar_datos_ship24(tracking_number, origin_country, destination_country, destination_postcode):
+    """
+    Valida los datos requeridos antes de enviarlos a la API de Ship24.
+    """
+    if not tracking_number or not tracking_number.isalnum():
+        raise ValueError("El número de seguimiento debe ser alfanumérico.")
+    if len(tracking_number) < 5 or len(tracking_number) > 50:
+        raise ValueError("El número de seguimiento debe tener entre 5 y 50 caracteres.")
+    if len(origin_country) not in [2, 3] or len(destination_country) not in [2, 3]:
+        raise ValueError("Los códigos de país deben ser ISO 3166-1 alpha-2 o alpha-3.")
+    if not destination_postcode.isdigit():
+        raise ValueError("El código postal debe ser numérico.")
+    logger.info("Datos de Ship24 validados correctamente.")
 
 @require_POST
 def iniciar_pago_view(request):
@@ -89,16 +260,23 @@ def iniciar_pago_view(request):
         return redirect("cart")  # Redirige de nuevo al carrito en caso de error
 
 
-
 def pago_exitoso_view(request):
     payment_id = request.GET.get("paymentId")
     payer_id = request.GET.get("PayerID")
     user_id = request.session.get('user_id')
 
+    if not user_id:
+        messages.error(request, "Debes iniciar sesión para completar el pago.")
+        return redirect("client_login")
+
     # Ejecutar el pago en PayPal
-    pago = PayPalPayment.find(payment_id)  # Cambiar a PayPalPayment
-    user_account = UserAccount.objects.get(id_user=user_id)
-    client = Client.objects.get(user=user_account)
+    try:
+        pago = PayPalPayment.find(payment_id)
+        user_account = UserAccount.objects.get(id_user=user_id)
+        client = Client.objects.get(user=user_account)
+    except (UserAccount.DoesNotExist, Client.DoesNotExist, PayPalPayment.DoesNotExist):
+        messages.error(request, "Error procesando el pago o encontrando la información del usuario.")
+        return redirect("cart")
 
     if pago.execute({"payer_id": payer_id}):
         # Pago exitoso
@@ -134,6 +312,9 @@ def pago_exitoso_view(request):
                 supplier.balance += item.product.product_price * item.cart_product_quantity
                 supplier.save()
 
+                # Registrar el envío para cada producto
+                registrar_rastreador_y_envio(order, client, item)
+
         # Crear el registro del pago con los detalles correctos
         Payment.objects.create(
             order=order,
@@ -159,10 +340,8 @@ def pago_exitoso_view(request):
         })
     else:
         # Error en el pago
-        messages.error(request, "Error al confirmar el pago")
-        return redirect("cart/error")
-
-
+        messages.error(request, "Error al confirmar el pago.")
+        return redirect("cart/error") #bien
 
 def pago_cancelado_view(request):
     messages.info(request, "El pago fue cancelado.")
@@ -291,3 +470,13 @@ def create_payout(request):
     messages.error(request, "Método no permitido.")
     return redirect("retirar_saldo")
 
+def historial_compras_view(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "Debes iniciar sesión para ver tu historial de compras.")
+        return redirect("client_login")
+
+    client = Client.objects.get(user__id_user=user_id)
+    historial = HistorialCompras.objects.filter(client=client)
+
+    return render(request, "historial_compras.html", {"historial": historial})

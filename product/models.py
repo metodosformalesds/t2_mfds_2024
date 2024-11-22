@@ -279,16 +279,39 @@ class Shipment(models.Model):
     id_shipment = models.AutoField(primary_key=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     shipment_tracking_number = models.CharField(max_length=50)
+    tracker_id = models.CharField(max_length=100, null=True, blank=True)  # Nuevo campo
     shipment_carrier = models.CharField(max_length=50)
     shipment_status = models.CharField(max_length=50)
     shipment_date = models.DateTimeField()
     shipment_estimated_delivery_date = models.DateTimeField()
-    shipment_actual_delivery_date = models.DateTimeField()
+    shipment_actual_delivery_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"Shipment {self.id_shipment}"
+    
+class TrackingEvent(models.Model):
+    shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, related_name="events")
+    status = models.CharField(max_length=50)
+    occurrence_datetime = models.DateTimeField()
+    details = models.TextField(null=True, blank=True)  # Para almacenar detalles adicionales
+    milestone = models.CharField(max_length=50, null=True, blank=True)  # Para statusMilestone
 
+    def __str__(self):
+        return f"Evento {self.status} - {self.occurrence_datetime}"
+    
+class HistorialCompras(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    product_name = models.CharField(max_length=255)
+    quantity = models.IntegerField()
+    price = models.FloatField()
+    total = models.FloatField()
+    payment_date = models.DateTimeField()
 
+    def __str__(self):
+        return f"Historial de {self.client} - {self.payment_date}"
+ 
+ 
+ 
 class Payment(models.Model):
     """
     Modelo que representa un pago realizado por un cliente.

@@ -54,6 +54,11 @@
                     <button class="btn custom-btn d-md-none" onclick="toggleSearch()"><i class="fas fa-bars" id="menuIcon"></i></button>
                 {% endif %}
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'cart' %}'"><i class="bi bi-cart2"></i></button>
+
+                <button class="btn btn-custom {% if request.resolver_match.url_name == 'paid_orders' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'paid_orders' %}'">
+                    <i class="bi bi-truck"></i>
+                </button>
+                
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'client_edit_info' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'client_edit_info' %}'"><i class="bi bi-gear"></i></button>
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'client_login' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'client_login' %}'"><i class="bi bi-box-arrow-left"></i></button>
             </div>
