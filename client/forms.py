@@ -27,6 +27,45 @@ class ClientForm(forms.ModelForm):
 
 
 class ClientAddressForm(forms.ModelForm):
+    """
+    Formulario para gestionar la dirección de un cliente.
+    Participantes:
+    Cesar Omar Rodarte Andrade
+    Andres Yahir Almanza Quezada
+    Modelo relacionado:
+        - ClientAddress
+
+    Campos:
+        - client_address: Dirección principal del cliente.
+        - client_city: Ciudad donde reside el cliente.
+        - client_state: Estado donde reside el cliente.
+        - client_zip_code: Código postal de la dirección.
+        - client_address_additional_information: Información adicional sobre la dirección.
+
+    Validaciones personalizadas:
+        - client_address:
+            - Solo permite letras, números, espacios y el símbolo '#'.
+        - client_city:
+            - Solo permite letras y espacios.
+        - client_state:
+            - Solo permite letras (no números ni caracteres especiales).
+        - client_zip_code:
+            - Debe contener solo dígitos y tener al menos 5 caracteres.
+        - client_address_additional_information:
+            - Longitud máxima de 100 caracteres.
+            - Solo permite letras, números y espacios.
+
+    Widgets:
+        - Estiliza los campos utilizando `form-control cantidad` para integrar con un diseño frontend basado en Bootstrap.
+        - Incluye marcadores de posición (`placeholder`) para guiar al usuario al completar el formulario.
+
+    Uso:
+        - Este formulario es utilizado para capturar y validar la información de dirección de un cliente en aplicaciones relacionadas con e-commerce o gestión de usuarios.
+
+    Notas:
+        - Las validaciones personalizadas aseguran que los datos ingresados sean consistentes y estén en el formato esperado.
+        - Los mensajes de error guían al usuario para corregir problemas en la entrada de datos.
+    """
     class Meta:
         model = ClientAddress
         fields = [

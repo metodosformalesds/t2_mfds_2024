@@ -363,7 +363,8 @@ def escojer_metodo_view(request):
 def generar_id_unico():
     """
     Genera un identificador único compuesto de 12 caracteres alfanuméricos.
-
+    Participantes:
+    Almanza Quezada Andres Yahir 215993
     Returns:
         str: Un identificador único con letras y números aleatorios.
     """
@@ -372,7 +373,8 @@ def generar_id_unico():
 def create_payout(request):
     """
     Vista que permite a un proveedor retirar dinero de su balance mediante PayPal.
-    
+    Participantes:
+    Almanza Quezada Andres Yahir 215993
     Args:
         request (HttpRequest): El objeto de solicitud HTTP.
 

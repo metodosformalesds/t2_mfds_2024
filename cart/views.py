@@ -16,7 +16,9 @@ import pandas as pd
 def cart(request):
     """
     Vista que maneja el carrito de compras de un cliente, incluyendo la creación de una sesión de pago con Stripe.
-
+    Participantes:
+    Berenice Flores Hernandez
+    Andres Yahir Almanza Quezada
     Args:
         request (HttpRequest): El objeto de solicitud HTTP.
 
