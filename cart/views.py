@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
 from product.models import Product, ShoppingCart, UserAccount, Client, Payment, Order, ClientAddress, OrderItem
-
+from product.models import HistorialCompras
 from django.conf import settings
 from django.http import HttpResponse
 from django.db import transaction
@@ -10,7 +10,10 @@ import stripe
 import time
 from django.http import JsonResponse 
 import pandas as pd
+from pay import views
+import logging
 
+logger = logging.getLogger(__name__)
 
 # Vista para mostrar el carrito
 def cart(request):
@@ -52,6 +55,9 @@ def cart(request):
     # Obtener items del carrito solo para este cliente
     carrito_items = ShoppingCart.objects.filter(client=client)
     total = sum(item.product.product_price * item.cart_product_quantity for item in carrito_items)
+    
+    # Contar la cantidad total de productos en el carrito
+    cart_count = sum(item.cart_product_quantity for item in carrito_items)
 
     stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
     if request.method == 'POST':
@@ -73,7 +79,8 @@ def cart(request):
 
         return redirect(checkout_session.url, code=303)
     
-    return render(request, 'cart/cart.html', {'carrito_items': carrito_items, 'total': total})
+    # Pasar `cart_count` al contexto
+    return render(request, 'cart/cart.html', {'carrito_items': carrito_items, 'total': total, 'cart_count': cart_count})
 
 
 def stripe_webhook(request):
@@ -162,7 +169,7 @@ def payment_successful(request):
         order_date=payment_date
     )
 
-
+    historial_compras = []  # Lista para guardar los registros del historial
     with transaction.atomic():
         for item in carrito_items:
             OrderItem.objects.create(
@@ -174,6 +181,23 @@ def payment_successful(request):
             supplier = item.product.supplier
             supplier.balance += item.product.product_price * item.cart_product_quantity
             supplier.save()
+            
+            # Registrar el historial de compras
+            historial_compras.append(HistorialCompras(
+                client=client,
+                product_name=item.product.product_name,
+                quantity=item.cart_product_quantity,
+                price=item.product.product_price,
+                total=item.product.product_price * item.cart_product_quantity,
+                payment_date=payment_date
+            ))
+
+            
+            # Registrar el envío para cada producto
+            views.registrar_rastreador_y_envio(order, client, item)
+        
+        # Guardar el historial de compras
+        HistorialCompras.objects.bulk_create(historial_compras)
 
 
     Payment.objects.create(
@@ -219,6 +243,31 @@ def payment_cancelled(request):
 
 # Vista para agregar productos al carrito
 def agregar_al_carrito(request, id):
+    
+    """
+    View Name: agregar_al_carrito
+    File: views.py
+    Author: Berenice Flores Hernández
+
+    Descripción:
+        Esta vista permite agregar productos al carrito de compras de un cliente.
+        Verifica la sesión del usuario, obtiene el producto y cliente asociados, y gestiona la cantidad
+        de productos en el carrito. También verifica el stock disponible del producto.
+
+    Parámetros:
+        - request: La solicitud HTTP recibida.
+        - id: El ID del producto a agregar al carrito.
+
+    Acciones:
+        - Verifica si el usuario está autenticado.
+        - Recupera el producto y el cliente asociado al usuario.
+        - Crea o actualiza el item en el carrito con la cantidad especificada.
+        - Verifica el stock disponible del producto antes de agregarlo al carrito.
+
+    Retorna:
+        - Redirecciona a la página del carrito después de agregar el producto.
+
+    """
     user_id = request.session.get('user_id')
     
     # Verificar si el usuario ha iniciado sesión
@@ -256,6 +305,29 @@ def agregar_al_carrito(request, id):
 
 # Vista para restar una unidad de un producto del carrito
 def restar_del_carrito(request, id):
+    
+    """
+    View Name: restar_del_carrito
+    File: views.py
+    Author: Berenice Flores Hernández
+
+    Descripción:
+        Esta vista permite restar una unidad de un producto específico del carrito de compras de un cliente.
+        Verifica la sesión del usuario, obtiene el cliente asociado y gestiona la cantidad de productos en el carrito.
+
+    Parámetros:
+        - request: La solicitud HTTP recibida.
+        - id: El ID del producto a restar del carrito.
+
+    Acciones:
+        - Verifica si el usuario está autenticado.
+        - Recupera el cliente asociado al usuario.
+        - Actualiza la cantidad del producto en el carrito o elimina el item si la cantidad es cero.
+
+    Retorna:
+        - Redirecciona a la página del carrito después de restar el producto.
+
+    """
     user_id = request.session.get('user_id')
 
     # Verificar si el usuario ha iniciado sesión
@@ -284,6 +356,28 @@ def restar_del_carrito(request, id):
 
 # Vista para eliminar productos del carrito
 def eliminar_del_carrito(request, id):
+    
+    """
+    View Name: eliminar_del_carrito
+    File: views.py
+    Author: Berenice Flores Hernández
+
+    Descripción:
+        Esta vista permite eliminar un producto específico del carrito de compras de un cliente.
+        Verifica la sesión del usuario, obtiene el cliente asociado y elimina el producto del carrito.
+
+    Parámetros:
+        - request: La solicitud HTTP recibida.
+        - id: El ID del producto a eliminar del carrito.
+
+    Acciones:
+        - Verifica si el usuario está autenticado.
+        - Recupera el cliente asociado al usuario y elimina el item correspondiente del carrito.
+
+    Retorna:
+        - Redirecciona a la página del carrito después de eliminar el producto.
+
+    """
     user_id = request.session.get('user_id')
     
     # Verificar si el usuario ha iniciado sesión

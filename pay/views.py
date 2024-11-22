@@ -22,14 +22,26 @@ import logging
 from django.utils.timezone import now
 from shipping.views import determinar_courier_code
 from django.conf import settings
+from django.db.models import Sum, F
 
 stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
 
 logger = logging.getLogger(__name__)
 
 def generar_tracking_number():
+    
     """
-    Genera un número de seguimiento válido para Ship24.
+    View Name: generar_tracking_number
+    File: views.py
+    Author: Berenice Flores Hernández
+    Descripción:
+        Genera un número de seguimiento válido para Ship24.
+    Parámetros:
+        Ninguno.
+    Acciones:
+        Genera un número de seguimiento único utilizando letras mayúsculas y dígitos.
+    Retorna:
+        str: Número de seguimiento generado.
     """
     prefix = ''.join(random.choices(string.ascii_uppercase, k=2))  # Prefijo con letras mayúsculas
     middle = ''.join(random.choices(string.digits, k=8))  # Ocho dígitos
@@ -37,8 +49,22 @@ def generar_tracking_number():
     return f"{prefix}{middle}{suffix}"
 
 def crear_tracker_ship24(tracking_number, courier_code, destination_postcode, shipment_date=None):
+    
     """
-    Crea un tracker en Ship24 y retorna el trackerId.
+    View Name: crear_tracker_ship24
+    File: views.py
+    Author: Berenice Flores Hernández
+    Descripción:
+        Crea un tracker en Ship24 y retorna el trackerId.
+    Parámetros:
+        tracking_number (str): Número de seguimiento generado.
+        courier_code (str): Código del courier para el envío.
+        destination_postcode (str): Código postal de destino del envío.
+        shipment_date (datetime, opcional): Fecha de envío del paquete.
+    Acciones:
+        Realiza una solicitud POST a la API de Ship24 para crear un tracker con los datos proporcionados.
+    Retorna:
+        str or None: ID del tracker creado si es exitoso, None si hay un error.
     """
     # Validación y formato de datos
     destination_postcode = str(destination_postcode)  # Convertir a string
@@ -81,8 +107,21 @@ def crear_tracker_ship24(tracking_number, courier_code, destination_postcode, sh
         return None
         
 def registrar_rastreador_y_envio(order, client, item):
+    
     """
-    Registra un rastreador en Ship24 y guarda el trackerId en la base de datos.
+    View Name: registrar_rastreador_y_envio
+    File: views.py
+    Author: Berenice Flores Hernández
+    Descripción:
+        Registra un rastreador en Ship24 y guarda el trackerId en la base de datos.
+    Parámetros:
+        order (Order): Objeto de orden para el cual se está registrando el envío.
+        client (Client): Cliente asociado a la orden.
+        item (ShoppingCart): Elemento del carrito que se está enviando.
+    Acciones:
+        Genera un número de seguimiento, crea un nuevo envío en la base de datos y registra un tracker en Ship24.
+    Retorna:
+        Ninguno.
     """
     tracking_number = generar_tracking_number()
 
@@ -124,54 +163,23 @@ def registrar_rastreador_y_envio(order, client, item):
     except Exception as e:
         logger.error(f"Error al registrar rastreador: {e}")
 
-@require_POST
-def iniciar_pago_stripe(request):
-    user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, "Debes iniciar sesión para realizar un pago.")
-        return redirect("client_login")
-
-    try:
-        carrito_items = ShoppingCart.objects.filter(client_id=user_id)
-        if not carrito_items.exists():
-            messages.error(request, "Tu carrito está vacío.")
-            return redirect("cart")
-
-        monto_total = sum(item.product.product_price * item.cart_product_quantity for item in carrito_items)
-        monto_total_cents = int(monto_total * 100)  # Stripe usa centavos
-
-        # Crear la sesión de Stripe Checkout
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=[
-                {
-                    'price_data': {
-                        'currency': 'usd',
-                        'product_data': {
-                            'name': "Compra de productos",
-                        },
-                        'unit_amount': monto_total_cents,
-                    },
-                    'quantity': 1,
-                }
-            ],
-            mode='payment',
-            success_url=request.build_absolute_uri(reverse('pago_exitoso_stripe')) + "?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url=request.build_absolute_uri(reverse('cart')),
-            metadata={
-                'user_id': user_id,  # Asociar el ID de usuario
-            },
-        )
-
-        return redirect(session.url, code=303)
-    except Exception as e:
-        logger.error(f"Error al crear la sesión de Stripe: {e}")
-        messages.error(request, "Error al procesar el pago.")
-        return redirect("cart")
-
 def validar_datos_ship24(tracking_number, origin_country, destination_country, destination_postcode):
+    
     """
-    Valida los datos requeridos antes de enviarlos a la API de Ship24.
+    View Name: validar_datos_ship24
+    File: views.py
+    Author: Berenice Flores Hernández
+    Descripción:
+        Valida los datos requeridos antes de enviarlos a la API de Ship24.
+    Parámetros:
+        tracking_number (str): Número de seguimiento generado.
+        origin_country (str): Código de país de origen.
+        destination_country (str): Código de país de destino.
+        destination_postcode (str): Código postal de destino.
+    Acciones:
+        Verifica que los datos cumplan con los requisitos necesarios antes de ser enviados a la API de Ship24.
+    Retorna:
+        Ninguno.
     """
     if not tracking_number or not tracking_number.isalnum():
         raise ValueError("El número de seguimiento debe ser alfanumérico.")
@@ -300,6 +308,7 @@ def pago_exitoso_view(request):
         )
 
         # Crear los items de la orden y actualizar el balance del proveedor
+        historial_compras = []  # Lista para guardar los objetos del historial
         with transaction.atomic():
             for item in carrito_items:
                 OrderItem.objects.create(
@@ -311,9 +320,21 @@ def pago_exitoso_view(request):
                 supplier = item.product.supplier
                 supplier.balance += item.product.product_price * item.cart_product_quantity
                 supplier.save()
+                
+                # Agregar al historial de compras
+                historial_compras.append(HistorialCompras(
+                    client=client,
+                    product_name=item.product.product_name,
+                    quantity=item.cart_product_quantity,
+                    price=item.product.product_price,
+                    total=item.product.product_price * item.cart_product_quantity,
+                    payment_date=payment_date
+                ))
 
                 # Registrar el envío para cada producto
                 registrar_rastreador_y_envio(order, client, item)
+            # Guardar el historial de compras en la base de datos
+            HistorialCompras.objects.bulk_create(historial_compras)
 
         # Crear el registro del pago con los detalles correctos
         Payment.objects.create(
@@ -473,12 +494,50 @@ def create_payout(request):
     return redirect("retirar_saldo")
 
 def historial_compras_view(request):
+    
+    """
+    View Name: historial_compras_view
+    File: views.py
+    Author: Berenice Flores Hernández
+    Descripción:
+        Muestra el historial de compras del cliente actualmente autenticado.
+    Parámetros:
+        request (HttpRequest): Objeto de solicitud HTTP.
+    Acciones:
+        Verifica la sesión del usuario para obtener el historial de compras del cliente.
+        Calcula subtotales y totales para cada orden.
+        Filtra las órdenes con total mayor a 0 y las prepara para ser renderizadas en el template.
+    Retorna:
+        HttpResponse: Renderiza el template 'historial_compras.html' con los detalles de las compras del cliente.
+    """
     user_id = request.session.get('user_id')
     if not user_id:
         messages.error(request, "Debes iniciar sesión para ver tu historial de compras.")
         return redirect("client_login")
 
     client = Client.objects.get(user__id_user=user_id)
-    historial = HistorialCompras.objects.filter(client=client)
+    ordenes = Order.objects.filter(client=client).prefetch_related('orderitem_set')
 
-    return render(request, "historial_compras.html", {"historial": historial})
+    # Preparar datos con subtotales y totales
+    ordenes_totales = []
+    for orden in ordenes:
+        items = []
+        for item in orden.orderitem_set.all():
+            subtotal = item.quantity * item.price_at_purchase
+            items.append({
+                'product_name': item.product.product_name,
+                'quantity': item.quantity,
+                'price_at_purchase': item.price_at_purchase,
+                'subtotal': subtotal
+            })
+
+        total = sum(item['subtotal'] for item in items)
+
+        # Agregar solo órdenes con total mayor a 0
+        if total > 0:
+            ordenes_totales.append({'orden': orden, 'items': items, 'total': total})
+
+    return render(request, "historial_compras.html", {
+        "client": client,
+        "ordenes_totales": ordenes_totales,
+    })

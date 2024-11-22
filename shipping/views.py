@@ -20,8 +20,19 @@ logger = logging.getLogger(__name__)
 
 @csrf_exempt
 def ship24_webhook(request):
+    
     """
-    Procesa el webhook de Ship24 y actualiza los datos de los envíos y eventos de seguimiento.
+    View Name: ship24_webhook
+    File: views.py
+    Author: Berenice Flores Hernández
+    Descripción:
+        Procesa el webhook de Ship24 y actualiza los datos de los envíos y eventos de seguimiento.
+    Parámetros:
+        request (HttpRequest): Objeto de solicitud HTTP.
+    Acciones:
+        Valida la autorización del webhook, procesa los datos recibidos y actualiza los eventos y estados de los envíos correspondientes.
+    Retorna:
+        JsonResponse: Respuesta JSON indicando el resultado del procesamiento del webhook.
     """
     if request.method == "HEAD":
         logger.info("Webhook validado exitosamente con HEAD request.")
@@ -161,6 +172,18 @@ def shipping_actualizar_datos(request):
 
 # Vista para mostrar los pedidos pagados
 def paid_orders(request):
+    
+    """
+    View Name: paid_orders
+    File: views.py
+    Author: Berenice Flores Hernández
+    Descripción:
+        Muestra los pedidos pagados del cliente autenticado y sus envíos pendientes.
+    Parámetros:
+        request (HttpRequest): Objeto de solicitud HTTP.
+    Retorna:
+        HttpResponse: Renderiza el template 'shipment_tracking_info.html' con los pedidos pagados y envíos pendientes del cliente.
+    """
     # Obtiene el ID de usuario de la sesión y verifica que esté autenticado
     user_id = request.session.get('user_id')
     if not user_id:
@@ -190,7 +213,16 @@ def paid_orders(request):
 # Vista para mostrar detalles de un envío específico y obtener información de Ship24
 def shipment_tracking_info(request, tracking_number):
     """
-    Muestra la información de un envío específico usando eventos almacenados localmente.
+    View Name: shipment_tracking_info
+    File: views.py
+    Author: Berenice Flores Hernández
+    Descripción:
+        Muestra los detalles de un envío específico y sus eventos de seguimiento almacenados localmente.
+    Parámetros:
+        request (HttpRequest): Objeto de solicitud HTTP.
+        tracking_number (str): Número de seguimiento del envío.
+    Retorna:
+        HttpResponse: Renderiza el template 'shipment_info.html' con los detalles del envío y sus eventos de seguimiento.
     """
     shipment = Shipment.objects.filter(shipment_tracking_number=tracking_number).first()
 
@@ -208,12 +240,39 @@ def shipment_tracking_info(request, tracking_number):
     
 @login_required
 def tracking_overview(request):
+    
+    """
+    View Name: tracking_overview
+    File: views.py
+    Author: Berenice Flores Hernández
+    Descripción:
+        Muestra una vista general de los envíos del usuario autenticado.
+    Parámetros:
+        request (HttpRequest): Objeto de solicitud HTTP.
+    Retorna:
+        HttpResponse: Renderiza el template 'tracking_overview.html' con los envíos del usuario autenticado.
+    """
     user_id = request.user.id  # Suponiendo que el usuario está autenticado
     shipments = Shipment.objects.filter(order_clientuser_id_user=user_id)
     return render(request, 'shipping/tracking_overview.html', {'shipments': shipments})
 
 def track_shipment_with_additional_info(shipment, destination_postcode, destination_country_code):
-    # Verifica si el mensajero requiere estos datos
+    
+    """
+    View Name: track_shipment_with_additional_info
+    File: views.py
+    Author: Berenice Flores Hernández
+    Descripción:
+        Realiza el seguimiento de un envío con datos adicionales como código postal y código de país.
+    Parámetros:
+        shipment (Shipment): Objeto de envío a rastrear.
+        destination_postcode (str): Código postal del destino.
+        destination_country_code (str): Código de país del destino.
+    Retorna:
+        dict: Respuesta JSON de la API de Ship24 con los detalles del seguimiento.
+    Raises:
+        ValueError: Si falta el código postal o el código de país y el mensajero lo requiere.
+    """
     if shipment.shipment_carrier == 'CourierCodeRequiereDatosAdicionales':
         if not destination_postcode or not destination_country_code:
             raise ValueError("Se requiere el código postal y el código de país del destinatario.")
@@ -229,6 +288,17 @@ def track_shipment_with_additional_info(shipment, destination_postcode, destinat
     return response.json()
 
 def get_couriers(request):
+    """
+    View Name: get_couriers
+    File: views.py
+    Author: Berenice Flores Hernández
+    Descripción:
+        Obtiene la lista de mensajeros disponibles desde la API de Ship24.
+    Parámetros:
+        request (HttpRequest): Objeto de solicitud HTTP.
+    Retorna:
+        JsonResponse: Respuesta JSON con la lista de mensajeros obtenida desde la API de Ship24.
+    """
     url = 'https://api.ship24.com/couriers'
     headers = {
         'Authorization': f'Bearer {settings.SHIP24_API_KEY}',
@@ -245,7 +315,15 @@ def get_couriers(request):
 
 def validate_courier_code(courier_code):
     """
-    Valida si el código de mensajero es válido.
+    View Name: validate_courier_code
+    File: views.py
+    Author: Berenice Flores Hernández
+    Descripción:
+        Valida si el código de mensajero es válido.
+    Parámetros:
+        courier_code (str): Código de mensajero a validar.
+    Raises:
+        ValueError: Si el código de mensajero está obsoleto y no debe usarse.
     """
     obsolete_codes = ['ObsoleteCourierCode1', 'ObsoleteCourierCode2']
     if courier_code in obsolete_codes:
