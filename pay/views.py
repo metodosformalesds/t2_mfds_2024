@@ -193,7 +193,7 @@ def generar_id_unico():
 def create_payout(request):
     """
     Vista que permite a un proveedor retirar dinero de su balance mediante PayPal.
-
+    
     Args:
         request (HttpRequest): El objeto de solicitud HTTP.
 
