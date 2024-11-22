@@ -152,9 +152,9 @@ def saldo_view(request):
 
     return render(request, 'supplier/saldo.html', {
         'supplier': supplier,
-        'mail': payment_method,
         'transactions': transactions
-    })
+        })
+
 
 
 # Vista para retirar saldo

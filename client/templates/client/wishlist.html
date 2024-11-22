@@ -20,7 +20,7 @@
                     <a href="{% url 'product_detail' item.product.id_product %}" class="text-decoration-none">
                         
                         <div class="card" style="width: 100%; margin: 5px 10px;">
-                            <img src="{{ Product.product_image.url }}" class="card-img-top" alt="{{ Product.product_name }}" style=" width:100%; max-width: 400px; height:210px; object-fit: cover;">
+                            <img src="{{ item.product.product_image.url }}" class="card-img-top" alt="{{ item.product.product_name }}" style=" width:100%; max-width: 400px; height:210px; object-fit: cover;"> 
                             <div class="card-body" style="padding: 10px;">
                                 <h6 class="card-title">{{ item.product.product_name }}</h6>
                                 
