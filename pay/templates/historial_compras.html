@@ -13,10 +13,11 @@
 {% endblock %}
 
 {% block content %}
+<button class="btn btn-outline-secondary btn-left" style="margin-top:15px;" onclick="window.location.href='{% url 'product_list' %}'">
+  <span class="me-1">&larr;</span> Volver
+</button>   
+
   <div class="header-content" style="text-align: left !important;">
-    <button class="btn btn-outline-secondary btn-left" onclick="window.location.href='{% url 'product_list' %}'">
-      <span class="me-1">&larr;</span> Volver
-    </button>  
 
     <h2 class="title-left" style="margin-bottom: 20px !important;">
       Historial de Compras para {{ client.client_first_name }} {{ client.client_last_name }}
