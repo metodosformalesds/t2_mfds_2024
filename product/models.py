@@ -260,7 +260,6 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"Order Item {self.id_order_item}"
 
-
 class Shipment(models.Model):
     """
     Modelo que representa un envío asociado a una orden.
@@ -360,9 +359,7 @@ class HistorialCompras(models.Model):
 
     def __str__(self):
         return f"Historial de {self.client} - {self.payment_date}"
- 
- 
- 
+
 class Payment(models.Model):
     """
     Modelo que representa un pago realizado por un cliente.
@@ -479,8 +476,7 @@ class SupplierPaymentMethodModel(models.Model):
 
     def __str__(self):
         return f"Supplier Payment {self.id_supplier_payment} - {self.supplier_payment_method}"
-
-
+    
 class SupplierSales(models.Model):
     """
     Modelo que representa las ventas totales de un proveedor.
@@ -497,7 +493,6 @@ class SupplierSales(models.Model):
 
     def __str__(self):
         return f"Supplier Sales {self.Supplier_order_sales}"
-
 
 class Recycle(models.Model):
     """
