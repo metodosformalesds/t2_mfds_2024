@@ -20,18 +20,21 @@ logger = logging.getLogger(__name__)
 
 @csrf_exempt
 def ship24_webhook(request):
-    
     """
-    View Name: ship24_webhook
-    File: views.py
-    Author: Berenice Flores Hernández
-    Descripción:
-        Procesa el webhook de Ship24 y actualiza los datos de los envíos y eventos de seguimiento.
-    Parámetros:
+    Procesa el webhook de Ship24 y actualiza los datos de los envíos y eventos de seguimiento.
+
+    Autor:
+    Berenice Flores Hernández
+
+    Args:
         request (HttpRequest): Objeto de solicitud HTTP.
-    Acciones:
-        Valida la autorización del webhook, procesa los datos recibidos y actualiza los eventos y estados de los envíos correspondientes.
-    Retorna:
+
+    Lógica:
+        1. Valida la autorización del webhook utilizando el encabezado `Authorization`.
+        2. Procesa el payload recibido para extraer datos de seguimiento.
+        3. Actualiza los eventos y estados de los envíos correspondientes en la base de datos.
+
+    Returns:
         JsonResponse: Respuesta JSON indicando el resultado del procesamiento del webhook.
     """
     if request.method == "HEAD":
@@ -172,17 +175,22 @@ def shipping_actualizar_datos(request):
 
 # Vista para mostrar los pedidos pagados
 def paid_orders(request):
-    
     """
-    View Name: paid_orders
-    File: views.py
-    Author: Berenice Flores Hernández
-    Descripción:
-        Muestra los pedidos pagados del cliente autenticado y sus envíos pendientes.
-    Parámetros:
+    Muestra los pedidos pagados del cliente autenticado y sus envíos pendientes.
+
+    Autor:
+    Berenice Flores Hernández
+
+    Args:
         request (HttpRequest): Objeto de solicitud HTTP.
-    Retorna:
-        HttpResponse: Renderiza el template 'shipment_tracking_info.html' con los pedidos pagados y envíos pendientes del cliente.
+
+    Lógica:
+        1. Verifica que el usuario esté autenticado.
+        2. Obtiene los envíos pendientes asociados al cliente autenticado.
+        3. Renderiza un template con los datos de los pedidos y envíos pendientes.
+
+    Returns:
+        HttpResponse: Renderiza el template `shipment_tracking_info.html`.
     """
     # Obtiene el ID de usuario de la sesión y verifica que esté autenticado
     user_id = request.session.get('user_id')
@@ -213,16 +221,22 @@ def paid_orders(request):
 # Vista para mostrar detalles de un envío específico y obtener información de Ship24
 def shipment_tracking_info(request, tracking_number):
     """
-    View Name: shipment_tracking_info
-    File: views.py
-    Author: Berenice Flores Hernández
-    Descripción:
-        Muestra los detalles de un envío específico y sus eventos de seguimiento almacenados localmente.
-    Parámetros:
+    Muestra los detalles de un envío específico y sus eventos de seguimiento almacenados localmente.
+
+    Autor:
+    Berenice Flores Hernández
+
+    Args:
         request (HttpRequest): Objeto de solicitud HTTP.
         tracking_number (str): Número de seguimiento del envío.
-    Retorna:
-        HttpResponse: Renderiza el template 'shipment_info.html' con los detalles del envío y sus eventos de seguimiento.
+
+    Lógica:
+        1. Busca el envío correspondiente al número de seguimiento.
+        2. Obtiene los eventos relacionados con el envío.
+        3. Renderiza un template con los detalles del envío y sus eventos.
+
+    Returns:
+        HttpResponse: Renderiza el template `shipment_info.html`.
     """
     shipment = Shipment.objects.filter(shipment_tracking_number=tracking_number).first()
 
@@ -240,36 +254,45 @@ def shipment_tracking_info(request, tracking_number):
     
 @login_required
 def tracking_overview(request):
-    
     """
-    View Name: tracking_overview
-    File: views.py
-    Author: Berenice Flores Hernández
-    Descripción:
-        Muestra una vista general de los envíos del usuario autenticado.
-    Parámetros:
+    Muestra una vista general de los envíos del usuario autenticado.
+
+    Autor:
+    Berenice Flores Hernández
+
+    Args:
         request (HttpRequest): Objeto de solicitud HTTP.
-    Retorna:
-        HttpResponse: Renderiza el template 'tracking_overview.html' con los envíos del usuario autenticado.
+
+    Lógica:
+        1. Obtiene los envíos asociados al usuario autenticado.
+        2. Renderiza un template con los envíos.
+
+    Returns:
+        HttpResponse: Renderiza el template `tracking_overview.html`.
     """
     user_id = request.user.id  # Suponiendo que el usuario está autenticado
     shipments = Shipment.objects.filter(order_clientuser_id_user=user_id)
     return render(request, 'shipping/tracking_overview.html', {'shipments': shipments})
 
 def track_shipment_with_additional_info(shipment, destination_postcode, destination_country_code):
-    
     """
-    View Name: track_shipment_with_additional_info
-    File: views.py
-    Author: Berenice Flores Hernández
-    Descripción:
-        Realiza el seguimiento de un envío con datos adicionales como código postal y código de país.
-    Parámetros:
+    Realiza el seguimiento de un envío con datos adicionales como código postal y código de país.
+
+    Autor:
+    Berenice Flores Hernández
+
+    Args:
         shipment (Shipment): Objeto de envío a rastrear.
         destination_postcode (str): Código postal del destino.
         destination_country_code (str): Código de país del destino.
-    Retorna:
+
+    Lógica:
+        1. Verifica que se proporcionen los datos adicionales requeridos.
+        2. Realiza el seguimiento utilizando la API de Ship24.
+
+    Returns:
         dict: Respuesta JSON de la API de Ship24 con los detalles del seguimiento.
+
     Raises:
         ValueError: Si falta el código postal o el código de país y el mensajero lo requiere.
     """
@@ -289,15 +312,20 @@ def track_shipment_with_additional_info(shipment, destination_postcode, destinat
 
 def get_couriers(request):
     """
-    View Name: get_couriers
-    File: views.py
-    Author: Berenice Flores Hernández
-    Descripción:
-        Obtiene la lista de mensajeros disponibles desde la API de Ship24.
-    Parámetros:
+    Obtiene la lista de mensajeros disponibles desde la API de Ship24.
+
+    Autor:
+    Berenice Flores Hernández
+
+    Args:
         request (HttpRequest): Objeto de solicitud HTTP.
-    Retorna:
-        JsonResponse: Respuesta JSON con la lista de mensajeros obtenida desde la API de Ship24.
+
+    Lógica:
+        1. Realiza una solicitud GET a la API de Ship24.
+        2. Devuelve la lista de mensajeros o un error en caso de falla.
+
+    Returns:
+        JsonResponse: Respuesta JSON con la lista de mensajeros o un mensaje de error.
     """
     url = 'https://api.ship24.com/couriers'
     headers = {
@@ -315,13 +343,18 @@ def get_couriers(request):
 
 def validate_courier_code(courier_code):
     """
-    View Name: validate_courier_code
-    File: views.py
-    Author: Berenice Flores Hernández
-    Descripción:
-        Valida si el código de mensajero es válido.
-    Parámetros:
+    Valida si el código de mensajero es válido.
+
+    Autor:
+    Berenice Flores Hernández
+
+    Args:
         courier_code (str): Código de mensajero a validar.
+
+    Lógica:
+        1. Verifica si el código de mensajero está en la lista de códigos obsoletos.
+        2. Si el código es obsoleto, lanza una excepción.
+
     Raises:
         ValueError: Si el código de mensajero está obsoleto y no debe usarse.
     """

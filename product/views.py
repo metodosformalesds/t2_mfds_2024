@@ -5,7 +5,31 @@ from functools import wraps
 from product.models import UserRole  # Importar UserRole
 
 def user_authenticated_and_role(role):
-    """Verifica si el usuario está autenticado y tiene el rol adecuado."""
+    """
+    Verifica si el usuario está autenticado y tiene el rol adecuado antes de acceder a una vista protegida.
+
+    Participantes:
+    Almanza Quezada Andres Yahir - 215993
+
+    Args:
+        role (str): El rol requerido para acceder a la vista (por ejemplo, 'Cliente', 'Proveedor').
+
+    Lógica:
+        1. Recupera el rol del usuario almacenado en la sesión.
+        2. Si el usuario no está autenticado o no tiene el rol requerido:
+            - Muestra un mensaje de error.
+            - Redirige al login del cliente.
+        3. Si el usuario tiene el rol adecuado, permite el acceso a la vista.
+
+    Returns:
+        function: Un decorador que protege la vista y verifica los permisos del usuario.
+
+    Ejemplo de uso:
+        @user_authenticated_and_role('Proveedor')
+        def vista_protegida(request):
+            # Lógica de la vista aquí
+    """
+    
     def decorator(view_func):
         @wraps(view_func)
         def wrapper(request, *args, **kwargs):

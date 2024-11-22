@@ -1,10 +1,28 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from product.models import Supplier, UserAccount, Product, SupplierPaymentMethodModel, Payment, Order, OrderItem
 from django.contrib import messages
-from .forms import SupplierForm, AgregarProductoForm, ActualizarProductosForm
+from .forms import SupplierForm, AgregarProductoForm, ActualizarDatosForm
 from django.contrib.auth.decorators import login_required
 from supplier.forms import SupplierPaymentMethodForm
+
 def supplier_edit_info(request):
+    """
+    Permite a un proveedor editar su información personal y de usuario.
+
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Lógica:
+        1. Verifica si el proveedor está autenticado mediante el `supplier_id` en la sesión.
+        2. Permite editar datos personales y de usuario, incluyendo la actualización de la contraseña.
+        3. Valida y guarda los cambios en la base de datos.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla `supplier/supplier_edit_info.html` con el formulario prellenado.
+    """
     supplier_id = request.session.get('supplier_id')
 
     if supplier_id is None:
@@ -141,13 +159,34 @@ def saldo_view(request):
 
 # Vista para retirar saldo
 def retirar_saldo(request):
-    
-   
+    """
+    Redirige a la vista del saldo del proveedor después de una acción de retiro.
+
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Returns:
+        HttpResponse: Redirige a la vista `saldo_view`.
+    """
     return redirect('saldo_view')  # Redirige a la vista de saldo después del retiro
 
 # Vista para actualizar datos de retiro
 def actualizar_datos_retiro(request):
-    # Aquí agregas la lógica para actualizar los datos de retiro
+    """
+    Muestra la plantilla para que un proveedor actualice sus datos de retiro.
+
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla `supplier/actualizar_datos.html`.
+    """
     return render(request, 'supplier/actualizar_datos.html')  # Muestra una plantilla para actualizar los datos
 
 def todos_los_movimientos(request):
@@ -224,7 +263,6 @@ def todos_los_movimientos(request):
 
     return render(request, 'supplier/todos_los_movimientos.html', {'transactions': transactions})
 
-
 def retirar_saldo_view(request):
     """
     Vista que muestra la página para que un proveedor solicite el retiro de saldo.
@@ -267,7 +305,6 @@ def retirar_saldo_view(request):
     supplier_payment = get_object_or_404(SupplierPaymentMethodModel, supplier=supplier)
 
     return render(request, 'supplier/retirar_saldo.html', {'supplier': supplier, 'pago': supplier_payment})
-
 
 def supplier_menu(request):
     """
@@ -412,7 +449,6 @@ def add_product(request):
     
     return render(request, 'supplier/add_product.html', {'form': form})
 
-
 def log_out(request):
     """
     Vista que cierra la sesión de un proveedor.
@@ -436,9 +472,6 @@ def log_out(request):
 
     messages.success(request, 'Sesión cerrada exitosamente.')
     return redirect('index')
-
-
-
 
 from django.contrib import messages
 
@@ -501,13 +534,38 @@ def add_supplier_payment_method(request):
 
 
 def confirmacion_retiro(request):
-    return render(request, 'supplier/confirmacion_retiro.html')
+    """
+    Muestra la confirmación de un retiro solicitado por un proveedor.
 
-from django.contrib.auth.decorators import login_required
-from .forms import ActualizarDatosForm
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla `supplier/confirmacion_retiro.html`.
+    """
+    return render(request, 'supplier/confirmacion_retiro.html')
 
 @login_required
 def configurar_datos(request):
+    """
+    Permite a un usuario actualizar su configuración personal.
+
+    Participantes:
+    Almanza Quezada Andres Yahir 215993
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Lógica:
+        1. Si el método es POST, valida y guarda los datos enviados mediante el formulario.
+        2. Si no, muestra el formulario prellenado con los datos actuales del usuario.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla `supplier/configurar_datos.html` con el formulario.
+    """
     if request.method == 'POST':
         form = ActualizarDatosForm(request.POST, instance=request.user)
         if form.is_valid():
