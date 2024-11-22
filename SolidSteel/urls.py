@@ -29,15 +29,11 @@ urlpatterns = [
     path('cart/', include('cart.urls')),# Incluye las URLs de la aplicación "cart"
     path('shipping/', include('shipping.urls')),# Incluye las URLs de la aplicación "Envios"
     path('products/', include('product.urls')), # Incluye las URLs de la aplicación "product"
-    path('contact/', include('contact.urls')),
     path('recycler/', include('recycler.urls')),
     path('supplier/', include('supplier.urls')),
     path('client/', include('client.urls')),
     path('accounts/', include('allauth.urls')), #new url para google
     path('pagos/', include('pay.urls')),
-    
-    
-
 ]
 
 if settings.DEBUG:

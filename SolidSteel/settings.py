@@ -40,9 +40,7 @@ INSTALLED_APPS = [
     'login',
     'menu',
     'register',
-    'about_us',
     'cart',
-    'contact',
     'pay',
     'product',
     'recycler',
@@ -234,7 +232,7 @@ AWS_REGION = 'us-west-2'  # Cambia esto según tu región
 STRIPE_PUBLIC_KEY = ""
 STRIPE_SECRET_KEY_TEST = "sk_test_51QGZYaKIVqnl5aZZLPrAwNWgMwRxAL7Ies2QuDqfN2ZigszcL7jfaG6eFQYGe57mCjH2yQ3MUa8XWq8TyXfEfEXf00T5ZEH2jQ"
 STRIPE_WEBHOOK_SECRET = ""
-REDIRECT_DOMAIN = 'https://3760-2806-2f0-3321-ef0b-b5c5-4855-fc7-9ea5.ngrok-free.app'
+REDIRECT_DOMAIN = 'https://8lhlxg61-8000.usw3.devtunnels.ms'
 
 PAYPAL_CLIENT_ID = 'Ac5BQjW9bnHkgwXKnjQuNW9SkK16mz5UpHfvkKFKdib9UDpWTEQjKsyMaERUO_BcsPkSDmw9UANyuYIu'
 PAYPAL_CLIENT_SECRET = 'EN91Qny9RUxxqPZYaETkQVSIJbxjEvEVpgnTYoVpbEUAwlqUTNL2u_10JGNnld0Zx9i6xiBRdtJF7v9d'
@@ -243,14 +241,14 @@ PAYPAL_MODE = 'sandbox'
 #ship24
 SHIP24_API_KEY = 'apik_whxXKXjidHeQeWqhKvVMbYfxe3L8QN'
 SHIP24_WEBHOOK_SECRET = 'whs_RSnMsLUGtQbw4AK5jeNbV4Wm3Itd25'
-SHIP24_WEBHOOK_URL = 'https://3760-2806-2f0-3321-ef0b-b5c5-4855-fc7-9ea5.ngrok-free.app/shipping/webhook/ship24/' 
+SHIP24_WEBHOOK_URL = 'https://8lhlxg61-8000.usw3.devtunnels.ms/shipping/webhook/ship24/' 
 #para aws:
 #SHIP24_WEBHOOK_URL = 'https://solid-steels.com/shipping/webhook/ship24/' 
 
 
 #ngrok pruebas
 CSRF_TRUSTED_ORIGINS = [
-    'https://3760-2806-2f0-3321-ef0b-b5c5-4855-fc7-9ea5.ngrok-free.app',  # poner su local
+    'https://8lhlxg61-8000.usw3.devtunnels.ms',  # poner su local
     #para aws:
     #'https://solid-steels.com/', 
 ]
