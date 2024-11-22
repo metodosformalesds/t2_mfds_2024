@@ -290,6 +290,31 @@ class Shipment(models.Model):
         return f"Shipment {self.id_shipment}"
     
 class TrackingEvent(models.Model):
+    
+    """
+    Model Name: TrackingEvent
+    File: models.py
+    Author: Berenice Flores Hernández
+
+    Descripción:
+        Este modelo registra eventos de seguimiento de envíos asociados a una expedición específica.
+        Cada evento captura el estado del envío, la fecha y hora de ocurrencia, y detalles opcionales.
+
+    Campos:
+        - shipment: ForeignKey que relaciona el evento con un envío específico mediante el modelo Shipment.
+        - status: CharField para almacenar el estado del evento (por ejemplo, "En tránsito", "Entregado").
+        - occurrence_datetime: DateTimeField que indica cuándo ocurrió el evento.
+        - details: TextField opcional para almacenar detalles adicionales del evento.
+        - milestone: CharField opcional para almacenar un hito específico del estado del envío.
+
+    Métodos:
+        - __str__: Retorna una representación legible del objeto, mostrando el estado y la fecha y hora del evento.
+
+    Notas:
+        - Este modelo se utiliza para registrar eventos específicos de seguimiento de envíos.
+        - Es crucial para integrar con APIs externas como Ship24 para sincronizar eventos de estado del envío.
+
+    """
     shipment = models.ForeignKey(Shipment, on_delete=models.CASCADE, related_name="events")
     status = models.CharField(max_length=50)
     occurrence_datetime = models.DateTimeField()
@@ -300,6 +325,32 @@ class TrackingEvent(models.Model):
         return f"Evento {self.status} - {self.occurrence_datetime}"
     
 class HistorialCompras(models.Model):
+    
+    """
+    Model Name: HistorialCompras
+    File: models.py
+    Author: Berenice Flores Hernández
+
+    Descripción:
+        Este modelo registra el historial de compras de un cliente, detallando cada transacción realizada.
+        Cada entrada incluye el cliente asociado, nombre del producto, cantidad comprada, precio unitario,
+        total de la compra y fecha de pago.
+
+    Campos:
+        - client: ForeignKey que relaciona la compra con un cliente específico mediante el modelo Client.
+        - product_name: CharField para almacenar el nombre del producto comprado.
+        - quantity: IntegerField para indicar la cantidad comprada del producto.
+        - price: FloatField para el precio unitario del producto en la transacción.
+        - total: FloatField para el monto total de la compra.
+        - payment_date: DateTimeField que indica cuándo se realizó el pago de la compra.
+
+    Métodos:
+        - __str__: Retorna una representación legible del objeto, mostrando el cliente y la fecha de pago del historial.
+
+    Notas:
+        - Este modelo es esencial para mantener un registro histórico de todas las compras realizadas por cada cliente.
+        - Facilita análisis y seguimiento de patrones de compra y comportamiento del cliente a lo largo del tiempo.
+    """
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     product_name = models.CharField(max_length=255)
     quantity = models.IntegerField()

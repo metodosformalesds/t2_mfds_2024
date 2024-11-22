@@ -53,13 +53,56 @@
                 {% if request.resolver_match.url_name == 'product_list' %}
                     <button class="btn custom-btn d-md-none" onclick="toggleSearch()"><i class="fas fa-bars" id="menuIcon"></i></button>
                 {% endif %}
-                <button class="btn btn-custom {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'cart' %}'"><i class="bi bi-cart2"></i></button>
+                <!--<button class="btn btn-custom {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'cart' %}'"><i class="bi bi-cart2"></i></button>-->
+                <style>
+                    /* Contenedor del botón del carrito */
+                    .cart-button {
+                      position: relative; /* Relativo para que el contador se posicione dentro del botón */
+                      display: inline-block;
+                    }
+                  
+                    /* Estilo para el numerito del contador */
+                    .cart-count {
+                      position: absolute;
+                      top: -5px; /* Ajusta según el tamaño del botón */
+                      right: -5px; /* Ajusta según el tamaño del botón */
+                      background-color: red; /* Fondo rojo */
+                      color: white; /* Texto blanco */
+                      font-size: 12px; /* Tamaño de fuente */
+                      font-weight: bold; /* Texto en negrita */
+                      border-radius: 50%; /* Forma circular */
+                      width: 20px; /* Ancho fijo */
+                      height: 20px; /* Alto fijo */
+                      display: flex; /* Centrar el texto */
+                      align-items: center; /* Centrar verticalmente */
+                      justify-content: center; /* Centrar horizontalmente */
+                      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra */
+                      z-index: 10; /* Asegura que el contador quede encima */
+                    }
+                  </style>
+                  
+                  <!-- Botón del carrito con el contador -->
+                  <div class="cart-button">
+                    <button class="btn btn-custom {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'cart' %}'">
+                        <i class="bi bi-cart2"></i>
+                    </button>
+                    {% if cart_items_count > 0 %}
+                        <span class="cart-count">{{ cart_items_count }}</span>
+                    {% endif %}
+                </div>
 
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'paid_orders' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'paid_orders' %}'">
                     <i class="bi bi-truck"></i>
                 </button>
                 
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'client_edit_info' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'client_edit_info' %}'"><i class="bi bi-gear"></i></button>
+
+                <div class="cart-button">
+                    <button class="btn btn-custom {% if request.resolver_match.url_name == 'historial_compras' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'historial_compras' %}'">
+                        <i class="bi bi-clock-history"></i>
+                    </button>
+                </div>
+
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'client_login' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'client_login' %}'"><i class="bi bi-box-arrow-left"></i></button>
             </div>
         </div>
