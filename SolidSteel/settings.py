@@ -55,10 +55,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    
-    
-    #facerecognition
-
 ]
 
 #se refiere a tomar informacion básica del profile and email para poder iniciar sesion
@@ -125,27 +121,20 @@ WSGI_APPLICATION = 'SolidSteel.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+#NOOOOOOO BORRAAAR POORFAVOOOOOOR
 DATABASES = {
-   'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'solid_db',  # El nombre que aparece en tu lista
+        'USER': 'root',     # Debe ser el nombre de tu usuario de PythonAnywhere
+        'PASSWORD': 'Cacahuate11%',
+        'HOST': 'ls-7c806381e95ae6fdea3561848f7aa12dbe862db9.cdqi0uqm4gv3.us-west-2.rds.amazonaws.com',  # Tu host de MySQL en PythonAnywhere
+        'PORT': '3306',  # Puerto estándar para MySQL
+        'OPTIONS': {
+           'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
-#NOOOOOOO BORRAAAR POORFAVOOOOOOR
-#DATABASES = {
-    #'default': {
-        #'ENGINE': 'django.db.backends.mysql',
-        #'NAME': 'solid_db',  # El nombre que aparece en tu lista
-        #'USER': 'root',     # Debe ser el nombre de tu usuario de PythonAnywhere
-        #'PASSWORD': 'Cacahuate11%',
-        #'HOST': 'ls-7c806381e95ae6fdea3561848f7aa12dbe862db9.cdqi0uqm4gv3.us-west-2.rds.amazonaws.com',  # Tu host de MySQL en PythonAnywhere
-        #'PORT': '3306',  # Puerto estándar para MySQL
-        #'OPTIONS': {
-           #'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        #},
-    #}
-#}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -222,35 +211,24 @@ AWS_ACCESS_KEY_ID = 'AKIA47CR2OAEE7ANHYMU'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_REGION = 'us-west-2'  # Cambia esto según tu región
 
-#api paypal
-#PAYPAL_CLIENT_ID = 'AUm2f3CYUOUlCmPOkAtA6kFWzjpY_yqDT9pBKLFpYZBR7ZW7Gl62dWqzb7CBqyb6cxJX_WQePKVj7A7E'
-#PAYPAL_CLIENT_SECRET = 'EKgTR0HeavgN8LEYCRI_vOQDAW5WwKCHyVuVUBjThRFW_-z9sDmx-QQ5OOL9jwxoWBjo1OYrSzOcsi4Q'
-#PAYPAL_MODE = 'sandbox'  # Asegúrate de que esté en 'sandbox' para pruebas
-
-
-
 #Stripe
 STRIPE_PUBLIC_KEY = ""
 STRIPE_SECRET_KEY_TEST = "sk_test_51QGZYaKIVqnl5aZZLPrAwNWgMwRxAL7Ies2QuDqfN2ZigszcL7jfaG6eFQYGe57mCjH2yQ3MUa8XWq8TyXfEfEXf00T5ZEH2jQ"
 STRIPE_WEBHOOK_SECRET = ""
-REDIRECT_DOMAIN = 'https://8lhlxg61-8000.usw3.devtunnels.ms'
+REDIRECT_DOMAIN = 'https://solid-steels.com'
 
+#PayPal
 PAYPAL_CLIENT_ID = 'Ac5BQjW9bnHkgwXKnjQuNW9SkK16mz5UpHfvkKFKdib9UDpWTEQjKsyMaERUO_BcsPkSDmw9UANyuYIu'
 PAYPAL_CLIENT_SECRET = 'EN91Qny9RUxxqPZYaETkQVSIJbxjEvEVpgnTYoVpbEUAwlqUTNL2u_10JGNnld0Zx9i6xiBRdtJF7v9d'
 PAYPAL_MODE = 'sandbox'
 
 #ship24
-SHIP24_API_KEY = 'apik_whxXKXjidHeQeWqhKvVMbYfxe3L8QN'
-SHIP24_WEBHOOK_SECRET = 'whs_RSnMsLUGtQbw4AK5jeNbV4Wm3Itd25'
-SHIP24_WEBHOOK_URL = 'https://8lhlxg61-8000.usw3.devtunnels.ms/shipping/webhook/ship24/' 
-#para aws:
-#SHIP24_WEBHOOK_URL = 'https://solid-steels.com/shipping/webhook/ship24/' 
-
+SHIP24_API_KEY = 'apik_kTfhhvafNUGgD7SNpnkfrDeiuib7Gq'
+SHIP24_WEBHOOK_SECRET = 'whs_plDspLxhICQf4r6jwpqJ63h7DNjKBo'
+SHIP24_WEBHOOK_URL = 'https://solid-steels.com/shipping/webhook/ship24/' 
 
 #ngrok pruebas
 CSRF_TRUSTED_ORIGINS = [
-    'https://8lhlxg61-8000.usw3.devtunnels.ms',  # poner su local
-    #para aws:
-    #'https://solid-steels.com/', 
+    'https://solid-steels.com/', 
 ]
 CSRF_COOKIE_SECURE = False

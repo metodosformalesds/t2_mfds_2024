@@ -1,7 +1,9 @@
 <!--
 Template Name: Registro de Cliente con Validación Biométrica
 File: register_client.html
-Author: Hugo Abisai Reyes Trejo - 215201
+Author: Cesar Omar Andrade 215430
+Coauthor: Hugo Abisai Reyes Trejo - 215201
+
 Description:
     Esta plantilla permite a los clientes registrarse en el sistema con validaciones de campos y soporte para 
     biometría a través de captura de imagen por cámara. También incluye la opción de cargar una identificación oficial 
@@ -36,7 +38,6 @@ Notas:
     - La cámara se activa solo si está disponible en el dispositivo. De lo contrario, se muestra la opción de subir una foto manualmente.
     - La generación del código QR se basa en un identificador único para cada usuario.
 -->
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -81,6 +82,16 @@ Notas:
 
                 <div class="d-flex justify-content-center mb-3">
                     <h2>Regístrate como Cliente</h2>
+                </div>
+                <div class="d-flex flex-column gap-2">
+                    <a href="{% provider_login_url 'google' %}" class="btn btn-outline-dark w-100">
+                        <i class="bi bi-google"></i> Continuar con Google
+                    </a>
+                </div>
+                <div class="d-flex align-items-center my-4">
+                    <hr class="flex-grow-1">
+                    <span class="px-2">O</span>
+                    <hr class="flex-grow-1">
                 </div>
 
                 <form id="register-form" method="POST" action="" enctype="multipart/form-data" onsubmit="return validateForm()">
