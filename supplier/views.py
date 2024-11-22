@@ -124,7 +124,6 @@ def saldo_view(request):
     # Recupera al usuario y al proveedor asociado
     user = get_object_or_404(UserAccount, pk=supplier_id) 
     supplier = get_object_or_404(Supplier, user=user) 
-    payment_method = get_object_or_404(SupplierPaymentMethodModel, supplier=supplier)
 
     # Obtiene los productos del proveedor
     supplier_products = Product.objects.filter(supplier=supplier)
@@ -151,8 +150,8 @@ def saldo_view(request):
             })
 
     return render(request, 'supplier/saldo.html', {
-        'supplier': supplier,
-        'transactions': transactions
+            'supplier': supplier,
+            'transactions': transactions
         })
 
 
