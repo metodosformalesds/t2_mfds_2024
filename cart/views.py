@@ -14,14 +14,29 @@ import pandas as pd
 
 # Vista para mostrar el carrito
 def cart(request):
+    """
+    Vista que maneja el carrito de compras de un cliente, incluyendo la creación de una sesión de pago con Stripe.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Lógica:
+        1. Verifica si el usuario está autenticado mediante el ID almacenado en la sesión.
+        2. Obtiene el cliente asociado al usuario autenticado.
+        3. Recupera los ítems del carrito del cliente y calcula el total.
+        4. Si el método es POST, crea una sesión de pago con Stripe y redirige al usuario a la URL de pago.
+        5. Si no, renderiza la plantilla del carrito.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'cart/cart.html' con los ítems del carrito y el total,
+        o redirige a la página de inicio de sesión o a la URL de pago de Stripe.
+    """
     # Obtener el ID del usuario desde la sesión
     user_id = request.session.get('user_id')
     
     # Verificar si el usuario ha iniciado sesión
     if not user_id:
-        # Mostrar un mensaje de error si no hay una sesión activa
         messages.error(request, "No has iniciado sesión. Por favor, inicia sesión.", extra_tags='edit')
-        # Redirigir al usuario a la página de inicio de sesión
         return redirect('client_login')
 
     # Obtener el UserAccount y Client asociado al user_id en la sesión
@@ -39,30 +54,41 @@ def cart(request):
     stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
     if request.method == 'POST':
         checkout_session = stripe.checkout.Session.create(
-            payment_method_types = ['card'],
+            payment_method_types=['card'],
             line_items=[{
-                    'price_data': {
-                        'currency': 'mxn',
-                        'product_data': {
-                            'name': 'Carrito de compras',
-                        },
-                        'unit_amount': int(total * 100),  # Stripe requiere centavos (2000 = $20.00)
-                    },
-                    'quantity': 1,
-                }],
-
-            mode = 'payment',
-            customer_creation = 'always',
-            success_url = settings.REDIRECT_DOMAIN + '/cart/payment_successful?session_id={CHECKOUT_SESSION_ID}',
-			cancel_url = settings.REDIRECT_DOMAIN + '/cart/payment_cancelled',
-
+                'price_data': {
+                    'currency': 'mxn',
+                    'product_data': {'name': 'Carrito de compras'},
+                    'unit_amount': int(total * 100),
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            customer_creation='always',
+            success_url=settings.REDIRECT_DOMAIN + '/cart/payment_successful?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url=settings.REDIRECT_DOMAIN + '/cart/payment_cancelled',
         )
 
-        return redirect(checkout_session.url, code = 303)
+        return redirect(checkout_session.url, code=303)
     
     return render(request, 'cart/cart.html', {'carrito_items': carrito_items, 'total': total})
 
+
 def stripe_webhook(request):
+    """
+    Webhook que maneja eventos de Stripe relacionados con pagos.
+    Participantes:
+    Almanza Quezada Andres Yahir 215993
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP con el evento de Stripe.
+
+    Lógica:
+        1. Verifica y construye el evento de Stripe usando la firma.
+        2. Si el evento es 'checkout.session.completed', actualiza el estado del pago asociado al `session_id`.
+
+    Returns:
+        HttpResponse: Respuesta con estado HTTP 200 para confirmar que el evento fue procesado.
+    """
     stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
     time.sleep(10)
     payload = request.body
@@ -72,44 +98,61 @@ def stripe_webhook(request):
         event = stripe.Webhook.construct_event(
             payload, signature_header, settings.STRIPE_WEBHOOK_SECRET_TEST
         )
-    except ValueError as e:
-        return HttpResponse(status = 400)
-    except stripe.error.SignatureVerificationError as e:
-        return HttpResponse(status = 400)
+    except ValueError:
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError:
+        return HttpResponse(status=400)
+
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        session_id = session.get('id', None)#
+        session_id = session.get('id')
         time.sleep(15)
-        user_payment = Payment.objects.get(stripe_checkout_id=session_id)#
-        
+        user_payment = Payment.objects.get(stripe_checkout_id=session_id)
         user_payment.payment_bool = True
         user_payment.save()
-    return HttpResponse(status = 200)
 
-#4242424242424242
+    return HttpResponse(status=200)
+
+
 def payment_successful(request):
+    """
+    Vista que maneja el éxito de un pago realizado con Stripe.
+    Participantes:
+    Almanza Quezada Andres Yahir 215993
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Lógica:
+        1. Recupera la sesión de Stripe y obtiene el correo del cliente.
+        2. Crea una nueva orden y registra los ítems en la base de datos.
+        3. Crea un registro del pago asociado a la orden.
+        4. Limpia el carrito del cliente y renderiza la página de éxito.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'cart/success.html' con los detalles del pago.
+    """
     stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
     checkout_session_id = request.GET.get('session_id', None)
     session = stripe.checkout.Session.retrieve(checkout_session_id)
 
-    # Extrae el correo electrónico del cliente desde la sesión de Stripe
-    customer_email = session.get('customer_email', None)
+
     
+    customer_email = session.get('customer_email', None)
     user_id = request.session.get('user_id')
     user_account = UserAccount.objects.get(id_user=user_id)
     client = Client.objects.get(user=user_account)
 
-    # Obtener items del carrito y calcular el total
+
     carrito_items = ShoppingCart.objects.filter(client=client)
     subtotal = sum(item.product.product_price * item.cart_product_quantity for item in carrito_items)
-    total = subtotal  # Si tienes impuestos u otros cálculos, ajústalo aquí
+    total = subtotal
 
-    # Extraer datos de la transacción
+
     transaction_id = session.payment_intent
-    payment_date = timezone.now()  # Usar la fecha y hora actual
+    payment_date = timezone.now()
     payment_method = "Stripe"
 
-    # Crear una nueva orden
+
     address = ClientAddress.objects.filter(client=client).first()
     order = Order.objects.create(
         client=client,
@@ -117,7 +160,7 @@ def payment_successful(request):
         order_date=payment_date
     )
 
-    # Crear los items de la orden
+
     with transaction.atomic():
         for item in carrito_items:
             OrderItem.objects.create(
@@ -130,35 +173,46 @@ def payment_successful(request):
             supplier.balance += item.product.product_price * item.cart_product_quantity
             supplier.save()
 
-    # Crear el registro del pago con los detalles correctos
+
     Payment.objects.create(
         order=order,
         payment_method=payment_method,
         payment_amount=total,
-        payment_status="Exitosa",  # Estado del pago
+        payment_status="Exitosa",
         app_user=client,
         stripe_checkout_id=checkout_session_id,
         payment_bool=True,
         customer_email=customer_email
     )
 
-    # Limpia el carrito del usuario
+
     ShoppingCart.objects.filter(client=client).delete()
 
-    # Pasar los datos al contexto para mostrarlos en la plantilla
+
     return render(request, 'cart/success.html', {
         'transaction_id': transaction_id,
         'payment_date': payment_date,
         'payment_method': payment_method,
-        'subtotal': f"{subtotal:.2f}",  # Formatear a dos decimales
-        'total': f"{total:.2f}",  # Formatear a dos decimales
+        'subtotal': f"{subtotal:.2f}",
+        'total': f"{total:.2f}",
         'status': "Exitosa",
         'customer_email': customer_email
     })
 
 
 def payment_cancelled(request):
+    """
+    Vista que maneja la cancelación de un pago realizado con Stripe.
+    Participantes:
+    Almanza Quezada Andres Yahir 215993
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla 'cart/cancel.html'.
+    """
     return render(request, 'cart/cancel.html')
+
 
 
 # Vista para agregar productos al carrito

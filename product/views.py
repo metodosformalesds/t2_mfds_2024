@@ -20,6 +20,42 @@ def user_authenticated_and_role(role):
 # Aplicar el decorador en la vista
 @user_authenticated_and_role(UserRole.CLIENT)
 def product_list(request):
+    """
+    Vista que muestra una lista de productos con opciones de filtrado, búsqueda y ordenamiento.
+    Participantes:
+    Cesar Omar Rodarte Andrade
+    Berenice Flores Hernandez
+    Almanza Quezada Andres Yahir 
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP que contiene parámetros de búsqueda y filtros.
+
+    Parámetros GET:
+        - q (str): Texto de búsqueda en los nombres de productos.
+        - order (str): Criterio de ordenamiento ('asc', 'desc', 'new').
+        - thickness (float): Filtra por espesor del producto.
+        - category (str): Filtra por material del producto.
+        - price_min (float): Filtra por precio mínimo.
+        - price_max (float): Filtra por precio máximo.
+        - width (float): Filtra por ancho del producto.
+        - height (float): Filtra por altura del producto.
+
+    Variables locales:
+        - productos (QuerySet): Conjunto de productos disponibles.
+        - thicknesses (QuerySet): Lista de espesores únicos ordenados.
+        - widths (QuerySet): Lista de anchos únicos ordenados.
+        - heights (QuerySet): Lista de alturas únicas ordenadas.
+
+    Lógica:
+        1. Obtiene todos los productos disponibles.
+        2. Procesa medidas únicas (espesor, ancho, altura) para mostrar filtros dinámicos.
+        3. Aplica filtros según los parámetros de búsqueda ingresados por el usuario.
+        4. Aplica ordenamiento basado en el parámetro 'order'.
+        5. Devuelve la lista de productos filtrados y ordenados al template.
+
+    Returns:
+        HttpResponse: Renderiza el template 'product/products_menu.html' con los productos filtrados y sus atributos adicionales.
+    """
     # Obtener productos
     productos = Product.objects.all()
 
@@ -79,7 +115,28 @@ def product_list(request):
         "heights": heights
     })
 
+
 def product_detail(request, id):
+    """
+    Vista que muestra los detalles de un producto específico.
+    Participantes:
+    Almanza Quezada Andres Yahir 215993
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+        id (int): El identificador único del producto a mostrar.
+
+    Variables locales:
+        - productos_aleatorios (QuerySet): Tres productos seleccionados aleatoriamente.
+        - product_info (Product): Información completa del producto solicitado.
+
+    Lógica:
+        1. Obtiene el producto solicitado utilizando `id`.
+        2. Obtiene tres productos aleatorios para sugerencias relacionadas.
+        3. Renderiza la página con los detalles del producto y las sugerencias.
+
+    Returns:
+        HttpResponse: Renderiza el template 'product/product_view.html' con la información del producto y sugerencias.
+    """
     productos_aleatorios = Product.objects.all().order_by('?')[:3]
     product_info = get_object_or_404(Product, id_product=id)
     return render(request, 'product/product_view.html', {'product_info': product_info, "productos": productos_aleatorios})

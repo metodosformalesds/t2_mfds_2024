@@ -182,11 +182,55 @@ def escojer_metodo_view(request):
     return render(request, "opcion_pago.html")
 
 def generar_id_unico():
+    """
+    Genera un identificador único compuesto de 12 caracteres alfanuméricos.
+
+    Returns:
+        str: Un identificador único con letras y números aleatorios.
+    """
     return ''.join(random.choices(string.ascii_letters + string.digits, k=12))
 
-from django.contrib import messages
-
 def create_payout(request):
+    """
+    Vista que permite a un proveedor retirar dinero de su balance mediante PayPal.
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Lógica:
+        1. Verifica si el método de solicitud es POST.
+        2. Valida el formulario `WithdrawForm` para obtener la cantidad a retirar.
+        3. Recupera el proveedor autenticado mediante la sesión.
+        4. Verifica si el balance del proveedor es suficiente para la cantidad solicitada.
+        5. Descuenta la cantidad del balance del proveedor y guarda el cambio.
+        6. Genera IDs únicos para `sender_batch_id` y `sender_item_id`.
+        7. Configura y realiza el pago usando PayPal API.
+        8. Si el pago es exitoso, muestra un mensaje de éxito; de lo contrario, muestra un mensaje de error.
+
+    Returns:
+        HttpResponse: Redirige a la página de retiro de saldo con un mensaje de éxito o error.
+
+    Manejo de errores:
+        - Si el formulario no es válido, redirige con un mensaje de error.
+        - Si la solicitud no es POST, redirige con un mensaje de error.
+        - Si ocurre un error en el payout de PayPal, redirige con un mensaje de error.
+
+    Dependencias:
+        - `random`: Para generar IDs aleatorios.
+        - `paypalrestsdk`: Para interactuar con la API de PayPal.
+        - `Supplier`: Modelo que representa al proveedor.
+        - `SupplierPaymentMethodModel`: Modelo que almacena los métodos de pago del proveedor.
+        - `WithdrawForm`: Formulario utilizado para solicitar el retiro.
+        - `UserAccount`: Modelo que representa las cuentas de usuario.
+        - `messages`: Para mostrar mensajes flash al usuario.
+
+    Contexto adicional:
+        - La función asume que el proveedor está autenticado y su ID está almacenado en la sesión (`supplier_id`).
+
+    Ejemplo de uso:
+        - El proveedor completa el formulario de retiro y envía la solicitud.
+        - Si el balance es suficiente, se realiza un pago mediante PayPal y se actualiza el balance del proveedor.
+    """
     if request.method == "POST":
         form = WithdrawForm(request.POST)
         if form.is_valid():
@@ -213,7 +257,7 @@ def create_payout(request):
 
             # Configura el payout
             payment_method = get_object_or_404(SupplierPaymentMethodModel, supplier=supplier)
-            supplier_email = payment_method.supplier_payment_email  # Reemplaza con el email correcto
+            supplier_email = payment_method.supplier_payment_email
             payout = paypalrestsdk.Payout({
                 "sender_batch_header": {
                     "sender_batch_id": sender_batch_id,
@@ -223,7 +267,7 @@ def create_payout(request):
                     {
                         "recipient_type": "EMAIL",
                         "amount": {
-                            "value": str(cantidad_retirar),  # Convertir a string para PayPal API
+                            "value": str(cantidad_retirar),
                             "currency": "USD"
                         },
                         "receiver": supplier_email,
@@ -246,3 +290,4 @@ def create_payout(request):
 
     messages.error(request, "Método no permitido.")
     return redirect("retirar_saldo")
+
