@@ -3,6 +3,8 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.utils import timezone
+from django.utils.timezone import now
+
 
 class UserRole(models.TextChoices):
     """
@@ -428,7 +430,7 @@ class WishItem(models.Model):
     id_wish = models.AutoField(primary_key=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    wish_date_added = models.DateTimeField()
+    wish_date_added = models.DateTimeField(default=now)
 
     def __str__(self):
         return f"Wish {self.id_wish}"
