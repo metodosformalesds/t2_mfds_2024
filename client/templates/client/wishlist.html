@@ -2,11 +2,7 @@
 
 {% block content %}
 
-<div class="container">
-<div class= "row">
-    <div class="col-md-1">
 
-    </div>
 <div class= "col-md-auto">
 <div class="d-flex justify-content-left">
     <button class="btn btn-outline-secondary" onclick="window.location.href='{% url 'product_list' %}'">
@@ -17,10 +13,6 @@
 
 <h2 class="text-center">Lista de favoritos</h2>
 
-
-<div class="col-md-9 col-25">
-    <div class="container mt-5">
-        
     <div class="container">
         <div class="row">
             {% for item in wishlist_items %}
@@ -42,16 +34,6 @@
         </div>
     </div>
 </div>
-</div>
-</div>
-</div>
-<div class="col-md-1">
-
-</div>
-
-        
-</div>
-</div>     
 
 
 {% endblock %}
