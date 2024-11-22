@@ -42,14 +42,14 @@
 <body>
     <div class="container-fluid" style="background-color: white; padding: 10px 0;">
         <div class="row align-items-center">
-            <div class="col-md-3 text-left">
+            <div class="col-md-2 text-left">
                 <img src="{% static 'images/logo.png' %}" alt="Logo" class="header-logo" style="max-width: 100px; height: auto;">
             </div>
             <div class="col-md-6 text-center">
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'recycler' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'recycler' %}'">Reciclaje</button>
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'product_list' %}'">Productos</button>
             </div>
-            <div class="col-md-3 text-end">
+            <div class="col-md-4 text-end">
                 {% if request.resolver_match.url_name == 'product_list' %}
                     <button class="btn custom-btn d-md-none" onclick="toggleSearch()"><i class="fas fa-bars" id="menuIcon"></i></button>
                 {% endif %}
@@ -93,6 +93,10 @@
 
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'paid_orders' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'paid_orders' %}'">
                     <i class="bi bi-truck"></i>
+                </button>
+
+                <button class="btn btn-custom {% if request.resolver_match.url_name == 'wishlist' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'wishlist' %}'">
+                    <i class="bi bi-bookmark-heart-fill"></i>
                 </button>
                 
                 <button class="btn btn-custom {% if request.resolver_match.url_name == 'client_edit_info' %}active{% endif %}" type="button" onclick="window.location.href='{% url 'client_edit_info' %}'"><i class="bi bi-gear"></i></button>

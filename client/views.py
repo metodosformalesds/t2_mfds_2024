@@ -3,6 +3,7 @@ from product.models import Client, UserAccount, ClientAddress
 from django.contrib import messages
 from .forms import ClientForm, ClientAddressForm
 
+
 def client_edit_info(request):
     """
     Vista que permite a un cliente editar su información personal.
@@ -167,5 +168,4 @@ def client_address(request):
 
 
     
-
 
