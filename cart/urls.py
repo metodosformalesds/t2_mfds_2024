@@ -6,7 +6,6 @@ urlpatterns = [
     path('agregar/<int:id>/', views.agregar_al_carrito, name='agregar_al_carrito'),
     path('restar/<int:id>/', views.restar_del_carrito, name='restar_del_carrito'),  # Nueva ruta para restar un producto del carrito
     path('eliminar/<int:id>/', views.eliminar_del_carrito, name='eliminar_del_carrito'),
-    path('drag/', views.drag_and_drop, name='drag_and_drop'),
     # urls de pagos
     path('payment_successful', views.payment_successful, name='payment_successful'),
     path('payment_cancelled', views.payment_cancelled, name='payment_cancelled'),
