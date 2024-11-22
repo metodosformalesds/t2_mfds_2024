@@ -6,22 +6,19 @@ from product.models import ShoppingCart, UserAccount, Client, Supplier, Supplier
 from django.views.decorators.http import require_POST
 from .paypal import paypalrestsdk
 from django.db import transaction
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from supplier.forms import WithdrawForm
 import random
 import string
 from django.utils import timezone
-from django.conf import settings
 import requests 
-from django.http import JsonResponse, HttpResponse
 import stripe
-import random
-import string
+from django.conf import settings
 from datetime import timedelta
 import logging
 from django.utils.timezone import now
 from shipping.views import determinar_courier_code
-from django.conf import settings
+
 from django.db.models import Sum, F
 
 stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
@@ -29,7 +26,6 @@ stripe.api_key = settings.STRIPE_SECRET_KEY_TEST
 logger = logging.getLogger(__name__)
 
 def generar_tracking_number():
-    
     """
     View Name: generar_tracking_number
     File: views.py
@@ -49,7 +45,6 @@ def generar_tracking_number():
     return f"{prefix}{middle}{suffix}"
 
 def crear_tracker_ship24(tracking_number, courier_code, destination_postcode, shipment_date=None):
-    
     """
     View Name: crear_tracker_ship24
     File: views.py
@@ -164,7 +159,6 @@ def registrar_rastreador_y_envio(order, client, item):
         logger.error(f"Error al registrar rastreador: {e}")
 
 def validar_datos_ship24(tracking_number, origin_country, destination_country, destination_postcode):
-    
     """
     View Name: validar_datos_ship24
     File: views.py
@@ -193,6 +187,33 @@ def validar_datos_ship24(tracking_number, origin_country, destination_country, d
 
 @require_POST
 def iniciar_pago_view(request):
+    """
+    Vista que maneja la confirmación de un pago exitoso en PayPal.
+
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Lógica:
+        1. Verifica si el usuario está autenticado.
+        2. Recupera los parámetros `paymentId` y `PayerID` de la solicitud.
+        3. Busca el usuario, cliente y el pago en PayPal.
+        4. Si el pago es válido y exitoso:
+            - Registra la transacción con la fecha y el método de pago.
+            - Calcula el subtotal y total de los productos en el carrito.
+            - Crea una nueva orden y sus ítems asociados.
+            - Actualiza el balance de los proveedores por cada producto comprado.
+            - Registra el envío y los datos en el historial de compras del cliente.
+            - Limpia el carrito del cliente.
+            - Renderiza una página de éxito con los detalles del pago.
+        5. Si el pago no es exitoso, redirige al carrito con un mensaje de error.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla `cart/success.html` con los detalles del pago exitoso,
+        o redirige al carrito o a una página de error en caso de problemas.
+    """
     # Obtener el ID del usuario desde la sesión
     user_id = request.session.get('user_id')
     
@@ -362,14 +383,48 @@ def pago_exitoso_view(request):
     else:
         # Error en el pago
         messages.error(request, "Error al confirmar el pago.")
-        return redirect("cart/error") #bien
+        return redirect("cart/error") 
 
 def pago_cancelado_view(request):
+    """
+    Vista que maneja la cancelación de un pago por parte del usuario.
+
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Lógica:
+        1. Muestra un mensaje informativo al usuario indicando que el pago fue cancelado.
+        2. Redirige al carrito para que el usuario pueda realizar otra acción.
+
+    Returns:
+        HttpResponse: Redirige a la vista del carrito (`cart`).
+    """
     messages.info(request, "El pago fue cancelado.")
     return redirect("cart")
 
 
 def mostrar_pagos_view(request):
+    """
+    Vista que muestra el total de pagos pendientes del carrito de compras.
+
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Lógica:
+        1. Obtiene el `user_id` desde la sesión.
+        2. Filtra los ítems del carrito asociados al cliente autenticado.
+        3. Calcula el monto total de los productos en el carrito multiplicando el precio por la cantidad.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla `pagos.html` con:
+            - `monto_total`: El monto total calculado de los productos en el carrito.
+    """
     # Opcional: calcula el monto total o realiza cualquier operación necesaria
     user_id = request.session.get('user_id')
     carrito_items = ShoppingCart.objects.filter(client_id=user_id)
@@ -377,8 +432,22 @@ def mostrar_pagos_view(request):
 
     return render(request, "pagos.html", {"monto_total": monto_total})
 
-
 def escojer_metodo_view(request):
+    """
+    Vista que renderiza la página para seleccionar un método de pago.
+
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Lógica:
+        1. Renderiza la plantilla `opcion_pago.html`, donde el usuario puede elegir entre los métodos de pago disponibles.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla `opcion_pago.html`.
+    """
     return render(request, "opcion_pago.html")
 
 def generar_id_unico():

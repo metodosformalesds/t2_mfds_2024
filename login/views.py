@@ -8,6 +8,30 @@ from .forms import SupplierLoginForm
 from product.models import UserAccount, UserRole,PasswordReset, UserRole, UserAuthProvider  # Asegúrate de que este es tu modelo correcto
 
 def supplier_login(request):
+    """
+    Vista que maneja el inicio de sesión de los proveedores.
+
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP que contiene los datos enviados por el formulario de inicio de sesión.
+
+    Lógica:
+        1. Verifica si el método de la solicitud es POST.
+        2. Valida los datos del formulario de inicio de sesión.
+        3. Busca al usuario con el correo proporcionado y el rol de proveedor.
+        4. Verifica la contraseña del usuario.
+        5. Si las credenciales son válidas:
+            - Guarda el rol y el ID del proveedor en la sesión.
+            - Redirige al menú del proveedor.
+        6. Si no, muestra mensajes de error específicos.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla `home/supplier_login.html` con el formulario de inicio de sesión,
+        o redirige al menú del proveedor si el inicio de sesión es exitoso.
+    """
+    
     if request.method == 'POST':
         form = SupplierLoginForm(request.POST)
         if form.is_valid():
@@ -38,6 +62,30 @@ def supplier_login(request):
 
 # Vista para el login de usuarios normales (clientes)
 def client_login(request):
+    """
+    Vista que maneja el inicio de sesión de los clientes.
+
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP que contiene los datos enviados por el formulario de inicio de sesión.
+
+    Lógica:
+        1. Verifica si el método de la solicitud es POST.
+        2. Valida los datos del formulario de inicio de sesión.
+        3. Busca al usuario con el correo proporcionado y el rol de cliente.
+        4. Verifica la contraseña del usuario si utiliza autenticación interna.
+        5. Si las credenciales son válidas:
+            - Guarda el rol y el ID del cliente en la sesión.
+            - Redirige a la lista de productos.
+        6. Si no, muestra mensajes de error específicos.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla `home/client_login.html` con el formulario de inicio de sesión,
+        o redirige a la lista de productos si el inicio de sesión es exitoso.
+    """
+    
     if request.method == 'POST':
         form = SupplierLoginForm(request.POST)
         if form.is_valid():
@@ -73,6 +121,26 @@ def client_login(request):
 
 
 def password_reset_request(request):
+    """
+    Vista que maneja la solicitud de restablecimiento de contraseña.
+
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP que contiene el correo enviado por el formulario.
+
+    Lógica:
+        1. Verifica si el método de la solicitud es POST.
+        2. Busca al usuario con el correo proporcionado.
+        3. Genera un código de restablecimiento y lo almacena en la base de datos.
+        4. Envía el código al correo proporcionado.
+        5. Guarda el correo en la sesión para futuras vistas.
+        6. Redirige a la vista de verificación de código.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla `home/reset_password.html`, o redirige a la verificación del código si la solicitud es exitosa.
+    """
     if request.method == 'POST':
         email = request.POST.get('email')
         
@@ -121,6 +189,25 @@ def password_reset_request(request):
 
 
 def verify_reset_code(request):
+    """
+    Vista que verifica el código de restablecimiento de contraseña enviado al correo del usuario.
+
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP que contiene el código enviado por el formulario.
+
+    Lógica:
+        1. Recupera el correo del usuario desde la sesión.
+        2. Verifica si el código proporcionado es válido y no ha expirado.
+        3. Si el código es válido, redirige a la vista para establecer una nueva contraseña.
+        4. Si no, muestra un mensaje de error.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla `home/verify_code.html` con el resultado de la verificación.
+    """
+    
     email = request.session.get('reset_email')  # Obtener el correo desde la sesión
     if request.method == 'POST':
         reset_code = request.POST.get('reset_code')
@@ -142,6 +229,25 @@ def verify_reset_code(request):
     return render(request, 'home/verify_code.html', {'email': email})
 
 def set_new_password(request):
+    """
+    Vista que permite a los usuarios establecer una nueva contraseña tras verificar el código de restablecimiento.
+
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP que contiene la nueva contraseña enviada por el formulario.
+
+    Lógica:
+        1. Recupera el correo del usuario desde la sesión.
+        2. Valida y guarda la nueva contraseña para el usuario.
+        3. Elimina los códigos de restablecimiento asociados al usuario.
+        4. Limpia la sesión y muestra un mensaje de éxito.
+        5. Redirige al login según el rol del usuario.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla `home/set_new_password.html`, o redirige al login del cliente o proveedor.
+    """
     email = request.session.get('reset_email')  # Obtener el correo desde la sesión
     if not email:
         return redirect('password_reset_request')  # Si no hay correo en la sesión, redirigir

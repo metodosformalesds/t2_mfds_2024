@@ -15,5 +15,5 @@ def index(request):
 
     Returns:
         HttpResponse: Renderiza la página principal `menu/index.html`.
-    """
+    """ 
     return render(request, 'menu/index.html')  # index principal solid-steel.com

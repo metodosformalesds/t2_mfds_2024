@@ -4,6 +4,39 @@ from django.contrib import messages
 from .forms import ClientForm, ClientAddressForm
 
 def client_edit_info(request):
+    """
+    Vista que permite a un cliente editar su información personal.
+
+    Participantes:
+    Cesar Omar Andrade - 215430
+
+    Args:
+        request (HttpRequest): El objeto de solicitud HTTP.
+
+    Lógica:
+        1. Verifica si el usuario está autenticado mediante el ID almacenado en la sesión.
+        2. Recupera o crea un cliente asociado al usuario autenticado.
+        3. Inicializa un formulario prellenado con la información actual del cliente.
+        4. Si el método de solicitud es POST:
+            - Valida y guarda los datos enviados en el formulario.
+            - Actualiza la información del cliente y del usuario.
+        5. Si el método no es POST, muestra el formulario con los datos actuales.
+        6. Renderiza la plantilla para editar la información del cliente.
+
+    Returns:
+        HttpResponse: Renderiza la plantilla `client/client_edit_info.html` con:
+            - `form`: El formulario prellenado o vacío para la edición de información.
+            - `client`: La instancia del cliente.
+            - `user`: La instancia del usuario autenticado.
+
+    Manejo de errores:
+        - Muestra un mensaje de error si no se encuentra el cliente o el usuario.
+        - Valida la información ingresada en el formulario y muestra errores específicos.
+
+    Ejemplo de uso:
+        - Un cliente accede a esta vista para modificar su información personal, como nombre, apellido y teléfono.
+    """
+    
     user_id = request.session.get('user_id')  # Obtener el ID del usuario desde la sesión
     
     if not user_id:
@@ -64,6 +97,7 @@ def client_address(request):
     Vista que permite a un cliente agregar o actualizar su dirección.
     Participantes:
     Almanza Quezada Andres Yahir
+    Cesar Omar Andrade - 215430
     Args:
         request (HttpRequest): El objeto de solicitud HTTP.
 

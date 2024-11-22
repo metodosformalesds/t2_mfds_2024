@@ -128,6 +128,8 @@ def payment_successful(request):
     Vista que maneja el éxito de un pago realizado con Stripe.
     Participantes:
     Almanza Quezada Andres Yahir 215993
+    Cesar Omar Andrade - 215430
+    
     Args:
         request (HttpRequest): El objeto de solicitud HTTP.
 
@@ -211,10 +213,8 @@ def payment_successful(request):
         customer_email=customer_email
     )
 
-
     ShoppingCart.objects.filter(client=client).delete()
-
-
+    
     return render(request, 'cart/success.html', {
         'transaction_id': transaction_id,
         'payment_date': payment_date,
@@ -224,7 +224,6 @@ def payment_successful(request):
         'status': "Exitosa",
         'customer_email': customer_email
     })
-
 
 def payment_cancelled(request):
     """
@@ -243,7 +242,6 @@ def payment_cancelled(request):
 
 # Vista para agregar productos al carrito
 def agregar_al_carrito(request, id):
-    
     """
     View Name: agregar_al_carrito
     File: views.py
@@ -305,7 +303,6 @@ def agregar_al_carrito(request, id):
 
 # Vista para restar una unidad de un producto del carrito
 def restar_del_carrito(request, id):
-    
     """
     View Name: restar_del_carrito
     File: views.py
@@ -356,7 +353,6 @@ def restar_del_carrito(request, id):
 
 # Vista para eliminar productos del carrito
 def eliminar_del_carrito(request, id):
-    
     """
     View Name: eliminar_del_carrito
     File: views.py
@@ -396,26 +392,3 @@ def eliminar_del_carrito(request, id):
     carrito_item = get_object_or_404(ShoppingCart, client=client, product_id=id)
     carrito_item.delete()
     return redirect('cart')
-
-
-def drag_and_drop(request):
-    if request.method == 'POST' and request.FILES.get('file'):
-        excel_file = request.FILES['file']
-
-        try:
-            # Leer el archivo Excel con pandas
-            df = pd.read_excel(excel_file)
-            # Convertir el DataFrame a una lista de listas (filas)
-            data = df.fillna('').values.tolist()  # Rellenar valores NaN con cadenas vacías
-            headers = df.columns.tolist()  # Obtener los encabezados de las columnas
-
-            print("Encabezados:", headers)  # Imprimir los encabezados en la consola
-            print("Datos:", data)  # Imprimir los datos en la consola
-
-            # Enviar los datos del Excel como respuesta JSON
-            return JsonResponse({"success": True, "headers": headers, "data": data})
-        except Exception as e:
-            print(f"Error al procesar el archivo: {e}")
-            return JsonResponse({"success": False, "error": str(e)})
-
-    return render(request, 'cart/drag.html')
