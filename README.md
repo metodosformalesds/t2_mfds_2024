@@ -24,6 +24,21 @@ Cacahuate11%
 stripe card
 4242 4242 4242 4242
 
+Cuentas de cliente:
+fyolanda246@gmail.com
+Contraseña: Cacahuate11%
+
+Hugoegege@gmail.com
+Solidsteel1!
+
+Supplier:
+Hugoegege1@gmail.com 
+Solidsteel1!
+
+almanzaquezadaandresyahir@gmail.com
+Lesgorda12$
+
+
 
 
 # Fecha de entrega del proyecto para el día 21 de noviembre
